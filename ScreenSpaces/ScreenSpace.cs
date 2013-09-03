@@ -1,4 +1,5 @@
 ﻿using System;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Extensions;
 
@@ -8,7 +9,7 @@ namespace DeltaEngine.ScreenSpaces
 	/// Converts to and from some kind of screen space like Quadratic, Pixel, etc.
 	/// See https://deltaengine.fogbugz.com/default.asp?W101
 	/// </summary>
-	public abstract class ScreenSpace
+	public abstract class ScreenSpace : IDisposable
 	{
 		protected ScreenSpace(Window window)
 		{
@@ -25,16 +26,21 @@ namespace DeltaEngine.ScreenSpaces
 			get
 			{
 				if (!ThreadStaticScreenSpace.HasCurrent)
-					throw new ScreenSpaceHasNotBeenInitializedCreateAWindowFirst();
+					throw new ScreenSpaceHasNotBeenInitializedCreateAWindowFirst(); //ncrunch: no coverage
 				return ThreadStaticScreenSpace.Current;
 			}
-			set { ThreadStaticScreenSpace.Use(value); }
+			private set { ThreadStaticScreenSpace.Use(value); }
 		}
-
-		public class ScreenSpaceHasNotBeenInitializedCreateAWindowFirst : Exception {}
 
 		private static readonly ThreadStatic<ScreenSpace> ThreadStaticScreenSpace =
 			new ThreadStatic<ScreenSpace>();
+
+		public class ScreenSpaceHasNotBeenInitializedCreateAWindowFirst : Exception {}
+
+		public void Dispose()
+		{
+			Current = null;
+		}
 
 		protected virtual void Update(Size newViewportSize)
 		{

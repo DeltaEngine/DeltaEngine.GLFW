@@ -11,6 +11,7 @@ using DeltaEngine.Extensions;
 using DeltaEngine.Graphics;
 using DeltaEngine.Logging;
 using DeltaEngine.Networking.Tcp;
+using DeltaEngine.ScreenSpaces;
 using Microsoft.Win32;
 
 namespace DeltaEngine.Platforms
@@ -23,12 +24,30 @@ namespace DeltaEngine.Platforms
 		protected void RegisterCommonEngineSingletons()
 		{
 			CreateDefaultLoggers();
-			CreateContentLoader();
+			CreateConsoleCommandResolver();
 			LoadSettingsAndCommands();
+			CreateContentLoader();
 			RegisterInstance(new StopwatchTime());
 			RegisterSingleton<Drawing>();
 			CreateEntitySystem();
 			RegisterMediaTypes();
+		}
+
+		private void CreateDefaultLoggers()
+		{
+			instancesToDispose.Add(new TextFileLogger());
+			if (ExceptionExtensions.IsDebugMode)
+				instancesToDispose.Add(new ConsoleLogger());
+		}
+
+		protected readonly List<IDisposable> instancesToDispose = new List<IDisposable>();
+
+		private void CreateConsoleCommandResolver()
+		{
+			var consoleCommandManager = new ConsoleCommands(new ConsoleCommandResolver(this));
+			AllRegistrationCompleted +=
+				() => consoleCommandManager.RegisterCommandsFromTypes(alreadyRegisteredTypes);
+			RegisterInstance(consoleCommandManager);
 		}
 
 		private void CreateContentLoader()
@@ -41,14 +60,12 @@ namespace DeltaEngine.Platforms
 
 		private OnlineServiceConnection ConnectToOnlineService()
 		{
-			var connection = OnlineServiceConnection.CreateForAppRunner(GetApiKey(), OnTimeout, OnError,
-				OnReady);
+			var connection = OnlineServiceConnection.CreateForAppRunner(GetApiKey(), settings, OnTimeout,
+				OnError, OnReady);
 			instancesToDispose.Add(connection);
 			instancesToDispose.Add(new NetworkLogger(connection));
 			return connection;
 		}
-
-		private readonly List<IDisposable> instancesToDispose = new List<IDisposable>();
 
 		private string GetApiKey()
 		{
@@ -57,11 +74,7 @@ namespace DeltaEngine.Platforms
 				if (key != null)
 					apiKey = (string)key.GetValue("ApiKey");
 			if (string.IsNullOrEmpty(apiKey))
-			{
 				OnConnectionError("ApiKey not set. Please login with Editor to set it up.");
-				if (failedToGetContent && !StackTraceExtensions.StartedFromNCrunch)
-					Environment.Exit((int)ExitCode.ContentMissingAndApiKeyNotSet);
-			}
 			return apiKey;
 		}
 
@@ -75,37 +88,15 @@ namespace DeltaEngine.Platforms
 		private void OnConnectionError(string errorMessage)
 		{
 			Logger.Warning(errorMessage);
-			int timeout = 1250;
-			while (timeout > 0 && ContentLoader.current == null)
-			{
-				if (cachedWindow != null && cachedWindow.IsClosing)
-					return;
-				Thread.Sleep(10);
-				timeout -= 10;
-			}
-			if (!(ContentLoader.current is DeveloperOnlineContentLoader))
-				return;
-			if (ContentLoader.HasValidContentForStartup())
-			{
-				(ContentLoader.current as DeveloperOnlineContentLoader).OnLoadContentMetaData();
-				return;
-			}
-			failedToGetContent = true;
-			timeout += 2250;
-			while (timeout > 0 && !IsAlreadyInitialized)
-			{
-				Thread.Sleep(10);
-				timeout -= 10;
-			}
-			Window.ShowMessageBox("Developer mode error", "No content available. " + errorMessage,
-				new[] { "OK" });
+			connectionError = errorMessage;
 		}
 
-		private bool failedToGetContent;
+		private string connectionError;
 
 		private void OnTimeout()
 		{
-			OnConnectionError("Connection to OnlineService timed out.");
+			OnConnectionError("Content Service Connection " + settings.OnlineServiceIp + ":" +
+				settings.OnlineServicePort + " timed out.");
 		}
 
 		private void OnError(string serverMessage)
@@ -127,14 +118,8 @@ namespace DeltaEngine.Platforms
 			ContentIsReady += () => ContentLoader.Load<InputCommands>("DefaultCommands");
 		}
 
+		protected Settings settings;
 		protected internal static event Action ContentIsReady;
-
-		private void CreateDefaultLoggers()
-		{
-			instancesToDispose.Add(new TextFileLogger());
-			if (ExceptionExtensions.IsDebugMode)
-				instancesToDispose.Add(new ConsoleLogger());
-		}
 
 		private void CreateEntitySystem()
 		{
@@ -142,6 +127,8 @@ namespace DeltaEngine.Platforms
 				entities = new EntitiesRunner(new AutofacHandlerResolver(this), settings));
 			RegisterInstance(entities);
 		}
+
+		protected EntitiesRunner entities;
 
 		protected virtual void RegisterMediaTypes()
 		{
@@ -156,7 +143,17 @@ namespace DeltaEngine.Platforms
 				return;
 			alreadyCheckedContentManagerReady = true;
 			if (ContentLoader.current is DeveloperOnlineContentLoader && !IsEditorContentLoader())
+			{
 				WaitUntilContentFromOnlineServiceIsReady();
+				if (!onlineServiceReadyReceived && ContentLoader.HasValidContentForStartup())
+					(ContentLoader.current as DeveloperOnlineContentLoader).OnLoadContentMetaData();
+			}
+			if (!ContentLoader.HasValidContentForStartup())
+			{
+				Window.ShowMessageBox("Unable to connect to OnlineService",
+					"Unable to continue: " + connectionError, new[] { "OK" });
+				Environment.Exit((int)ExitCode.ContentMissingAndApiKeyNotSet);
+			}
 			if (ContentIsReady != null)
 				ContentIsReady();
 		}
@@ -170,69 +167,14 @@ namespace DeltaEngine.Platforms
 
 		private void WaitUntilContentFromOnlineServiceIsReady()
 		{
-			while (!onlineServiceReadyReceived)
-			{
-				if (failedToGetContent)
-					throw new FailedToLoadAnyContentUnableToInitializeApp();
-				Thread.Sleep(10);
-				if (onlineServiceReadyReceived || !(ContentLoader.current is DeveloperOnlineContentLoader))
-					return;
-				if (warnedAlready)
-					continue;
+			if (!ContentLoader.HasValidContentForStartup())
 				Logger.Info("No content available. Waiting until OnlineService sends it to us ...");
-				warnedAlready = true;
-			}
-		}
-
-		private bool warnedAlready;
-
-		private class FailedToLoadAnyContentUnableToInitializeApp : Exception { }
-
-		protected class AutofacContentDataResolver : ContentDataResolver
-		{
-			public AutofacContentDataResolver(Resolver resolver)
+			int timeout = ContentLoader.HasValidContentForStartup() ? 10000 : 30000;
+			while (String.IsNullOrEmpty(connectionError) && !onlineServiceReadyReceived &&
+				(ContentLoader.current is DeveloperOnlineContentLoader) && timeout > 0)
 			{
-				this.resolver = resolver;
-			}
-
-			private readonly Resolver resolver;
-
-			public override ContentData Resolve(Type contentType, string contentName)
-			{
-				return resolver.Resolve(contentType, contentName) as ContentData;
-			}
-
-			public override ContentData Resolve(Type contentType, ContentCreationData data)
-			{
-				return resolver.Resolve(contentType, data) as ContentData;
-			}
-
-			public override void MakeSureResolverIsInitializedAndContentIsReady()
-			{
-				resolver.MakeSureContentManagerIsReady();
-			}
-		}
-
-		protected Settings settings;
-		protected EntitiesRunner entities;
-
-		protected class AutofacHandlerResolver : BehaviorResolver
-		{
-			public AutofacHandlerResolver(Resolver resolver)
-			{
-				this.resolver = resolver;
-			}
-
-			private readonly Resolver resolver;
-
-			public UpdateBehavior ResolveUpdateBehavior(Type handlerType)
-			{
-				return resolver.Resolve(handlerType) as UpdateBehavior;
-			}
-
-			public DrawBehavior ResolveDrawBehavior(Type handlerType)
-			{
-				return resolver.Resolve(handlerType) as DrawBehavior;
+				Thread.Sleep(10);
+				timeout -= 10;
 			}
 		}
 
@@ -244,11 +186,17 @@ namespace DeltaEngine.Platforms
 			Dispose();
 		}
 
+		private Window Window
+		{
+			get { return cachedWindow ?? (cachedWindow = Resolve<Window>()); }
+		}
+		private Window cachedWindow;
+
 		internal void RunTick()
 		{
 			Device.Clear();
 			GlobalTime.Current.Update();
-			TryUpdateAndDrawEntities();
+			UpdateAndDrawAllEntities();
 			ExecuteTestCodeAndMakeScreenshotAfterFirstFrame();
 			Device.Present();
 			Window.Present();
@@ -260,11 +208,18 @@ namespace DeltaEngine.Platforms
 		}
 		private Device cachedDevice;
 
-		private Window Window
+		/// <summary>
+		/// When debugging or testing crash where the actual exception happens, not here.
+		/// </summary>
+		private void UpdateAndDrawAllEntities()
 		{
-			get { return cachedWindow ?? (cachedWindow = Resolve<Window>()); }
+			Drawing.NumberOfDynamicVerticesDrawnThisFrame = 0;
+			Drawing.NumberOfDynamicDrawCallsThisFrame = 0;
+			if (Debugger.IsAttached || StackTraceExtensions.StartedFromNCrunch)
+				entities.UpdateAndDrawAllEntities(Drawing.DrawEverythingInCurrentLayer);
+			else
+				TryUpdateAndDrawAllEntities();
 		}
-		private Window cachedWindow;
 
 		private Drawing Drawing
 		{
@@ -272,19 +227,8 @@ namespace DeltaEngine.Platforms
 		}
 		private Drawing cachedDrawing;
 
-		/// <summary>
-		/// When debugging or testing crash where the actual exception happens, not here.
-		/// </summary>
-		private void TryUpdateAndDrawEntities()
+		private void TryUpdateAndDrawAllEntities()
 		{
-			Drawing.NumberOfDynamicVerticesDrawnThisFrame = 0;
-			Drawing.NumberOfDynamicDrawCallsThisFrame = 0;
-			if (Debugger.IsAttached || StackTraceExtensions.StartedFromNCrunch)
-			{
-				entities.UpdateAndDrawAllEntities(Drawing.DrawEverythingInCurrentLayer);
-				return;
-			}
-
 			try
 			{
 				entities.UpdateAndDrawAllEntities(Drawing.DrawEverythingInCurrentLayer);
@@ -300,10 +244,9 @@ namespace DeltaEngine.Platforms
 
 		private void DisplayMessageBoxAndCloseApp(Exception exception, string title)
 		{
-			var window = Resolve<Window>();
-			window.CopyTextToClipboard(exception.ToString());
-			if (window.ShowMessageBox(title, "Unable to continue: " + exception,
-				new[] { "Abort", "Ignore" }) == "Ignore")
+			Window.CopyTextToClipboard(exception.ToString());
+			if (Window.ShowMessageBox(title, "Unable to continue: " + exception,
+					new[] { "Abort", "Ignore" }) == "Ignore")
 				return;
 			Dispose();
 			if (!StackTraceExtensions.StartedFromNCrunch)
@@ -312,10 +255,12 @@ namespace DeltaEngine.Platforms
 
 		public override void Dispose()
 		{
+			base.Dispose();
 			foreach (var instance in instancesToDispose)
 				instance.Dispose();
 			instancesToDispose.Clear();
-			base.Dispose();
+			if (ScreenSpace.Current != null)
+				ScreenSpace.Current.Dispose();
 		}
 	}
 }

@@ -21,6 +21,17 @@ namespace DeltaEngine.Input.Tests
 				GamePadButton.X, State.Released));
 		}
 
+		[Test]
+		public void VibrateOnButtonPress()
+		{
+			var gamePad = Resolve<GamePad>();
+			new FontText(FontXml.Default, "Press X on GamePad to vibrate", Rectangle.One);
+			new Command(() => gamePad.Vibrate(1f)).Add(new GamePadButtonTrigger(
+				GamePadButton.X, State.Pressed));
+			new Command(() => gamePad.Vibrate(0f)).Add(new GamePadButtonTrigger(
+				GamePadButton.X, State.Released));
+		}
+
 		[Test, CloseAfterFirstFrame]
 		public void TestGamePadButtonPress()
 		{

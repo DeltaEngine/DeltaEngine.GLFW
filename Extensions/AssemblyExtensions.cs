@@ -63,7 +63,8 @@ namespace DeltaEngine.Extensions
 			return name.StartsWith("OpenAL32", "wrap_oal", "libEGL", "libgles", "libGLESv2", "libvlc",
 				"libvlccore", "csogg", "csvorbis", "Autofac", "Moq", "DynamicProxyGen",
 				"Anonymously Hosted", "AvalonDock", "Pencil.Gaming", "Glfw", "Newtonsoft.Json", "OpenTK",
-				"NVorbis", "Farseer", "MvvmLight", "SharpDX", "SlimDX", "ToyMp3");
+				"NVorbis", "Farseer", "MvvmLight", "SharpDX", "SlimDX", "ToyMp3", "EntityFramework",
+				"NHibernate", "Approval", "System.IO.Abstractions");
 		}
 
 		public static bool IsPlatformAssembly(string assemblyName)

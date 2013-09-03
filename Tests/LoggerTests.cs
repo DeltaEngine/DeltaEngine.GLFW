@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using DeltaEngine.Core;
 using DeltaEngine.Mocks;
 using NUnit.Framework;
 
@@ -8,6 +9,12 @@ namespace DeltaEngine.Tests
 {
 	public class LoggerTests
 	{
+		[SetUp]
+		public void MakeSureNoLoggersAreAttached()
+		{
+			Assert.AreEqual(0, Logger.TotalNumberOfAttachedLoggers);
+		}
+
 		[Test]
 		public void LogInfoMessage()
 		{
@@ -19,7 +26,18 @@ namespace DeltaEngine.Tests
 				Assert.AreEqual(0, logger.NumberOfRepeatedMessagesIgnored);
 			}
 		}
-		
+
+		[Test]
+		public void LogSameMessageMultipleTimes()
+		{
+			using (var logger = new MockLogger())
+			{
+				Logger.Info("Hello");
+				Logger.Info("Hello");
+				Assert.AreEqual(1, logger.NumberOfRepeatedMessagesIgnored);
+			}
+		}
+
 		[Test]
 		public void LogWarning()
 		{
@@ -56,7 +74,7 @@ namespace DeltaEngine.Tests
 		public class SameThreadLogger : Logger
 		{
 			public SameThreadLogger()
-				: base(true) { }
+				: base(true) {}
 
 			public override void Write(MessageType messageType, string message)
 			{
@@ -76,7 +94,7 @@ namespace DeltaEngine.Tests
 		public class AnotherLogger : MockLogger {}
 
 		[Test]
-		public void IfNoLoggerIsAttachedWeGetAWarn()
+		public void IfNoLoggerIsAttachedWeGetAWarning()
 		{
 			const string Warning = "Ohoh";
 			const string Message = "No loggers have been created for this message: " + Warning;
@@ -84,7 +102,7 @@ namespace DeltaEngine.Tests
 			var console = new StringWriter();
 			Console.SetOut(console);
 			Logger.Warning(Warning);
-			Assert.IsTrue(console.ToString().Contains(Message));
+			Assert.IsTrue(console.ToString().Contains(Message), console.ToString());
 			Console.SetOut(defaultOut);
 			console.Dispose();
 		}

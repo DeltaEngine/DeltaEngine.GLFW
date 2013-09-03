@@ -1,4 +1,5 @@
-﻿using DeltaEngine.Datatypes;
+﻿using DeltaEngine.Core;
+using DeltaEngine.Datatypes;
 using DeltaEngine.Mocks;
 using DeltaEngine.ScreenSpaces;
 using NUnit.Framework;

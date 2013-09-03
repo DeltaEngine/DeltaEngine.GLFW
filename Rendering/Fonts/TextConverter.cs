@@ -16,47 +16,66 @@ namespace DeltaEngine.Rendering.Fonts
 			wrapper = new TextWrapper(glyphDictionary, FallbackCharForUnsupportedCharacters,
 				pixelLineHeight);
 			MaxTextPixelSize = Size.Zero;
+			glyphs = new List<GlyphDrawData>();
 		}
 
 		private readonly Dictionary<char, Glyph> glyphDictionary;
 		private readonly TextWrapper wrapper;
 		private const char FallbackCharForUnsupportedCharacters = '?';
 		public Size MaxTextPixelSize { get; private set; }
+		private readonly List<GlyphDrawData> glyphs;
 
 		public GlyphDrawData[] GetRenderableGlyphs(string text, HorizontalAlignment alignment)
 		{
-			var glyphs = new List<GlyphDrawData>();
-			lastDrawData = CreateFirstGlyphDrawData(wrapper.GetFontHeight());
-			List<List<char>> textlines = wrapper.SplitTextIntoLines(text, MaxTextPixelSize, false);
-
-			for (int lineIndex = 0; lineIndex < textlines.Count; lineIndex++)
+			SetInitialValues();
+			var allLines = wrapper.SplitTextIntoLines(text, MaxTextPixelSize, false);
+			for (int lineIndex = 0; lineIndex < allLines.Count; lineIndex++)
 			{
-				List<char> textLine = textlines[lineIndex];
-				if (!IsTextLineEmpty(textLine))
-				{
-					AlignTextLineHorizontally(textLine, lineIndex, alignment);
-					float totalGlyphWidth = 0.0f;
-					float lineStartX = lastDrawData.DrawArea.Left;
-					Glyph lastGlyph = null;
-					foreach (char lineCharacter in textLine)
-					{
-						Glyph characterGlyph = GetGlyphFromDictionary(lineCharacter);
-						totalGlyphWidth += GetKerningFromDictionary(lineCharacter, lastGlyph);
-						var newDrawInfo = PlaceGlyphInLine(characterGlyph, lineStartX, totalGlyphWidth);
-						glyphs.Add(newDrawInfo);
-						lastDrawData = newDrawInfo;
-						totalGlyphWidth += (float)Math.Round(characterGlyph.AdvanceWidth);
-						lastGlyph = characterGlyph;
-					}
-				}
-				lastDrawData.DrawArea.Top += wrapper.GetFontHeight();
+				var singleLine = allLines[lineIndex];
+				if (!IsTextLineEmpty(singleLine))
+					CreateLineAlignmentAndGlyphs(singleLine, lineIndex, alignment);
+				AdvanceLineVertically();
 			}
-
-			MaxTextPixelSize = new Size(wrapper.MaxTextLineWidth, lastDrawData.DrawArea.Top);
+			UpdateMaximumLinePixels();
 			return glyphs.ToArray();
 		}
 
+		private void SetInitialValues()
+		{
+			glyphs.Clear();
+			lastGlyph = null;
+			lastDrawData = CreateFirstGlyphDrawData(wrapper.GetFontHeight());
+		}
+
+		private Glyph lastGlyph;
 		private GlyphDrawData lastDrawData;
+
+		private void CreateLineAlignmentAndGlyphs(List<char> singleLine, int lineIndex, HorizontalAlignment alignment )
+		{
+			AlignTextLineHorizontally(singleLine, lineIndex, alignment);
+			float totalGlyphWidth = 0.0f;
+			float lineStartX = lastDrawData.DrawArea.Left;
+			foreach (char lineCharacter in singleLine)
+			{
+				Glyph characterGlyph = GetGlyphFromDictionary(lineCharacter);
+				totalGlyphWidth += GetKerningFromDictionary(lineCharacter, lastGlyph);
+				var newDrawInfo = PlaceGlyphInLine(characterGlyph, lineStartX, totalGlyphWidth);
+				glyphs.Add(newDrawInfo);
+				lastDrawData = newDrawInfo;
+				totalGlyphWidth += (float)Math.Round(characterGlyph.AdvanceWidth);
+				lastGlyph = characterGlyph;
+			}
+		}
+
+		private void AdvanceLineVertically()
+		{
+			lastDrawData.DrawArea.Top += wrapper.GetFontHeight();
+		}
+
+		private void UpdateMaximumLinePixels()
+		{
+			MaxTextPixelSize = new Size(wrapper.MaxTextLineWidth, lastDrawData.DrawArea.Top);
+		}
 
 		private static GlyphDrawData CreateFirstGlyphDrawData(float totalLineHeight)
 		{

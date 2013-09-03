@@ -3,11 +3,13 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 using DeltaEngine.ScreenSpaces;
 using SystemSize = System.Drawing.Size;
 using SystemPoint = System.Drawing.Point;
 using Color = DeltaEngine.Datatypes.Color;
+using Orientation = DeltaEngine.Core.Orientation;
 using Point = DeltaEngine.Datatypes.Point;
 using Size = DeltaEngine.Datatypes.Size;
 
@@ -45,7 +47,7 @@ namespace DeltaEngine.Platforms.Windows
 				form.Icon = appIcon;
 			form.SizeChanged += OnSizeChanged;
 			form.Show();
-			ScreenSpace.Current = new QuadraticScreenSpace(this);
+			new QuadraticScreenSpace(this);
 		}
 
 		protected FormsWindow(Control panel)
@@ -280,7 +282,6 @@ namespace DeltaEngine.Platforms.Windows
 			if (form != null)
 				form.Close();
 			panel.Dispose();
-			ScreenSpace.Current = null;
 		}
 	}
 }

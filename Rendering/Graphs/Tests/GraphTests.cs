@@ -42,6 +42,13 @@ namespace DeltaEngine.Rendering.Graphs.Tests
 		private static readonly Color LineColor = Color.Blue;
 
 		[Test]
+		public void RenderResizedGraph()
+		{
+			CreateGraphWithFourLines();
+			graph.DrawArea = Rectangle.HalfCentered;
+		}
+
+		[Test]
 		public void RenderGraphWithAxes()
 		{
 			CreateGraphWithFourLines();
@@ -96,6 +103,7 @@ namespace DeltaEngine.Rendering.Graphs.Tests
 			Assert.AreEqual(Visibility.Hide, graph.PercentilesVisibility);
 			graph.PercentilesVisibility = Visibility.Show;
 			graph.PercentilesVisibility = Visibility.Show;
+			graph.NumberOfPercentiles = 2;
 			Assert.AreEqual(Visibility.Show, graph.PercentilesVisibility);
 		}
 
@@ -105,7 +113,17 @@ namespace DeltaEngine.Rendering.Graphs.Tests
 			Assert.AreEqual(Visibility.Hide, graph.PercentileLabelsVisibility);
 			graph.PercentileLabelsVisibility = Visibility.Show;
 			graph.PercentileLabelsVisibility = Visibility.Show;
+			graph.ArePercentileLabelsInteger = true;
 			Assert.AreEqual(Visibility.Show, graph.PercentileLabelsVisibility);
+		}
+
+		[Test, CloseAfterFirstFrame]
+		public void ChangeKeyVisibility()
+		{
+			Assert.AreEqual(Visibility.Show, graph.KeyVisibility);
+			graph.KeyVisibility = Visibility.Hide;
+			graph.KeyVisibility = Visibility.Hide;
+			Assert.AreEqual(Visibility.Hide, graph.KeyVisibility);
 		}
 		
 		[Test, CloseAfterFirstFrame]
@@ -206,8 +224,8 @@ namespace DeltaEngine.Rendering.Graphs.Tests
 			Assert.IsTrue(graph.ArePercentileLabelsInteger);
 		}
 
-		[Test, CloseAfterFirstFrame]
-		public void HideGraph()
+		[Test]
+		public void HiddenGraphDisplaysNothing()
 		{
 			graph.NumberOfPercentiles = 5;
 			GraphLine line = graph.CreateLine("", LineColor);

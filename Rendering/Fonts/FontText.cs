@@ -113,8 +113,8 @@ namespace DeltaEngine.Rendering.Fonts
 				foreach (var entity in entities)
 					AddToBatch((FontText)entity);
 				for (int i = 0; i < drawFontCount; i++)
-					drawing.Add(drawnFontTexts[i].material.Shader, drawnFontTexts[i].material.DiffuseMap,
-						drawnFontTexts[i].vertices, drawnFontTexts[i].indices, drawnFontTexts[i].verticesCount,
+					drawing.Add(drawnFontTexts[i].material, drawnFontTexts[i].vertices,
+						drawnFontTexts[i].indices, drawnFontTexts[i].verticesCount,
 						drawnFontTexts[i].indicesCount);
 			}
 

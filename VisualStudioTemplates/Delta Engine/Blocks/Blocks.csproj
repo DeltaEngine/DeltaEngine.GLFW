@@ -91,6 +91,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="Grid.cs" />
     <Compile Include="BlocksContent.cs" />
+    <Compile Include="MainMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RenderLayer.cs" />
     <Compile Include="Block.cs" />

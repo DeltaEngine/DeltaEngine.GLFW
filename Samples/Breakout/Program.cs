@@ -1,8 +1,6 @@
-﻿using DeltaEngine;
-using DeltaEngine.Datatypes;
+﻿using DeltaEngine.Core;
 using DeltaEngine.Multimedia;
 using DeltaEngine.Platforms;
-using DeltaEngine.ScreenSpaces;
 
 namespace Breakout
 {

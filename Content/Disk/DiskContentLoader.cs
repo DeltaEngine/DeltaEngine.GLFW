@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Content.Disk
@@ -74,7 +75,7 @@ namespace DeltaEngine.Content.Disk
 					data.Name = attribute.Value;
 					break;
 				case "Type":
-					data.Type = attribute.Value.Parse<ContentType>();
+					data.Type = attribute.Value.TryParse(ContentType.Image);
 					break;
 				case "LastTimeUpdated":
 					data.LastTimeUpdated = DateExtensions.Parse(attribute.Value);

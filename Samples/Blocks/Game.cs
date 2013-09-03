@@ -1,5 +1,5 @@
-﻿using DeltaEngine;
-using DeltaEngine.Commands;
+﻿using DeltaEngine.Commands;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Input;
 using DeltaEngine.Multimedia;
@@ -15,16 +15,25 @@ namespace Blocks
 		public Game(Window window, BlocksContent content, SoundDevice soundDevice)
 		{
 			this.window = window;
+			this.content = content;
+			var menu = new MainMenu();
+			menu.InitGame += () => { menu.Hide(); StartGame(); };
+			menu.QuitGame += window.CloseAfterFrame;
+		}
+
+		public UserInterface UserInterface { get; private set; }
+		public Controller Controller { get; private set; }
+		private readonly Window window;
+		private readonly BlocksContent content;
+
+		public void StartGame()
+		{
 			UserInterface = new UserInterface(content);
 			Controller = new Controller(DisplayMode, content);
 			ScreenSpace.Current.ViewportSizeChanged +=
 				() => ShowCorrectSceneForAspect(window.ViewportPixelSize);
 			Initialize();
 		}
-
-		public UserInterface UserInterface { get; private set; }
-		public Controller Controller { get; private set; }
-		private readonly Window window;
 
 		private void Initialize()
 		{

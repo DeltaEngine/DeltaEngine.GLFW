@@ -77,7 +77,7 @@ namespace DeltaEngine.Rendering.Shapes
 
 		private void DrawTriangles(VertexPosition2DColor[] newVertices)
 		{
-			draw.Add(material, BlendMode.Normal, newVertices, triangleIndices);
+			draw.Add(material, newVertices, triangleIndices);
 		}
 
 		private void NumberOfVertex(VertexPosition2DColor[] newVertices, int posInList,

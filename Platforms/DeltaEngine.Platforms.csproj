@@ -75,6 +75,11 @@
     <Compile Include="ApproveFirstFrameScreenshot.cs" />
     <Compile Include="ApproveFirstFrameScreenshotAttribute.cs" />
     <Compile Include="AppRunner.cs" />
+    <Compile Include="AutofacContentDataResolver.cs" />
+    <Compile Include="AssemblyTypeLoader.cs" />
+    <Compile Include="AutofacHandlerResolver.cs" />
+    <Compile Include="ConsoleCommands.cs" />
+    <Compile Include="ConsoleCommandResolver.cs" />
     <Compile Include="FileSettings.cs" />
     <Compile Include="IgnoreForResolverAttribute.cs" />
     <Compile Include="InAppPurchase.cs" />

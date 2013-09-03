@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DeltaEngine.Core;
 
 namespace DeltaEngine.Extensions
 {
 	/// <summary>
-	/// Provides the number of elements in an enum.
+	/// Provides the number of elements in an enum and some conversion and enumeration methods.
 	/// </summary>
 	public static class EnumExtensions
 	{
@@ -25,9 +26,17 @@ namespace DeltaEngine.Extensions
 			return GetEnumValues(anyEnum).Length;
 		}
 
-		public static T Parse<T>(this string text)
+		/// <summary>
+		/// Tries to convert any text to a enum, if it fails defaultValue is returned. If you know the
+		/// text will be in the correct format use <see cref="StringExtensions.Convert{T}"/>.
+		/// </summary>
+		public static T TryParse<T>(this string text, T defaultValue) where T : struct
 		{
-			return (T)Enum.Parse(typeof(T), text);
+			T result;
+			if (Enum.TryParse(text, true, out result))
+				return result;
+			Logger.Warning("Failed to parse enum value " + text + ", using default: " + defaultValue);
+			return defaultValue;
 		}
 	}
 }

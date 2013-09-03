@@ -1,4 +1,5 @@
 ﻿using System;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 using DeltaEngine.Networking.Messages;
 
@@ -11,22 +12,16 @@ namespace DeltaEngine.Networking.Tcp
 	public class OnlineServiceConnection : TcpSocket
 	{
 		//ncrunch: no coverage start
-		internal static OnlineServiceConnection CreateForAppRunner(string apiKey, Action timeout,
-			Action<string> errorHappened, Action ready)
+		internal static OnlineServiceConnection CreateForAppRunner(string apiKey, Settings settings,
+			Action timeout, Action<string> errorHappened, Action ready)
 		{
 			var connection = CreateForEditor();
 			connection.serverErrorHappened = errorHappened;
 			connection.contentReady = ready;
 			var projectName = AssemblyExtensions.GetEntryAssemblyForProjectName();
 			connection.Connected += () => connection.Send(new LoginRequest(apiKey, projectName));
-			try
-			{
-				connection.ConnectToOnlineService(timeout);
-			}
-			catch (Exception ex)
-			{
-				Logger.Error(ex);
-			}
+			connection.TimedOut += timeout;
+			connection.Connect(settings.OnlineServiceIp, settings.OnlineServicePort);
 			return connection;
 		}
 
@@ -67,12 +62,7 @@ namespace DeltaEngine.Networking.Tcp
 		}
 
 		public bool IsLoggedIn { get; private set; }
-		public Action LoggedIn;
 
-		internal void ConnectToOnlineService(Action timeout)
-		{
-			TimedOut += timeout;
-			Connect("deltaengine.net", 800);
-		}
+		public Action LoggedIn;
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using DeltaEngine;
 using DeltaEngine.Content;
 using DeltaEngine.Core;
 using DeltaEngine.Platforms;
@@ -11,7 +12,8 @@ namespace Asteroids.Tests
 		[Test]
 		public void GameOver()
 		{
-			var game = new Game();
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			game.GameOver();
 			Assert.AreEqual(GameState.GameOver, game.GameState);
 			Assert.IsFalse(game.InteractionLogics.Player.IsActive);

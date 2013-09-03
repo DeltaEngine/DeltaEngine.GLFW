@@ -257,6 +257,14 @@ namespace DeltaEngine.Tests.Content
 					() => new FakeContentLoader());
 		}
 
+		[Test]
+		public void ThrowExceptionIfContentLoaderHasNoResolver()
+		{
+			ContentLoader.current.resolver = null;
+			Assert.Throws<ContentLoader.NoContentResolverWasSet>(
+				() => ContentLoader.Load<MockXmlContent>(TestXmlContentName));
+		}
+
 		private class FakeContentLoader : ContentLoader
 		{
 			public FakeContentLoader()

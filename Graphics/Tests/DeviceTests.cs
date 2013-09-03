@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using DeltaEngine.Commands;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Input;
 using DeltaEngine.Platforms;

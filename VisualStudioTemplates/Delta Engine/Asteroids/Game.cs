@@ -1,4 +1,5 @@
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Rendering.Sprites;
 
@@ -6,8 +7,18 @@ namespace $safeprojectname$
 {
 	public class Game
 	{
-		public Game()
+		public Game(Window window)
 		{
+			mainMenu = new Menu();
+			mainMenu.InitGame += StartGame;
+			mainMenu.QuitGame += window.CloseAfterFrame;
+		}
+
+		private readonly Menu mainMenu;
+
+		public void StartGame()
+		{
+			mainMenu.Hide();
 			controls = new Controls(this);
 			score = 0;
 			SetUpBackground();
@@ -31,7 +42,7 @@ namespace $safeprojectname$
 			};
 		}
 
-		private readonly Controls controls;
+		private Controls controls;
 		private int score;
 
 		public InteractionLogics InteractionLogics
@@ -41,7 +52,7 @@ namespace $safeprojectname$
 		}
 
 		public GameState GameState;
-		private readonly HudInterface hudInterface;
+		private HudInterface hudInterface;
 
 		private static void SetUpBackground()
 		{

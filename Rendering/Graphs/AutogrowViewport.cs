@@ -42,7 +42,6 @@ namespace DeltaEngine.Rendering.Graphs
 		{
 			if (extremities.Contains(point))
 				return;
-
 			UpdateExtremities(point);
 			UpdateViewportFromExtremities();
 		}
@@ -51,13 +50,10 @@ namespace DeltaEngine.Rendering.Graphs
 		{
 			if (point.X < extremities.Left)
 				MoveLeftEdge(point.X);
-
 			if (point.X > extremities.Right)
 				extremities.Width = point.X - extremities.Left;
-
 			if (point.Y < extremities.Top)
 				MoveTopEdge(point.Y);
-
 			if (point.Y > extremities.Bottom)
 				extremities.Height = point.Y - extremities.Top;
 		}

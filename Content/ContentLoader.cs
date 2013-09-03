@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using DeltaEngine.Core;
 
 namespace DeltaEngine.Content
 {
@@ -61,7 +62,7 @@ namespace DeltaEngine.Content
 		}
 
 		internal class NoContentLoaderWasInitialized : Exception {}
-		private class NoContentResolverWasSet : Exception {}
+		internal class NoContentResolverWasSet : Exception {}
 
 		public static bool Exists(string contentName)
 		{

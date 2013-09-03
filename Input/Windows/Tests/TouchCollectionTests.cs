@@ -1,49 +1,50 @@
 ﻿using System.Collections.Generic;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
-using DeltaEngine.Platforms.Mocks;
+using DeltaEngine.Platforms;
 using DeltaEngine.ScreenSpaces;
 using NUnit.Framework;
 
 namespace DeltaEngine.Input.Windows.Tests
 {
-	public class TouchCollectionTests
+	public class TouchCollectionTests : TestWithMocksOrVisually
 	{
-		public TouchCollectionTests()
+		[SetUp]
+		public void CreateTouchCollection()
 		{
-			resolver = new MockResolver();
+			emptyTouchCollection = new TouchCollection(null);
+			var positionTranslator = new CursorPositionTranslater(Resolve<Window>());
+			touchCollection = new TouchCollection(positionTranslator);
 		}
 
-		private readonly MockResolver resolver;
+		private TouchCollection emptyTouchCollection;
+		private TouchCollection touchCollection;
 
 		[Test]
 		public void FindIndexByIdOrGetFreeIndex()
 		{
-			var touchCollection = new TouchCollection(null);
-			Assert.AreEqual(0, touchCollection.FindIndexByIdOrGetFreeIndex(478));
+			Assert.AreEqual(0, emptyTouchCollection.FindIndexByIdOrGetFreeIndex(478));
 		}
 
 		[Test]
 		public void FindIndexByIdWithExistingId()
 		{
-			var touchCollection = new TouchCollection(null);
-			touchCollection.ids[5] = 5893;
-			Assert.AreEqual(5, touchCollection.FindIndexByIdOrGetFreeIndex(5893));
+			emptyTouchCollection.ids[5] = 5893;
+			Assert.AreEqual(5, emptyTouchCollection.FindIndexByIdOrGetFreeIndex(5893));
 		}
 
 		[Test]
 		public void FindFreeIndex()
 		{
-			var touchCollection = new TouchCollection(null);
-			Assert.AreEqual(0, touchCollection.FindIndexByIdOrGetFreeIndex(456));
+			Assert.AreEqual(0, emptyTouchCollection.FindIndexByIdOrGetFreeIndex(456));
 		}
 
 		[Test]
 		public void FindFreeIndexWithoutAnyFreeIndices()
 		{
-			var touchCollection = new TouchCollection(null);
-			for (int index = 0; index < touchCollection.ids.Length; index++)
-				touchCollection.ids[index] = 1;
-			Assert.AreEqual(-1, touchCollection.FindIndexByIdOrGetFreeIndex(546));
+			for (int index = 0; index < emptyTouchCollection.ids.Length; index++)
+				emptyTouchCollection.ids[index] = 1;
+			Assert.AreEqual(-1, emptyTouchCollection.FindIndexByIdOrGetFreeIndex(546));
 		}
 
 		[Test]
@@ -58,7 +59,6 @@ namespace DeltaEngine.Input.Windows.Tests
 		[Test]
 		public void UpdateTouchState()
 		{
-			var touchCollection = new TouchCollection(null);
 			touchCollection.UpdateTouchState(0, NativeTouchInput.FlagTouchDown);
 			Assert.AreEqual(State.Pressing, touchCollection.states[0]);
 			touchCollection.UpdateTouchState(0, 0);
@@ -68,7 +68,6 @@ namespace DeltaEngine.Input.Windows.Tests
 		[Test]
 		public void CalculateQuadraticPosition()
 		{
-			TouchCollection touchCollection = CreateCollection();
 			Point quadPosition = touchCollection.CalculateQuadraticPosition(400 * 100, 300 * 100);
 			Assert.AreEqual(ScreenSpace.Current.FromPixelSpace(new Point(400, 300)), quadPosition);
 		}
@@ -76,7 +75,6 @@ namespace DeltaEngine.Input.Windows.Tests
 		[Test]
 		public void ProcessNewTouches()
 		{
-			TouchCollection touchCollection = CreateCollection();
 			var newTouches = new List<NativeTouchInput> { GetTestTouchInput() };
 			touchCollection.ProcessNewTouches(newTouches);
 			Assert.AreEqual(15, touchCollection.ids[0]);
@@ -93,7 +91,6 @@ namespace DeltaEngine.Input.Windows.Tests
 		[Test]
 		public void UpdateTouchStateWithoutNewData()
 		{
-			TouchCollection touchCollection = CreateCollection();
 			touchCollection.ids[0] = 15;
 			touchCollection.states[0] = State.Releasing;
 			touchCollection.UpdateTouchStateWithoutNewData(0);
@@ -108,7 +105,6 @@ namespace DeltaEngine.Input.Windows.Tests
 		[Test]
 		public void UpdateAllTouches()
 		{
-			TouchCollection touchCollection = CreateCollection();
 			var newTouches = new List<NativeTouchInput> { GetTestTouchInput() };
 			touchCollection.ids[0] = 15;
 			touchCollection.states[0] = State.Pressing;
@@ -123,7 +119,6 @@ namespace DeltaEngine.Input.Windows.Tests
 		[Test]
 		public void UpdateTouchWithUpdatedActiveTouch()
 		{
-			TouchCollection touchCollection = CreateCollection();
 			var newTouches = new List<NativeTouchInput> { GetTestTouchInput() };
 			touchCollection.ids[0] = 15;
 			touchCollection.states[0] = State.Pressing;
@@ -138,7 +133,6 @@ namespace DeltaEngine.Input.Windows.Tests
 		[Test]
 		public void UpdateTouchWithoutAnyActiveTouch()
 		{
-			TouchCollection touchCollection = CreateCollection();
 			var newTouches = new List<NativeTouchInput>();
 			touchCollection.ids[0] = 15;
 			touchCollection.states[0] = State.Releasing;
@@ -153,7 +147,6 @@ namespace DeltaEngine.Input.Windows.Tests
 		[Test]
 		public void UpdateTouchIfPreviouslyPresentWithMultipleNewTouches()
 		{
-			TouchCollection touchCollection = CreateCollection();
 			var newTouches = new List<NativeTouchInput>
 			{
 				new NativeTouchInput(3, 0, 0, 0),
@@ -164,13 +157,6 @@ namespace DeltaEngine.Input.Windows.Tests
 			touchCollection.UpdateTouchBy(0, newTouches);
 			Assert.AreEqual(15, touchCollection.ids[0]);
 			Assert.AreEqual(State.Released, touchCollection.states[0]);
-		}
-
-		private TouchCollection CreateCollection()
-		{
-			var window = resolver.Window;
-			var positionTranslator = new CursorPositionTranslater(window);
-			return new TouchCollection(positionTranslator);
 		}
 	}
 }

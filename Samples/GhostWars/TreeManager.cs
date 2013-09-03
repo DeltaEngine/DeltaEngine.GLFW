@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DeltaEngine;
 using DeltaEngine.Commands;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Input;
@@ -24,7 +24,7 @@ namespace GhostWars
 			statusText = new FontText(MainMenu.Font, "",
 				Rectangle.FromCenter(new Point(0.5f, 0.25f), new Size(0.2f))) { RenderLayer = 5 };
 			new Sprite(new Material(Shader.Position2DUv, "Logo"),
-				new Rectangle(0.025f, 0.225f, 0.15f, 0.15f)) { RenderLayer = -15 };
+				new Rectangle(0.02f, 0.205f, 0.15f, 0.15f)) { RenderLayer = -15 };
 			CreateArrowSelectionAndBars();
 			OnClickSelectTree();
 		}
@@ -136,6 +136,8 @@ namespace GhostWars
 			var ghostsToSend = Math.Min(startTree.NumberOfGhosts, 5);
 			startTree.NumberOfGhosts -= ghostsToSend;
 			UpdateBars();
+			if (targetTree == null)
+				return;
 			var wave = new GhostWave(startTree.Center, targetTree.Center, ghostsToSend,
 				startTree.Team.ToColor());
 			wave.Attacker = startTree.Team;
@@ -211,14 +213,14 @@ namespace GhostWars
 		{
 			statusText.Text = "";
 			MainMenu.State = GameState.GameOver;
-			new Sprite(new Material(Shader.Position2DUv, "YouWin"), Point.Half) { RenderLayer = 100 };
+			new Sprite(new Material(Shader.Position2DUv, "YouWin"), Point.Half) { RenderLayer = 4000 };
 		}
 
 		private void HandleLostSituation()
 		{
 			statusText.Text = "You Lost!";
 			MainMenu.State = GameState.GameOver;
-			new Sprite(new Material(Shader.Position2DUv, "GameOver"), Point.Half) { RenderLayer = 100 };
+			new Sprite(new Material(Shader.Position2DUv, "GameOver"), Point.Half) { RenderLayer = 4000 };
 		}
 
 		private void HandleAi(Tree tree)

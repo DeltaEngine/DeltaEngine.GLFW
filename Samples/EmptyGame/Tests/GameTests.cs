@@ -1,4 +1,4 @@
-﻿using DeltaEngine;
+﻿using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Platforms;
 using NUnit.Framework;

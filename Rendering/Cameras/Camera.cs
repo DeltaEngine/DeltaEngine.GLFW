@@ -1,4 +1,5 @@
-﻿using DeltaEngine.Datatypes;
+﻿using DeltaEngine.Core;
+using DeltaEngine.Datatypes;
 using DeltaEngine.Graphics;
 using DeltaEngine.ScreenSpaces;
 
@@ -31,7 +32,7 @@ namespace DeltaEngine.Rendering.Cameras
 		public const float DefaultNearPlane = 1.0f;
 		public Vector Position { get; set; }
 		public virtual Vector Target { get; set; }
-		public static readonly Vector UpVector = Vector.UnitY;
+		public static readonly Vector UpVector = Vector.UnitZ;
 		public static Camera Current { get; private set; }
 		private bool updateProjection = true;
 

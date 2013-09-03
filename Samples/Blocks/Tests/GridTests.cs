@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DeltaEngine;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Platforms;
 using DeltaEngine.ScreenSpaces;

@@ -92,10 +92,12 @@
     <Compile Include="Content\MaterialRenderSizeTests.cs" />
     <Compile Include="Core\BinaryDataExtensionsTests.cs" />
     <Compile Include="Core\BinaryDataLoadSaveTests.cs" />
+    <Compile Include="Core\BinaryDataLoadSaveTestsHelper.cs" />
     <Compile Include="Datatypes\BoundingBoxTests.cs" />
     <Compile Include="Datatypes\BoundingSphereTests.cs" />
     <Compile Include="Datatypes\DatatypesLoadSaveTests.cs" />
     <Compile Include="Datatypes\PlaneTests.cs" />
+    <Compile Include="Datatypes\RangeTests.cs" />
     <Compile Include="Datatypes\RayTests.cs" />
     <Compile Include="Entities\CreatingEntitiesTests.cs" />
     <Compile Include="Entities\DrawableEntityTest.cs" />

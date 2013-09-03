@@ -1,4 +1,4 @@
-﻿using DeltaEngine.Networking;
+﻿using DeltaEngine.Core;
 using DeltaEngine.Networking.Messages;
 using DeltaEngine.Networking.Tcp;
 

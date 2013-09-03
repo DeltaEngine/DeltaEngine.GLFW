@@ -114,8 +114,8 @@ namespace DeltaEngine.Content.Disk
 				return ContentType.Json;
 			case ".deltamesh":
 				return ContentType.Mesh;
-			case ".deltaparticle":
-				return ContentType.ParticleEffect;
+			case ".deltaparticleemitter":
+				return ContentType.ParticleEmitter;
 			case ".deltashader":
 				return ContentType.Shader;
 			case ".deltamaterial":

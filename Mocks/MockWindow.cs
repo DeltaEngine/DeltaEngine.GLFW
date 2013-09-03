@@ -1,4 +1,5 @@
 ﻿using System;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.ScreenSpaces;
 
@@ -13,15 +14,11 @@ namespace DeltaEngine.Mocks
 		{
 			Title = "MockWindow";
 			TotalPixelSize = new Size(640, 360);
-			ScreenSpace.Current = new QuadraticScreenSpace(this);
+			new QuadraticScreenSpace(this);
 		}
 
 		public void Present() {}
 		public void CloseAfterFrame() {}
-		public void Dispose()
-		{
-			ScreenSpace.Current = null;
-		}
 
 		public string Title { get; set; }
 

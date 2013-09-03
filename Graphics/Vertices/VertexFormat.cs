@@ -9,7 +9,7 @@ namespace DeltaEngine.Graphics.Vertices
 	/// </summary>
 	public class VertexFormat : IEquatable<VertexFormat>
 	{
-		private VertexFormat() {}
+		private VertexFormat() {} //ncrunch: no coverage
 
 		public VertexFormat(VertexElement[] elements)
 		{
@@ -71,10 +71,12 @@ namespace DeltaEngine.Graphics.Vertices
 			return other is VertexFormat && Equals((VertexFormat)other);
 		}
 
+		//ncrunch: no coverage start
 		public override int GetHashCode()
 		{
 			return Elements.GetHashCode() ^ Stride.GetHashCode();
 		}
+		//ncrunch: no coverage end
 
 		public override string ToString()
 		{

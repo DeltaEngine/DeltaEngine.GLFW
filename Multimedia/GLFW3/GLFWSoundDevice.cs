@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Multimedia.GLFW.Helpers;
 using Pencil.Gaming.Audio;

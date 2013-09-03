@@ -1,4 +1,5 @@
-﻿using DeltaEngine.Datatypes;
+﻿using DeltaEngine.Core;
+using DeltaEngine.Datatypes;
 using DeltaEngine.Graphics;
 
 namespace DeltaEngine.Rendering.Cameras

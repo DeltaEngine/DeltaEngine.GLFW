@@ -46,7 +46,9 @@ namespace DeltaEngine.Rendering.Triggers.Tests
 			{
 				Color = Color.Green
 			};
-			sprite.Start<TimeTrigger>().Add(new TimeTrigger.Data(Color.Green, Color.Gold, 0.5f));
+			sprite.Start<TimeTrigger>().Add(new TimeTrigger.Data(Color.Green, Color.Gold, 0.2f));
+			AdvanceTimeAndUpdateEntities(0.03f);
+			AdvanceTimeAndUpdateEntities(0.2f);
 		}
 	}
 }

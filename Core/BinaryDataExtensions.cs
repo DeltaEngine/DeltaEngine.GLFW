@@ -85,7 +85,8 @@ namespace DeltaEngine.Core
 			if (type.IsAbstract || typeof(Exception).IsAssignableFrom(type))
 				return false;
 			string name = type.FullName;
-			return !name.StartsWith("NUnit.") && !name.EndsWith("Tests") && !name.Contains("<");
+			return !name.StartsWith("NUnit.") && !name.EndsWith("Tests") && !name.Contains("<") &&
+				!name.StartsWith("Microsoft.");
 		}
 
 		private static void AddType(Type type)

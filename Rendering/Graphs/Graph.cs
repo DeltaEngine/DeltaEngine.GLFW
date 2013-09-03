@@ -19,8 +19,12 @@ namespace DeltaEngine.Rendering.Graphs
 
 		public void Update()
 		{
-			if (!DidFootprintChange)
-				return;
+			if (DidFootprintChange)
+				RefreshAll();
+		}
+
+		private void RefreshAll()
+		{
 			renderKey.Refresh(this);
 			renderAxes.Refresh(this);
 			renderPercentiles.Refresh(this);
@@ -31,6 +35,7 @@ namespace DeltaEngine.Rendering.Graphs
 
 		private readonly RenderKey renderKey = new RenderKey();
 		private readonly RenderAxes renderAxes = new RenderAxes { Visibility = Visibility.Hide };
+		internal readonly List<GraphLine> Lines = new List<GraphLine>();
 
 		private readonly RenderPercentiles renderPercentiles = new RenderPercentiles
 		{
@@ -42,7 +47,18 @@ namespace DeltaEngine.Rendering.Graphs
 			Visibility = Visibility.Hide
 		};
 
-		internal List<GraphLine> Lines = new List<GraphLine>();
+		public override Visibility Visibility
+		{
+			get
+			{
+				return base.Visibility;
+			}
+			set
+			{
+				base.Visibility = value;
+				RefreshAll();
+			}
+		}
 
 		public GraphLine CreateLine(string key, Color color)
 		{
@@ -107,6 +123,18 @@ namespace DeltaEngine.Rendering.Graphs
 					return;
 				renderPercentileLabels.Visibility = value;
 				renderPercentileLabels.Refresh(this);
+			}
+		}
+
+		public Visibility KeyVisibility
+		{
+			get { return renderKey.Visibility; }
+			set
+			{
+				if (renderKey.Visibility == value)
+					return;
+				renderKey.Visibility = value;
+				renderKey.Refresh(this);
 			}
 		}
 

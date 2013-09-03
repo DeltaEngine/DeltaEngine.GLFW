@@ -2,6 +2,7 @@
 using System.IO;
 using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
+using DeltaEngine.Extensions;
 using DeltaEngine.ScreenSpaces;
 
 namespace DeltaEngine.Content
@@ -16,7 +17,7 @@ namespace DeltaEngine.Content
 		/// <summary>
 		/// Create material from content created via the Editor, contentName is NOT just the image name.
 		/// </summary>
-		public Material(string contentName)
+		private Material(string contentName)
 			: base(contentName) {}
 
 		/// <summary>
@@ -104,15 +105,6 @@ namespace DeltaEngine.Content
 				else if (DiffuseMap != null)
 					size = SetRenderSize(DiffuseMap.PixelSize);
 				return size;
-				//100,100 -> 1000,1000: PixelBased:100,100 pixels (0.1,0.1 quad)
-				//100,100 -> 1000,1000: Size800X480:100/800=125/1000,100/800=125/1000
-				//var pixelSize = DiffuseMap.PixelSize;
-				//var quadSize800X480 = new Size(800);
-				//Settings settings = new FileSettings();
-				//var quadSizeSettings =
-				//	new Size(settings.Resolution.Width > settings.Resolution.Height
-				//		? settings.Resolution.Width : settings.Resolution.Height);
-				//return pixelSize / quadSize800X480;
 			}
 		}
 
@@ -128,14 +120,6 @@ namespace DeltaEngine.Content
 				pixelSize = ScreenSpace.Current.FromPixelSpace(pixelSize / new Size(1280));
 			else if (renderSize == RenderSize.Size1920X1080)
 				pixelSize = ScreenSpace.Current.FromPixelSpace(pixelSize / new Size(1920));
-			//else if (renderSize == RenderSizes.SettingsBased)
-			//{
-			//	Settings settings = new FileSettings();
-			//	var quadSizeSettings =
-			//			new Size(settings.Resolution.Width > settings.Resolution.Height
-			//				? settings.Resolution.Width : settings.Resolution.Height);
-			//	pixelSize = ScreenSpace.Current.FromPixelSpace(pixelSize / quadSizeSettings);
-			//}
 			return pixelSize;
 		}
 
@@ -156,15 +140,7 @@ namespace DeltaEngine.Content
 			else
 				DiffuseMap = ContentLoader.Load<Image>(imageOrAnimationName);
 			if (DiffuseMap != null)
-				try
-				{
-					DiffuseMap.BlendMode =
-						(BlendMode)Enum.Parse(typeof(BlendMode), MetaData.Get("BlendMode", ""));
-				}
-				catch (Exception)
-				{
-						DiffuseMap.BlendMode = BlendMode.Normal;
-				}
+				DiffuseMap.BlendMode = MetaData.Get("BlendMode", "Normal").TryParse(BlendMode.Normal);
 		}
 
 		protected override void DisposeData() {}

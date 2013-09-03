@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Reflection;
 
 namespace DeltaEngine.Content
 {
@@ -12,7 +14,9 @@ namespace DeltaEngine.Content
 
 		public virtual ContentData Resolve(Type contentType, string contentName)
 		{
-			return Activator.CreateInstance(contentType, contentName) as ContentData;
+			return Activator.CreateInstance(contentType,
+					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, Type.DefaultBinder,
+					new object[] { contentName }, CultureInfo.CurrentCulture) as ContentData;
 		}
 
 		public virtual ContentData Resolve(Type contentType, ContentCreationData data)

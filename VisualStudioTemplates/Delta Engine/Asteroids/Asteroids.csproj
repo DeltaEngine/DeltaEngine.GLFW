@@ -59,6 +59,9 @@
     <Reference Include="DeltaEngine.Rendering.Sprites">
 	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Rendering.Sprites.dll</HintPath>
     </Reference>
+    <Reference Include="DeltaEngine.Scenes">
+	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Scenes.dll</HintPath>
+    </Reference>
     <Reference Include="DeltaEngine.WindowsGLFW3">
 	  <HintPath>$(DeltaEnginePath)\DeltaEngine.WindowsGLFW3.dll</HintPath>
     </Reference>
@@ -77,6 +80,7 @@
     <Compile Include="GameState.cs" />
     <Compile Include="InteractionLogics.cs" />
     <Compile Include="HudInterface.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="PlayerShip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Projectile.cs" />

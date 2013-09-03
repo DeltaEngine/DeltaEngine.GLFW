@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Input;
 using DeltaEngine.Input.Mocks;
 using DeltaEngine.Platforms;
+using DeltaEngine.Platforms.Tests;
 using DeltaEngine.Scenes.UserInterfaces.Terminal;
 using NUnit.Framework;
 
@@ -13,10 +15,9 @@ namespace DeltaEngine.Scenes.Tests.UserInterfaces.Terminal
 		[SetUp]
 		public void SetUp()
 		{
+			resolver.Register<TestCommand>();
 			Resolve<Window>().ViewportPixelSize = new Size(500, 500);
 			console = new Console();
-			console.AddCommand(typeof(TestCommands).GetMethod("AddFloats"), new TestCommands());
-			console.AddCommand(typeof(TestCommands).GetMethod("AddInts"), new TestCommands());
 			keyboard = Resolve<Keyboard>() as MockKeyboard;
 			lastKey = Key.None;
 			AdvanceTimeAndUpdateEntities();

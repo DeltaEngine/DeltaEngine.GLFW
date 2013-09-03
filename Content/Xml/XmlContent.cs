@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
+using DeltaEngine.Core;
 
 namespace DeltaEngine.Content.Xml
 {
@@ -10,7 +11,7 @@ namespace DeltaEngine.Content.Xml
 	/// </summary>
 	public class XmlContent : ContentData
 	{
-		public XmlContent(string contentName)
+		protected XmlContent(string contentName)
 			: base(contentName) {}
 
 		public XmlData Data { get; set; }
@@ -25,16 +26,18 @@ namespace DeltaEngine.Content.Xml
 			{
 				Logger.Error(ex);
 				if (Debugger.IsAttached)
-					throw new XmlContentNotFound(Name, ex);
+					throw new XmlContentNotFound(Name, ex); //ncrunch: no coverage
 				Data = new XmlData(Name);
 			}
 		}
 
+		//ncrunch: no coverage start
 		public class XmlContentNotFound : Exception
 		{
 			public XmlContentNotFound(string contentName, Exception innerException)
 				: base(contentName, innerException) {}
 		}
+		//ncrunch: no coverage end
 
 		protected override void DisposeData() {}
 	}

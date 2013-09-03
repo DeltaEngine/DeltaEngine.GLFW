@@ -33,6 +33,9 @@ namespace $safeprojectname$
 			var newSprite = new Sprite(ghostMaterial, start) {
 				RenderLayer = 1
 			};
+			if (GameLogic.GhostSize != 1.0f)
+				newSprite.Size *= GameLogic.GhostSize;
+
 			if (start.X > target.X)
 				newSprite.Coordinates = new Sprite.SpriteCoordinates(Rectangle.One, FlipMode.Horizontal);
 
@@ -71,7 +74,8 @@ namespace $safeprojectname$
 			pos += vertical * MathExtensions.Sin(runTime * 300) * 0.0035f;
 			pos += vertical * MathExtensions.Sin(runTime * 44 + num * 27) * 0.0135f;
 			pos += vertical * SpreadDistance * CalcDistanceFromCenter(num, 1.0f, 90, 90);
-			return Rectangle.FromCenter(pos, sprites [0].Material.MaterialRenderSize);
+			return Rectangle.FromCenter(pos, GameLogic.GhostSize * sprites 
+				[0].Material.MaterialRenderSize);
 		}
 
 		private const float SpreadDistance = 0.06f;

@@ -10,11 +10,11 @@ namespace DeltaEngine.Graphics.Mocks
 	/// </summary>
 	public class MockImage : Image
 	{
-		public MockImage(string contentName, Device device)
+		protected MockImage(string contentName, Device device)
 			: base(contentName)
 		{
 			if (device == null)
-				throw new NeedDeviceForImageCreation();
+				throw new NeedDeviceForImageCreation(); //ncrunch: no coverage
 		}
 
 		public class NeedDeviceForImageCreation : Exception { }
@@ -23,7 +23,7 @@ namespace DeltaEngine.Graphics.Mocks
 			: base(data)
 		{
 			if (device == null)
-				throw new NeedDeviceForImageCreation();
+				throw new NeedDeviceForImageCreation(); //ncrunch: no coverage
 		}
 
 		protected override void LoadImage(Stream fileData) {}

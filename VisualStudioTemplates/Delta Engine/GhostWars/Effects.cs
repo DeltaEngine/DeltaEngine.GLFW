@@ -21,17 +21,18 @@ namespace $safeprojectname$
 			target -= Point.Normalize(start.DirectionTo(target)) * 0.033f;
 			var distance = start.DistanceTo(target);
 			var size = new Size(distance, distance / material.DiffuseMap.PixelSize.AspectRatio);
-			return Rectangle.FromCenter((start + target) / 2, size);
+			return Rectangle.FromCenter((start + target) / 2, size * GameLogic.ArrowSize);
 		}
 
 		public static ParticleEmitter CreateDeathEffect(Point position)
 		{
 			var material = new Material(Shader.Position2DColorUv, "DeathSkull");
-			var deathEffect = new ParticleEffectData {
+			var deathEffect = new ParticleEmitterData {
 				ParticleMaterial = material,
 				MaximumNumberOfParticles = 1,
 				SpawnInterval = 0,
-				Size = new RangeGraph<Size>(new Size(0.02f), new Size(0.015f)),
+				Size = new RangeGraph<Size>(new Size(GameLogic.DeathSkullSize), new 
+					Size(GameLogic.DeathSkullSize - 0.005f)),
 				Force = new RangeGraph<Point>(new Point(0, -0.04f), new Point(0, -0.04f)),
 				LifeTime = 2f,
 				StartVelocity = new RangeGraph<Point>(Point.Zero, new Point(0.01f, 0.01f))
@@ -42,7 +43,7 @@ namespace $safeprojectname$
 		public static ParticleEmitter CreateHitEffect(Point position)
 		{
 			var material = new Material(Shader.Position2DColorUv, "Hit");
-			var deathEffect = new ParticleEffectData {
+			var deathEffect = new ParticleEmitterData {
 				ParticleMaterial = material,
 				MaximumNumberOfParticles = 1,
 				SpawnInterval = 0,

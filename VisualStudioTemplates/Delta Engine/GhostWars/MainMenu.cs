@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DeltaEngine;
 using DeltaEngine.Commands;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Input;
@@ -18,23 +18,20 @@ namespace $safeprojectname$
 	{
 		public MainMenu(Window window, Mouse mouse)
 		{
-			this.window = window;
 			this.mouse = mouse;
 			CreateMainMenu();
-			new Command("Exit", window.CloseAfterFrame);
+			new Command(Command.Exit, window.CloseAfterFrame);
 		}
 
-		private readonly Window window;
 		private readonly Mouse mouse;
 
 		private void CreateMainMenu()
 		{
 			Clear();
 			AddMenuBackground();
-			AddMenuOption(OnHowToPlay, "How to play", new Point(0.5f, 0.50f));
-			AddMenuOption(OnSingleplayer, "Singleplayer", new Point(0.5f, 0.57f));
-			AddMenuOption(OnCredits, "Credits", new Point(0.5f, 0.64f));
-			AddMenuOption(window.CloseAfterFrame, "Exit", new Point(0.5f, 0.71f));
+			AddMenuOption(OnHowToPlay, GameLogic.MenuHowToPlay, new Point(0.5f, 0.50f));
+			AddMenuOption(OnSingleplayer, GameLogic.MenuSingleplayer, new Point(0.5f, 0.57f));
+			AddMenuOption(OnCredits, GameLogic.MenuCredits, new Point(0.5f, 0.64f));
 		}
 
 		private void AddMenuBackground()
@@ -42,7 +39,6 @@ namespace $safeprojectname$
 			Add(new Sprite("MenuBackground", ScreenSpace.Current.Viewport) {
 				RenderLayer = int.MinValue
 			});
-			Add(new Sprite("Logo", Rectangle.FromCenter(new Point(0.5f, 0.3f), new Size(0.2f))));
 		}
 
 		private void Clear()
@@ -84,14 +80,23 @@ namespace $safeprojectname$
 		{
 			Clear();
 			Add(new Sprite("GhostWarsHowToPlay", ScreenSpace.Current.Viewport));
+			AddBackButton();
 			Add(new Command(Command.Click, CreateMainMenu));
+		}
+
+		private void AddBackButton()
+		{
+			var buttonRect = new Rectangle(0.8f, 0.2f, 0.19f, 0.0525f);
+			Add(new Sprite("ButtonBackground", buttonRect));
+			Add(new FontText(Font, "Back", buttonRect) {
+				Color = Color.White
+			});
 		}
 
 		private void OnSingleplayer()
 		{
 			Clear();
-			AddMenuBackground();
-			Add(new FontText(Font, "Level Selection", new Point(0.5f, 0.5f)));
+			Add(new Sprite("LevelSelectionBackground", ScreenSpace.Current.Viewport));
 			AddLevelSelection(1, Rectangle.FromCenter(0.25f, 0.66f, 0.19f, 0.19f));
 			AddLevelSelection(2, Rectangle.FromCenter(0.5f, 0.66f, 0.19f, 0.19f));
 			AddLevelSelection(3, Rectangle.FromCenter(0.75f, 0.66f, 0.19f, 0.19f));
@@ -170,23 +175,8 @@ namespace $safeprojectname$
 		private void OnCredits()
 		{
 			Clear();
-			AddMenuBackground();
-			Add(new FontText(Font, "Credits", new Point(0.5f, 0.45f)));
-			Add(new FontText(Font, "Art", new Point(0.4f, 0.54f)) {
-				Color = Color.Orange
-			});
-			Add(new FontText(Font, "Kirsten Grobe-Nitschke", new Point(0.7f, 0.54f)) {
-				Color = Color.Orange
-			});
-			Add(new FontText(Font, "Programming", new Point(0.3f, 0.60f)) {
-				Color = Color.Orange
-			});
-			Add(new FontText(Font, "Benjamin Nitschke", new Point(0.65f, 0.60f)) {
-				Color = Color.Orange
-			});
-			Add(new FontText(Font, "For Delta Engine Game Jam May 2013", new Point(0.5f, 0.75f)) {
-				Color = Color.Grey
-			});
+			Add(new Sprite("CreditsBackground", ScreenSpace.Current.Viewport));
+			AddBackButton();
 			Add(new Command(Command.Click, CreateMainMenu));
 		}
 

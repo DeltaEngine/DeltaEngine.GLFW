@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DeltaEngine.Content;
 using DeltaEngine.Content.Xml;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 using DeltaEngine.Graphics;
 using DeltaEngine.Logging;
@@ -15,6 +16,7 @@ using DeltaEngine.Multimedia.Mocks;
 using DeltaEngine.Networking.Mocks;
 using DeltaEngine.Physics2D.Farseer;
 using DeltaEngine.Rendering.Cameras;
+using DeltaEngine.ScreenSpaces;
 
 namespace DeltaEngine.Platforms.Mocks
 {
@@ -25,9 +27,11 @@ namespace DeltaEngine.Platforms.Mocks
 	{
 		public MockResolver()
 		{
-			new MockContentLoader(new AutofacContentDataResolver(this));
-			settings = RegisterMock(new MockSettings());
-			entities = new EntitiesRunner(new AutofacHandlerResolver(this), settings);
+			CreateConsoleCommandResolver();
+			instancesToDispose.Add(new MockContentLoader(new AutofacContentDataResolver(this)));
+			instancesToDispose.Add(settings = RegisterMock(new MockSettings()));
+			instancesToDispose.Add(
+				entities = new EntitiesRunner(new AutofacHandlerResolver(this), settings));
 			RegisterMock(new MockGlobalTime());
 			RegisterMock(new MockLogger());
 			if (ExceptionExtensions.IsDebugMode)
@@ -35,6 +39,19 @@ namespace DeltaEngine.Platforms.Mocks
 			Register<MockClient>();
 			Window = RegisterMock(new MockWindow());
 			ContentIsReady += () => ContentLoader.Load<InputCommands>("DefaultCommands");
+			RegisterMockSingletons();
+			RegisterMediaTypes();
+		}
+
+		private void CreateConsoleCommandResolver()
+		{
+			var consoleCommandResolver = new ConsoleCommands(new ConsoleCommandResolver(this));
+			AllRegistrationCompleted +=
+				() => consoleCommandResolver.RegisterCommandsFromTypes(alreadyRegisteredTypes);
+		}
+
+		private void RegisterMockSingletons()
+		{
 			RegisterSingleton<MockInAppPurchase>();
 			RegisterSingleton<MockDevice>();
 			RegisterSingleton<Drawing>();
@@ -47,7 +64,6 @@ namespace DeltaEngine.Platforms.Mocks
 			RegisterSingleton<MockGamePad>();
 			RegisterSingleton<MockSystemInformation>();
 			RegisterSingleton<FarseerPhysics>();
-			RegisterMediaTypes();
 		}
 
 		protected override sealed void RegisterMediaTypes()
@@ -67,20 +83,43 @@ namespace DeltaEngine.Platforms.Mocks
 		{
 			Type instanceType = instance.GetType();
 			foreach (object mock in registeredMocks.Where(mock => mock.GetType() == instanceType))
-				throw new UnableToRegisterAlreadyRegisteredMockClass(instance, mock);
-
+				throw new UnableToRegisterAlreadyRegisteredMockClass(instance, mock); //ncrunch: no coverage
 			registeredMocks.Add(instance);
 			alreadyRegisteredTypes.AddRange(instanceType.GetInterfaces());
+			if (instance is IDisposable)
+				instancesToDispose.Add(instance as IDisposable);
 			RegisterInstance(instance);
 			return instance;
 		}
 
 		internal class UnableToRegisterAlreadyRegisteredMockClass : Exception
 		{
+			//ncrunch: no coverage start
 			public UnableToRegisterAlreadyRegisteredMockClass(object instance, object mock)
-				: base("New instance: " + instance + ", already registered mock class: " + mock) {}
+				: base("New instance: " + instance + ", already registered mock class: " + mock) { }
+			//ncrunch: no coverage end
 		}
 
 		private readonly List<object> registeredMocks = new List<object>();
+
+		public bool IsInitialized
+		{
+			get { return IsAlreadyInitialized; }
+		}
+
+		public override void Dispose()
+		{
+			base.Dispose();
+			if (ContentLoader.current != null)
+				throw new ContentLoaderWasNotDisposed(); //ncrunch: no coverage
+			if (EntitiesRunner.Current != null)
+				throw new EntitiesRunnerWasNotDisposed(); //ncrunch: no coverage
+			if (ScreenSpace.Current != null)
+				throw new ScreenSpaceWasNotDisposed(); //ncrunch: no coverage
+		}
+
+		public class ContentLoaderWasNotDisposed : Exception {}
+		public class EntitiesRunnerWasNotDisposed : Exception {}
+		public class ScreenSpaceWasNotDisposed : Exception {}
 	}
 }

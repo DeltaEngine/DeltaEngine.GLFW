@@ -7,15 +7,17 @@ namespace Snake
 {
 	public class Body
 	{
-		public Body(int gridSize)
+		public Body(int gridSize, Color color)
 		{
 			this.gridSize = gridSize;
 			blockSize = 1.0f / gridSize;
+			this.color = color;
 			SpawnSnake();
 		}
 
 		private readonly int gridSize;
 		private readonly float blockSize;
+		private Color color;
 
 		private void SpawnSnake()
 		{
@@ -40,7 +42,7 @@ namespace Snake
 		private void PlaceSnakeHead()
 		{
 			var startPosition = blockSize * (float)Math.Floor(gridSize / 2.0f);
-			var firstPart = new FilledRect(CalculateHeadDrawArea(startPosition), Color.Teal);
+			var firstPart = new FilledRect(CalculateHeadDrawArea(startPosition), color);
 			BodyParts.Add(firstPart);
 		}
 
@@ -52,7 +54,7 @@ namespace Snake
 		public void AddSnakeBody()
 		{
 			var snakeHead = BodyParts[BodyParts.Count - 1].DrawArea;
-			var newTail = new FilledRect(CalculateBodyDrawArea(snakeHead), Color.Teal);
+			var newTail = new FilledRect(CalculateBodyDrawArea(snakeHead), color);
 			BodyParts.Add(newTail);
 		}
 

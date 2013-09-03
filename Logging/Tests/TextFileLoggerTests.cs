@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 using NUnit.Framework;
 

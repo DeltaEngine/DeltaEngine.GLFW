@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using DeltaEngine.Commands;
 using DeltaEngine.Content.Xml;
+using DeltaEngine.Core;
+using DeltaEngine.Datatypes;
 using DeltaEngine.Extensions;
+using DeltaEngine.Rendering.Particles;
+using DeltaEngine.Scenes;
 
 namespace DeltaEngine.Content.Mocks
 {
@@ -21,59 +25,27 @@ namespace DeltaEngine.Content.Mocks
 		protected override Stream GetContentDataStream(ContentData content)
 		{
 			var stream = Stream.Null;
-			if (content.Name.Equals("Test"))
+			if (content.MetaData.Type == ContentType.Xml && content.Name.Equals("Test"))
 				stream = new XmlFile(new XmlData("Root").AddChild(new XmlData("Hi"))).ToMemoryStream();
-			else if (content.Name.Equals("Texts"))
+			else if (content.MetaData.Type == ContentType.Xml && content.Name.Equals("Texts"))
 				stream = new XmlFile(new XmlData("Texts").AddChild(GoLocalizationNode)).ToMemoryStream();
-			else if (content.Name.Equals("DefaultCommands"))
+			else if (content.MetaData.Type == ContentType.InputCommand &&
+				content.Name.Equals("DefaultCommands"))
 				stream = CreateInputCommandXml().ToMemoryStream();
-			else if (content.Name.Equals("Level"))
-				stream = new MemoryStream(LoadLevelJsonAsBytes());
 			else if (content.Name.Equals("Verdana12") || content.Name.Equals("Tahoma30"))
 				stream = CreateFontXml().ToMemoryStream();
+			else if (content.Name.Equals("TestParticle"))
+				return SaveTestParticle();
+			else if (content.Name.Equals("TestScene"))
+				return SaveTestScene();
+			else if (content.Name.Equals("TestMenuXml"))
+				return SaveTestMenu();
 			return stream;
 		}
 
 		protected override bool HasValidContentAndMakeSureItIsLoaded()
 		{
 			return true;
-		}
-
-		private static byte[] LoadLevelJsonAsBytes()
-		{
-			return StringExtensions.ToByteArray(@"""objects"":[
-	{
-		""width"":32,
-		""height"":32,
-		""name"":""player""
-	}, 
-	{
-		""width"":32,
-		""height"":32,
-		""name"":""monster""
-	},");
-		}
-
-		private static XmlFile CreateFontXml()
-		{
-			var glyph = new XmlData("Glyph");
-			glyph.AddAttribute("Character", ' ');
-			glyph.AddAttribute("UV", "0 0 1 16");
-			glyph.AddAttribute("AdvanceWidth", "7.34875");
-			glyph.AddAttribute("LeftBearing", "0");
-			glyph.AddAttribute("RightBearing", "4.21875");
-			var glyphs = new XmlData("Glyphs").AddChild(glyph);
-			var bitmap = new XmlData("Bitmap");
-			bitmap.AddAttribute("Name", "Verdana12Font");
-			bitmap.AddAttribute("Width", "128");
-			bitmap.AddAttribute("Height", "128");
-			var font = new XmlData("Font");
-			font.AddAttribute("Family", "Verdana");
-			font.AddAttribute("Size", "12");
-			font.AddAttribute("Style", "AddOutline");
-			font.AddAttribute("LineHeight", "16");
-			font.AddChild(bitmap).AddChild(glyphs);
-			return new XmlFile(font);
 		}
 
 		private static XmlData GoLocalizationNode
@@ -139,16 +111,9 @@ namespace DeltaEngine.Content.Mocks
 			AddToInputCommandXml(inputSettings, Command.Hold, new MockCommand("TouchHoldTrigger", ""));
 			AddToInputCommandXml(inputSettings, Command.DoubleClick,
 				new MockCommand("MouseDoubleClickTrigger", "Left"));
-			AddToInputCommandXml(inputSettings, Command.Rotate, new MockCommand("TouchRotateTrigger", ""));
+			AddToInputCommandXml(inputSettings, Command.Rotate,
+				new MockCommand("TouchRotateTrigger", ""));
 			return new XmlFile(inputSettings);
-		}
-
-		private static void AddToInputCommandXml(XmlData inputSettings, string commandName,
-			MockCommand command)
-		{
-			var entry = new XmlData("Command").AddAttribute("Name", commandName);
-			entry.AddChild(command.Trigger, command.Command);
-			inputSettings.AddChild(entry);
 		}
 
 		private struct MockCommand
@@ -163,6 +128,14 @@ namespace DeltaEngine.Content.Mocks
 			public readonly string Command;
 		}
 
+		private static void AddToInputCommandXml(XmlData inputSettings, string commandName,
+			MockCommand command)
+		{
+			var entry = new XmlData("Command").AddAttribute("Name", commandName);
+			entry.AddChild(command.Trigger, command.Command);
+			inputSettings.AddChild(entry);
+		}
+
 		private static void AddToInputCommandsXml(XmlData inputSettings, string commandName,
 			IEnumerable<MockCommand> commands)
 		{
@@ -170,6 +143,68 @@ namespace DeltaEngine.Content.Mocks
 			foreach (var command in commands)
 				entry.AddChild(command.Trigger, command.Command);
 			inputSettings.AddChild(entry);
+		}
+
+		private static XmlFile CreateFontXml()
+		{
+			var glyph1 = new XmlData("Glyph");
+			glyph1.AddAttribute("Character", ' ');
+			glyph1.AddAttribute("UV", "0 0 1 16");
+			glyph1.AddAttribute("AdvanceWidth", "7.34875");
+			glyph1.AddAttribute("LeftBearing", "0");
+			glyph1.AddAttribute("RightBearing", "4.21875");
+			var glyph2 = new XmlData("Glyph");
+			glyph2.AddAttribute("Character", 'a');
+			glyph2.AddAttribute("UV", "0 0 1 16");
+			glyph2.AddAttribute("AdvanceWidth", "7.34875");
+			glyph2.AddAttribute("LeftBearing", "0");
+			glyph2.AddAttribute("RightBearing", "4.21875");
+			var glyphs = new XmlData("Glyphs").AddChild(glyph1).AddChild(glyph2);
+			var kerningPair = new XmlData("Kerning");
+			kerningPair.AddAttribute("First", " ");
+			kerningPair.AddAttribute("Second", "a");
+			kerningPair.AddAttribute("Distance", "1");
+			var kernings = new XmlData("Kernings");
+			kernings.AddChild(kerningPair);
+			var bitmap = new XmlData("Bitmap");
+			bitmap.AddAttribute("Name", "Verdana12Font");
+			bitmap.AddAttribute("Width", "128");
+			bitmap.AddAttribute("Height", "128");
+			var font = new XmlData("Font");
+			font.AddAttribute("Family", "Verdana");
+			font.AddAttribute("Size", "12");
+			font.AddAttribute("Style", "AddOutline");
+			font.AddAttribute("LineHeight", "16");
+			font.AddChild(bitmap).AddChild(glyphs).AddChild(kernings);
+			return new XmlFile(font);
+		}
+
+		private static MemoryStream SaveTestParticle()
+		{
+			var emptyParticleEffect = new ParticleEmitterData();
+			var shader = Load<Shader>(Shader.Position2DColorUv);
+			emptyParticleEffect.ParticleMaterial = new Material(shader,
+				Create<Image>(new ImageCreationData(new Size(8, 8))));
+			emptyParticleEffect.Size = new RangeGraph<Size>(new Size(0.1f, 0.1f), new Size(0.1f, 0.1f));
+			var data = BinaryDataExtensions.SaveToMemoryStream(emptyParticleEffect);
+			data.Seek(0, SeekOrigin.Begin);
+			return data;
+		}
+
+		private static MemoryStream SaveTestScene()
+		{			
+			var emptyScene = new Scene();
+			var data = BinaryDataExtensions.SaveToMemoryStream(emptyScene);
+			data.Seek(0, SeekOrigin.Begin);
+			return data;
+		}
+
+		private static MemoryStream SaveTestMenu()
+		{
+			var emptyScene = new AutoArrangingMenu(Size.One);
+			var data = BinaryDataExtensions.SaveToMemoryStream(emptyScene);
+			data.Seek(0, SeekOrigin.Begin);
+			return data;
 		}
 
 		protected override ContentMetaData GetMetaData(string contentName,
@@ -188,10 +223,15 @@ namespace DeltaEngine.Content.Mocks
 				return CreateImageAnimationMetaData(contentName);
 			if (contentType == ContentType.Image)
 				return CreateImageMetaData(contentName);
+			if (contentType == ContentType.Model)
+				return CreateModelMetaData(contentName);
+			if (contentType == ContentType.Mesh)
+				return CreateMeshMetaData(contentName);
 			if (contentType == ContentType.Shader)
 				return null;
 			return new ContentMetaData { Name = contentName, Type = contentType };
 		}
+
 
 		private static ContentType ConvertClassTypeToContentType(Type contentClassType)
 		{
@@ -204,8 +244,12 @@ namespace DeltaEngine.Content.Mocks
 					return contentType;
 			if (typeName.Contains("Image") || typeName.Contains("Texture"))
 				return ContentType.Image;
-			if (typeName.Contains("Mesh") || typeName.Contains("Geometry"))
+			if (typeName.Contains("ModelData"))
+				return ContentType.Model;
+			if (typeName.Contains("Mesh"))
 				return ContentType.Mesh;
+			if (typeName.Contains("Geometry"))
+				return ContentType.Geometry;
 			return ContentType.Xml;
 		}
 
@@ -253,6 +297,23 @@ namespace DeltaEngine.Content.Mocks
 		{
 			var metaData = new ContentMetaData { Name = contentName, Type = ContentType.Image };
 			metaData.Values.Add("PixelSize", "128,128");
+			return metaData;
+		}
+
+		private static ContentMetaData CreateModelMetaData(string contentName)
+		{
+			var metaData = new ContentMetaData { Name = contentName, Type = ContentType.Model };
+			if (contentName == "InvalidModel")
+				return metaData;
+			metaData.Values.Add("MeshNames", "MockModel");
+			return metaData;
+		}
+
+		private static ContentMetaData CreateMeshMetaData(string contentName)
+		{
+			var metaData = new ContentMetaData { Name = contentName, Type = ContentType.Mesh };
+			metaData.Values.Add("GeometryName", "MockGeometry");
+			metaData.Values.Add("MaterialName", "MockMaterial");
 			return metaData;
 		}
 	}

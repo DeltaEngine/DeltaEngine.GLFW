@@ -20,6 +20,14 @@ namespace DeltaEngine.Content.Xml.Tests
 			xmlContent.Dispose();
 		}
 
+		[Test]
+		public void LoadXmlContentFromNonExistingFile()
+		{
+			new MockContentLoader(new ContentDataResolver());
+			var xmlContent = ContentLoader.Load<XmlContent>("NonExisting");
+			Assert.AreEqual("NonExisting", xmlContent.Data.Name);
+		}
+
 		//ncrunch: no coverage start
 		[Test, Category("Slow"), Ignore]
 		public void LoadXmlContentFromFile()

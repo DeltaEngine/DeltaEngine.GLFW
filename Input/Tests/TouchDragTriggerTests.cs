@@ -1,7 +1,7 @@
 ﻿using DeltaEngine.Commands;
 using DeltaEngine.Datatypes;
+using DeltaEngine.Input.Mocks;
 using DeltaEngine.Platforms;
-using DeltaEngine.Rendering.Fonts;
 using DeltaEngine.Rendering.Shapes;
 using NUnit.Framework;
 
@@ -9,19 +9,46 @@ namespace DeltaEngine.Input.Tests
 {
 	public class TouchDragTriggerTests : TestWithMocksOrVisually
 	{
-		[Test]
-		public void ShowRedCircleOnTouch()
+		[SetUp]
+		public void SetUp()
 		{
-			new FontText(FontXml.Default, "Touch screen to show red circle", Rectangle.One);
-			var ellipse = new Ellipse(new Rectangle(0.1f, 0.1f, 0.1f, 0.1f), Color.Red);
-			new Command(() => ellipse.Center = Point.Half).Add(new TouchDragTrigger());
-			new Command(() => ellipse.Center = Point.Zero).Add(new TouchPressTrigger(State.Released));
+			touch = Resolve<Touch>() as MockTouch;
+			if (touch != null)
+				touch.SetTouchState(0, State.Released, Point.Zero);
+			AdvanceTimeAndUpdateEntities();
+		}
+
+		private MockTouch touch;
+
+		[Test]
+		public void DragTouchToCreateRectangles()
+		{
+			var rectangle = new FilledRect(Rectangle.Unused, Color.GetRandomColor());
+			new Command((start, end, done) =>
+			{
+				rectangle.DrawArea = Rectangle.FromCorners(start, end);
+				if (done)
+					rectangle = new FilledRect(Rectangle.Unused, Color.GetRandomColor());
+			}).Add(new TouchDragTrigger());
 		}
 
 		[Test, CloseAfterFirstFrame]
-		public void Create()
+		public void DragTouch()
 		{
-			Assert.DoesNotThrow(() => new TouchDragTrigger());
+			bool isFinished = false;
+			new Command((start, end, done) => isFinished = done).Add(new TouchDragTrigger());
+			SetTouchState(State.Pressing, Point.Zero);
+			SetTouchState(State.Pressed, Point.One);
+			SetTouchState(State.Releasing, Point.One);
+			Assert.IsTrue(isFinished);
+		}
+
+		private void SetTouchState(State state, Point position)
+		{
+			if (touch == null)
+				return; //ncrunch: no coverage
+			touch.SetTouchState(0, state, position);
+			AdvanceTimeAndUpdateEntities();
 		}
 	}
 }

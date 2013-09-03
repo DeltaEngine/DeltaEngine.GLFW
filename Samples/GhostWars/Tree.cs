@@ -1,5 +1,5 @@
-﻿using DeltaEngine;
-using DeltaEngine.Content;
+﻿using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Multimedia;
@@ -35,18 +35,18 @@ namespace GhostWars
 			set
 			{
 				numberOfGhosts = value;
-				if (numberOfGhosts > Level * 50)
-					numberOfGhosts = Level * 50;
+				if (numberOfGhosts > Level * GameLogic.GhostsToUpgrade)
+					numberOfGhosts = Level * GameLogic.GhostsToUpgrade;
 				NumberText.Color = Team.ToColor();
 				NumberText.Text = numberOfGhosts + "";
 			}
 		}
 
 		private int numberOfGhosts;
-		public FontText NumberText;
+		public readonly FontText NumberText;
 		private static readonly Point[] NumberTextPositionPerLevel =
 		{
-			new Point(0.002f, -0.0475f), new Point(0.002f, -0.075f), new Point(0.0015f, -0.085f)
+			new Point(0.002f, -0.0495f), new Point(0.002f, -0.0775f), new Point(0.0015f, -0.0875f)
 		};
 
 		public bool IsAi
@@ -68,7 +68,8 @@ namespace GhostWars
 		{
 			Material = new Material(Shader.Position2DColorUv, TreeImageName[Level - 1]);
 			Color = Team.ToColor();
-			DrawArea = Rectangle.FromCenter(Center, Material.DiffuseMap.PixelSize / 1920.0f);
+			DrawArea =
+				Rectangle.FromCenter(Center, GameLogic.TreeSize * Material.DiffuseMap.PixelSize / 1920.0f);
 			NumberText.Center = Center + NumberTextPositionPerLevel[Level - 1];
 		}
 
@@ -143,9 +144,9 @@ namespace GhostWars
 
 		public void TryToUpgrade()
 		{
-			if (Level > 2 || NumberOfGhosts < Level * 30 || Team != Team.HumanYellow)
+			if (Level > 2 || NumberOfGhosts < Level * GameLogic.GhostsToUpgrade || Team != Team.HumanYellow)
 				return;
-			NumberOfGhosts -= Level * 30;
+			NumberOfGhosts -= Level * GameLogic.GhostsToUpgrade;
 			Level++;
 			UpdateImage();
 			ContentLoader.Load<Sound>("Upgrading").Play();

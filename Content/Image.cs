@@ -49,11 +49,6 @@ namespace DeltaEngine.Content
 		public bool AllowTiling { get; private set; }
 		public bool DisableLinearFiltering { get; private set; }
 
-		protected bool HasAlpha
-		{
-			get { return BlendMode == BlendMode.Normal || BlendMode == BlendMode.AlphaTest; }
-		}
-
 		private void TryLoadImage(Stream fileData)
 		{
 			try
@@ -80,6 +75,11 @@ namespace DeltaEngine.Content
 			else if (!HasAlpha && imageHasAlphaFormat)
 				Logger.Warning("Image '" + Name +
 					"' is supposed to have no alpha pixels, but the image pixel format is using alpha.");
+		}
+
+		protected bool HasAlpha
+		{
+			get { return BlendMode == BlendMode.Normal || BlendMode == BlendMode.AlphaTest; }
 		}
 
 		protected override void CreateDefault()

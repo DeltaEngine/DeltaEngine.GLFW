@@ -6,11 +6,11 @@ namespace DeltaEngine.Graphics.Mocks
 {
 	public class MockShader : ShaderWithFormat
 	{
-		public MockShader(string contentName, Device device)
+		protected MockShader(string contentName, Device device)
 			: base(contentName)
 		{
 			if (device == null)
-				throw new NeedDeviceForShaderCreation();
+				throw new NeedDeviceForShaderCreation(); //ncrunch: no coverage
 		}
 
 		public class NeedDeviceForShaderCreation : Exception { }
@@ -19,13 +19,14 @@ namespace DeltaEngine.Graphics.Mocks
 			: base(customShader)
 		{
 			if (device == null)
-				throw new NeedDeviceForShaderCreation();
+				throw new NeedDeviceForShaderCreation(); //ncrunch: no coverage
 		}
 
 		protected override void DisposeData() { }
 		public override void SetModelViewProjectionMatrix(Matrix matrix) { }
 		public override void SetDiffuseTexture(Image texture) { }
 		public override void Bind() { }
+		public override void BindVertexDeclaration() { }
 		protected override void Create() { }
 	}
 }

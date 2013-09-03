@@ -1,4 +1,5 @@
-﻿using DeltaEngine.Extensions;
+﻿using DeltaEngine.Core;
+using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Rendering.Particles
 {

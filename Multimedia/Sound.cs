@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 
 namespace DeltaEngine.Multimedia
 {
@@ -69,8 +70,8 @@ namespace DeltaEngine.Multimedia
 				if (!warnedAboutTooManyInstances)
 				{
 					warnedAboutTooManyInstances = true;
-					Logger.Warning("Too many SoundInstances of '" + this + "' have been started, will not " +
-						"create more and wait until they are free to use again.");
+					Logger.Warning("Too many SoundInstances " + MaxInstances + " of '" + this +
+						"' have been started, will not create more and wait until they are free to use again.");
 				}
 				return;
 			}
@@ -91,7 +92,7 @@ namespace DeltaEngine.Multimedia
 			return CreateSoundInstance();
 		}
 
-		private const int MaxInstances = 12;
+		private const int MaxInstances = 16;
 
 		private bool createInternalInstance;
 

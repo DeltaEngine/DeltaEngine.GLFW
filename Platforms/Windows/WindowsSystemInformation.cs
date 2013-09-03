@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using Microsoft.Win32;
 

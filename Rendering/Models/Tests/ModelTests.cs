@@ -1,4 +1,6 @@
 ﻿using DeltaEngine.Commands;
+using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Graphics;
 using DeltaEngine.Input;
@@ -13,42 +15,26 @@ namespace DeltaEngine.Rendering.Models.Tests
 	public class ModelTests : TestWithMocksOrVisually
 	{
 		[Test]
-		public void RenderFromZPositive()
+		public void LoadInvalidModel()
 		{
-			RenderBoxFrom(Vector.UnitZ);
+			Assert.Throws<ModelData.NoMeshesGivenNeedAtLeastOne>(
+				() => new Model("InvalidModel", Vector.Zero));
 		}
 
 		[Test]
-		public void RenderFromZNegative()
-		{
-			RenderBoxFrom(-Vector.UnitZ);
-		}
-
-		[Test]
-		public void RenderFromXPositive()
-		{
-			RenderBoxFrom(Vector.UnitX);
-		}
-
-		[Test]
-		public void RenderFromXNegative()
-		{
-			RenderBoxFrom(-Vector.UnitX);
-		}
-
-		private void RenderBoxFrom(Vector vector)
+		public void RenderCubeModel()
 		{
 			Resolve<Window>().BackgroundColor = Color.Grey;
-			new LookAtCamera(Resolve<Device>(), Resolve<Window>(), vector * 5.0f, Vector.Zero);
-			new Model(new ModelData(new Box(Vector.One, Color.Red)), Vector.Zero);
-			RenderCoordinateSystemCross();
+			new LookAtCamera(Resolve<Device>(), Resolve<Window>(), Vector.One * 2.0f, Vector.Zero);
+			new Model("CubeText", Vector.Zero);
 		}
 
-		private static void RenderCoordinateSystemCross()
+		[Test]
+		public void RenderCubeAndConeModel()
 		{
-			new Line3D(-Vector.UnitX * 0.25f, Vector.UnitX, Color.Red);
-			new Line3D(-Vector.UnitY * 0.25f, Vector.UnitY, Color.Green);
-			new Line3D(-Vector.UnitZ * 0.25f, Vector.UnitZ, Color.Blue);
+			Resolve<Window>().BackgroundColor = Color.Grey;
+			new LookAtCamera(Resolve<Device>(), Resolve<Window>(), Vector.One * 2.0f, Vector.Zero);
+			new Model("CubeAndCone", Vector.Zero);
 		}
 
 		[Test]

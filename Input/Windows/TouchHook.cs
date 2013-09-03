@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using DeltaEngine.Core;
 using DeltaEngine.Platforms.Windows;
 
 namespace DeltaEngine.Input.Windows

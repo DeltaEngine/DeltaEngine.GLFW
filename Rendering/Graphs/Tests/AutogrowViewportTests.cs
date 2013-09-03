@@ -7,6 +7,7 @@ using DeltaEngine.Platforms;
 using DeltaEngine.Rendering.Fonts;
 using DeltaEngine.Rendering.Shapes;
 using NUnit.Framework;
+using Randomizer = DeltaEngine.Core.Randomizer;
 
 namespace DeltaEngine.Rendering.Graphs.Tests
 {

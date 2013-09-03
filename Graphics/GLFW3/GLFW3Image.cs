@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using DeltaEngine.Content;
-using DeltaEngine.Core;
 using Color = DeltaEngine.Datatypes.Color;
 using Image = DeltaEngine.Content.Image;
 using Size = DeltaEngine.Datatypes.Size;
@@ -15,7 +14,7 @@ namespace DeltaEngine.Graphics.GLFW3
 	/// </summary>
 	public class GLFW3Image : Image
 	{
-		public GLFW3Image(string contentName, GLFW3Device device)
+		protected GLFW3Image(string contentName, GLFW3Device device)
 			: base(contentName)
 		{
 			this.device = device;
@@ -59,10 +58,10 @@ namespace DeltaEngine.Graphics.GLFW3
 			device.BindTexture(Handle);
 			WarnAboutWrongAlphaFormat(bitmap.PixelFormat == PixelFormat.Format32bppArgb);
 			var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),
-				ImageLockMode.ReadOnly, bitmap.PixelFormat);
-			device.LoadTexture(new Size(bitmap.Width, bitmap.Height), data.Scan0,
-				bitmap.PixelFormat == PixelFormat.Format32bppArgb);
+				ImageLockMode.ReadOnly, HasAlpha ? PixelFormat.Format32bppArgb : PixelFormat.Format24bppRgb);
+			device.LoadTexture(new Size(bitmap.Width, bitmap.Height), data.Scan0, HasAlpha);
 			bitmap.UnlockBits(data);
+			device.BindTexture(0);
 		}
 
 		public override void Fill(Color[] colors)

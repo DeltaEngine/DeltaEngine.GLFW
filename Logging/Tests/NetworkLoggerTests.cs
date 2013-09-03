@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using DeltaEngine.Core;
+using DeltaEngine.Mocks;
 using DeltaEngine.Networking.Tcp;
 using Microsoft.Win32;
 using NUnit.Framework;
@@ -93,13 +95,15 @@ namespace DeltaEngine.Logging.Tests
 		public static void LogToRealLogServer()
 		{
 			var ready = false;
-			var connection = OnlineServiceConnection.CreateForAppRunner(
-				GetApiKeyFromRegistry(), () => { }, error => { throw new ServerErrorReceived(error); },
+			var connection = OnlineServiceConnection.CreateForAppRunner(GetApiKeyFromRegistry(),
+				new MockSettings(), () => { }, error => { throw new ServerErrorReceived(error); },
 				() => ready = true);
-			var logClient = new NetworkLogger(connection);
-			for (int timeoutMs = 1000; timeoutMs > 0 && !ready; timeoutMs -= 10)
-				Thread.Sleep(10);
-			logClient.Write(Logger.MessageType.Info, "Hello TestWorld from " + Environment.MachineName);
+			using (var logClient = new NetworkLogger(connection))
+			{
+				for (int timeoutMs = 1000; timeoutMs > 0 && !ready; timeoutMs -= 10)
+					Thread.Sleep(10);
+				logClient.Write(Logger.MessageType.Info, "Hello TestWorld from " + Environment.MachineName);
+			}
 		}
 	}
 }

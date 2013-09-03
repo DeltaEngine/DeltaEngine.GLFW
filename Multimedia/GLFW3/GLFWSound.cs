@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Multimedia.GLFW.Helpers;
 
@@ -12,8 +12,8 @@ namespace DeltaEngine.Multimedia.GLFW
 	/// </summary>
 	public class GLFWSound : Sound
 	{
-		public GLFWSound(string filename, GLFWSoundDevice openAL, Settings settings)
-			: base(filename, settings)
+		protected GLFWSound(string contentName, GLFWSoundDevice openAL, Settings settings)
+			: base(contentName, settings)
 		{
 			this.openAL = openAL;
 		}

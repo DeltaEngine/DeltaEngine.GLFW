@@ -1,4 +1,4 @@
-﻿using DeltaEngine;
+﻿using DeltaEngine.Core;
 using DeltaEngine.Input;
 using DeltaEngine.Platforms;
 

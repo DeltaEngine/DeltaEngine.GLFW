@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DeltaEngine.Extensions;
 using NUnit.Framework;
 using System.Collections;
 
 namespace DeltaEngine.Tests.Extensions
 {
-	using System.Linq;
 	public class UniqueListTests
 	{
 		[Test]

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Graphics;
 using DeltaEngine.Entities;
@@ -10,11 +11,6 @@ namespace DeltaEngine.Rendering.Shapes3D.Tests
 {
 	public class Line3DTests : TestWithMocksOrVisually
 	{
-		private void CreateLookAtCamera(Vector position, Vector target)
-		{
-			new LookAtCamera(Resolve<Device>(), Resolve<Window>(), position, target);
-		}
-
 		[Test]
 		public void RenderCoordinateSystemCross()
 		{
@@ -22,6 +18,11 @@ namespace DeltaEngine.Rendering.Shapes3D.Tests
 			new Line3D(-Vector.UnitX, Vector.UnitX * 3, Color.Red);
 			new Line3D(-Vector.UnitY, Vector.UnitY * 3, Color.Green);
 			new Line3D(-Vector.UnitZ, Vector.UnitZ * 3, Color.Blue);
+		}
+		
+		private void CreateLookAtCamera(Vector position, Vector target)
+		{
+			new LookAtCamera(Resolve<Device>(), Resolve<Window>(), position, target);
 		}
 
 		[Test]
@@ -34,17 +35,17 @@ namespace DeltaEngine.Rendering.Shapes3D.Tests
 			CreateLookAtCamera(Vector.One * 4.0f, Vector.Zero);
 			for (int i = 0; i <= GridSize; i++, axisXz.X += 1, axisXz.Y += 1)
 			{
-				new Line3D(new Vector(-HalfGridSize * GridScale, 0.0f, axisXz.Y * GridScale),
-					new Vector(HalfGridSize * GridScale, 0.0f, axisXz.Y * GridScale), Color.White);
-				new Line3D(new Vector(axisXz.X * GridScale, 0.0f, -HalfGridSize * GridScale),
-					new Vector(axisXz.X * GridScale, 0.0f, HalfGridSize * GridScale), Color.White);
+				new Line3D(new Vector(-HalfGridSize * GridScale, axisXz.Y * GridScale, 0.0f),
+					new Vector(HalfGridSize * GridScale, axisXz.Y * GridScale, 0.0f), Color.White);
+				new Line3D(new Vector(axisXz.X * GridScale, -HalfGridSize * GridScale, 0.0f),
+					new Vector(axisXz.X * GridScale, HalfGridSize * GridScale, 0.0f), Color.White);
 			}
 		}
 
 		[Test]
 		public void RenderRedLine()
 		{
-			CreateLookAtCamera(Vector.UnitZ, Vector.Zero);
+			CreateLookAtCamera(Vector.UnitY, Vector.Zero);
 			new Line3D(-Vector.UnitX, Vector.UnitX, Color.Red);
 		}
 

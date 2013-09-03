@@ -13,7 +13,7 @@ namespace DeltaEngine.Graphics.Tests
 		{
 			var shader =
 				ContentLoader.Create<Shader>(new ShaderCreationData(ShaderWithFormat.UvVertexCode,
-					ShaderWithFormat.UvFragmentCode, ShaderWithFormat.UvHlslCode, VertexFormat.Position2DUv));
+					ShaderWithFormat.UvFragmentCode, ShaderWithFormat.UvHlslCode, ShaderWithFormat.UvHlslCode, VertexFormat.Position2DUv));
 			var image = ContentLoader.Create<Image>(new ImageCreationData(new Size(4)));
 			var generatedMaterial = new Material(shader, image);
 			Assert.IsNotNull(generatedMaterial);

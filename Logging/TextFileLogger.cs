@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Logging

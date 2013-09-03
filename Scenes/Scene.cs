@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Rendering.Sprites;
@@ -11,16 +13,22 @@ namespace DeltaEngine.Scenes
 	/// <summary>
 	/// Groups Entities such that they can be activated and deactivated together. 
 	/// </summary>
-	public class Scene
+	public class Scene : ContentData
 	{
-		public void Add(Entity control)
+		protected Scene(string contentName)
+			: base(contentName) {}
+
+		public Scene()
+			: base("<GeneratedScene>") { }
+
+		public virtual void Add(Entity control)
 		{
 			if (!controls.Contains(control))
 				controls.Add(control);
 			control.IsActive = isShown;
 		}
 
-		private readonly List<Entity> controls = new List<Entity>();
+		private List<Entity> controls = new List<Entity>();
 		private bool isShown = true;
 
 		public List<Entity> Controls
@@ -81,5 +89,16 @@ namespace DeltaEngine.Scenes
 		}
 
 		protected Sprite background;
+
+		protected override void DisposeData(){}
+
+		protected override void LoadData(Stream fileData)
+		{
+			var sceneData = (Scene)new BinaryReader(fileData).Create();
+			controls = sceneData.Controls;
+			background = sceneData.background;
+		}
+
+
 	}
 }

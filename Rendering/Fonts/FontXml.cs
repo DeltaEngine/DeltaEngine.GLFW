@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using DeltaEngine.Content;
 using DeltaEngine.Content.Xml;
+using DeltaEngine.Core;
 
 namespace DeltaEngine.Rendering.Fonts
 {
@@ -11,7 +12,7 @@ namespace DeltaEngine.Rendering.Fonts
 	/// </summary>
 	public class FontXml : XmlContent
 	{
-		public FontXml(string contentName)
+		protected FontXml(string contentName)
 			: base(contentName) {}
 
 		public static FontXml Default

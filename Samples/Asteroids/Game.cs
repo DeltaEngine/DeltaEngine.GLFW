@@ -1,4 +1,5 @@
 ﻿using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Rendering.Sprites;
 
@@ -9,8 +10,18 @@ namespace Asteroids
 	/// </summary>
 	public class Game
 	{
-		public Game()
+		public Game(Window window)
 		{
+			mainMenu = new Menu();
+			mainMenu.InitGame += StartGame;
+			mainMenu.QuitGame += window.CloseAfterFrame;
+		}
+
+		private readonly Menu mainMenu;
+
+		public void StartGame()
+		{
+			mainMenu.Hide();
 			controls = new Controls(this);
 			score = 0;
 			SetUpBackground();
@@ -31,11 +42,11 @@ namespace Asteroids
 			};
 		}
 
-		private readonly Controls controls;
+		private Controls controls;
 		private int score;
 		public InteractionLogics InteractionLogics { get; private set; }
 		public GameState GameState;
-		private readonly HudInterface hudInterface;
+		private HudInterface hudInterface;
 
 		private static void SetUpBackground()
 		{

@@ -1,5 +1,4 @@
 ﻿using DeltaEngine.Commands;
-using DeltaEngine.Datatypes;
 
 namespace DeltaEngine.Input
 {
@@ -8,7 +7,7 @@ namespace DeltaEngine.Input
 	/// </summary>
 	public class TouchDragTrigger : DragTrigger
 	{
-		public TouchDragTrigger()
+		public TouchDragTrigger(string unused = null)
 		{
 			Start<Touch>();
 		}

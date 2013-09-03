@@ -42,7 +42,7 @@ namespace DeltaEngine.Rendering.Models
 					modelTranform.Translation = entity.Get<Vector>();
 					var data = entity.Get<ModelData>();
 					foreach (var mesh in data.Meshes)
-						drawing.AddGeometry(mesh.Geometry, mesh.Material);
+						drawing.AddGeometry(mesh.Geometry, mesh.Material, modelTranform);
 				}
 			}
 		}

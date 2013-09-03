@@ -58,6 +58,18 @@ namespace DeltaEngine.Input.Tests
 		}
 
 		[Test, CloseAfterFirstFrame]
+		public void HoverDoesntTriggersIfMouseMoves()
+		{
+			bool isTriggered = false;
+			new Command(() => isTriggered = true).Add(new MouseHoverTrigger());
+			Resolve<Mouse>().SetPosition(Point.Zero);
+			AdvanceTimeAndUpdateEntities(0.5f);
+			Resolve<Mouse>().SetPosition(Point.One);
+			AdvanceTimeAndUpdateEntities(0.5f);
+			Assert.IsFalse(isTriggered);
+		}
+
+		[Test, CloseAfterFirstFrame]
 		public void Create()
 		{
 			var trigger = new MouseHoverTrigger(3.0f);

@@ -1,4 +1,5 @@
 ﻿using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Platforms;
 using DeltaEngine.Rendering;
@@ -31,7 +32,6 @@ namespace DeltaEngine.Physics2D.Tests
 			{
 				Velocity = Point.Half,
 				Gravity = new Point(1.0f, 2.0f),
-				RotationSpeed = 100.0f,
 				Duration = 1.0f
 			});
 			sprite.Start<SimplePhysics.Move>();
@@ -44,7 +44,6 @@ namespace DeltaEngine.Physics2D.Tests
 			AdvanceTimeAndUpdateEntities(1.0f);
 			Assert.AreEqual(1.534f, entity.DrawArea.Center.X, 0.01f);
 			Assert.AreEqual(2.059f, entity.DrawArea.Center.Y, 0.01f);
-			Assert.AreEqual(100.0f, entity.Rotation, 5.0f);
 		}
 
 		[Test]
@@ -121,7 +120,10 @@ namespace DeltaEngine.Physics2D.Tests
 			rect.Add(new SimplePhysics.Data { Gravity = Point.Zero, Velocity = new Point(-0.1f, 0.0f) });
 			rect.Start<SimplePhysics.Move>();
 			rect.Start<SimplePhysics.BounceIfAtScreenEdge>();
+			var collided = false;
+			rect.Get<SimplePhysics.Data>().Bounced += () => collided = true;
 			AdvanceTimeAndUpdateEntities();
+			Assert.IsTrue(collided);
 			Assert.AreEqual(0.1f, rect.Get<SimplePhysics.Data>().Velocity.X);
 		}
 

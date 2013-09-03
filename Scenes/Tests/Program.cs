@@ -4,7 +4,7 @@
 	{
 		public static void Main()
 		{
-			new MenuTests().ShowMenuWithTwoButtons();
+			new AutoArrangingMenuTests().ShowMenuWithTwoButtons();
 		}
 	}
 }

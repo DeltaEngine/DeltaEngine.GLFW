@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DeltaEngine;
 using DeltaEngine.Commands;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Input;
@@ -26,7 +26,7 @@ namespace $safeprojectname$
 				new Size(0.2f))) {
 				RenderLayer = 5
 			};
-			new Sprite(new Material(Shader.Position2DUv, "Logo"), new Rectangle(0.025f, 0.225f, 0.15f, 
+			new Sprite(new Material(Shader.Position2DUv, "Logo"), new Rectangle(0.02f, 0.205f, 0.15f, 
 				0.15f)) {
 				RenderLayer = -15
 			};
@@ -154,6 +154,9 @@ namespace $safeprojectname$
 			var ghostsToSend = Math.Min(startTree.NumberOfGhosts, 5);
 			startTree.NumberOfGhosts -= ghostsToSend;
 			UpdateBars();
+			if (targetTree == null)
+				return;
+
 			var wave = new GhostWave(startTree.Center, targetTree.Center, ghostsToSend, 
 				startTree.Team.ToColor());
 			wave.Attacker = startTree.Team;
@@ -236,7 +239,7 @@ namespace $safeprojectname$
 			statusText.Text = "";
 			MainMenu.State = GameState.GameOver;
 			new Sprite(new Material(Shader.Position2DUv, "YouWin"), Point.Half) {
-				RenderLayer = 100
+				RenderLayer = 4000
 			};
 		}
 
@@ -245,7 +248,7 @@ namespace $safeprojectname$
 			statusText.Text = "You Lost!";
 			MainMenu.State = GameState.GameOver;
 			new Sprite(new Material(Shader.Position2DUv, "GameOver"), Point.Half) {
-				RenderLayer = 100
+				RenderLayer = 4000
 			};
 		}
 

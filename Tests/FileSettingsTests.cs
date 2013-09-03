@@ -1,4 +1,5 @@
-﻿using DeltaEngine.Mocks;
+﻿using DeltaEngine.Core;
+using DeltaEngine.Mocks;
 using DeltaEngine.Platforms;
 using NUnit.Framework;
 using ProfilingMode = DeltaEngine.Core.ProfilingMode;
@@ -41,6 +42,14 @@ namespace DeltaEngine.Tests
 
 		private const string ModifiedPlayerName = "John Doe";
 		private const string ModifiedTwoLetterLanguageName = "de";
+
+		[Test]
+		public void SetValueTwice()
+		{
+			settings.PlayerName = "Blub";
+			settings.PlayerName = ModifiedPlayerName;
+			Assert.AreEqual(ModifiedPlayerName, settings.PlayerName);
+		}
 
 		[Test]
 		public void EditAndCheckSettings()

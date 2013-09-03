@@ -17,8 +17,9 @@
 				<ProjectItem ReplaceParameters="true" TargetFileName="SnakeIcon.ico">SnakeIcon.ico</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Body.cs">Body.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Chunk.cs">Chunk.cs</ProjectItem>
+				<ProjectItem ReplaceParameters="true" TargetFileName="Menu.cs">Menu.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Snake.cs">Snake.cs</ProjectItem>
-				<ProjectItem ReplaceParameters="true" TargetFileName="SnakeGame.cs">SnakeGame.cs</ProjectItem>
+				<ProjectItem ReplaceParameters="true" TargetFileName="Game.cs">Game.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Program.cs">Program.cs</ProjectItem>
 			</Folder>
 			<Folder Name="Properties" TargetFolderName="Properties">

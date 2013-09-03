@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using Autofac;
@@ -24,6 +23,13 @@ namespace DeltaEngine.Platforms
 	/// </summary>
 	public abstract class Resolver : IDisposable
 	{
+		protected Resolver()
+		{
+			assemblyLoader = new AssemblyTypeLoader(this);
+		}
+
+		private readonly AssemblyTypeLoader assemblyLoader;
+
 		public void Register<T>()
 		{
 			Register(typeof(T));
@@ -40,7 +46,7 @@ namespace DeltaEngine.Platforms
 
 		protected readonly List<Type> alreadyRegisteredTypes = new List<Type>();
 
-		protected class UnableToRegisterMoreTypesAppAlreadyStarted : Exception {}
+		protected internal class UnableToRegisterMoreTypesAppAlreadyStarted : Exception {}
 
 		public void RegisterSingleton<T>()
 		{
@@ -63,9 +69,26 @@ namespace DeltaEngine.Platforms
 		{
 			AddRegisteredType(t);
 			if (typeof(ContentData).IsAssignableFrom(t))
-				return builder.RegisterType(t).AsSelf().UsingConstructor(new ContentConstructorSelector());
+				return builder.RegisterType(t).AsSelf()
+					.FindConstructorsWith(publicAndNonPublicConstructorFinder)
+					.UsingConstructor(contentConstructorSelector);
 			return builder.RegisterType(t).AsSelf();
 		}
+
+		private readonly PublicAndNonPublicConstructorFinder publicAndNonPublicConstructorFinder =
+			new PublicAndNonPublicConstructorFinder();
+
+		private class PublicAndNonPublicConstructorFinder : IConstructorFinder
+		{
+			public ConstructorInfo[] FindConstructors(Type targetType)
+			{
+				return targetType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic |
+					BindingFlags.Instance);
+			}
+		}
+
+		private readonly ContentConstructorSelector contentConstructorSelector =
+			new ContentConstructorSelector();
 
 		private class ContentConstructorSelector : IConstructorSelector
 		{
@@ -97,7 +120,7 @@ namespace DeltaEngine.Platforms
 
 		private ContainerBuilder builder = new ContainerBuilder();
 
-		protected internal void RegisterInstance(object instance)
+		internal protected void RegisterInstance(object instance)
 		{
 			var registration =
 				builder.RegisterInstance(instance).SingleInstance().AsSelf().AsImplementedInterfaces();
@@ -153,139 +176,24 @@ namespace DeltaEngine.Platforms
 		{
 			if (IsAlreadyInitialized)
 				return; //ncrunch: no coverage
-			RegisterAllTypesFromAllAssemblies<ContentData, UpdateBehavior, DrawBehavior>();
+			assemblyLoader.RegisterAllTypesFromAllAssemblies<ContentData, UpdateBehavior, DrawBehavior>();
 			container = builder.Build();
+			if (AllRegistrationCompleted != null)
+				AllRegistrationCompleted();
 		}
 
 		protected bool IsAlreadyInitialized
 		{
 			get { return container != null; }
 		}
-
 		private IContainer container;
 
-		private void RegisterAllTypesFromAllAssemblies<InstanceType, UpdateType, DrawType>()
-		{
-			var assemblies = TryLoadAllUnloadedAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-			foreach (Assembly assembly in assemblies)
-				if (!AssemblyExtensions.IsPlatformAssembly(assembly.GetName().Name))
-				{
-					Type[] assemblyTypes = TryToGetAssemblyTypes(assembly);
-					if (assemblyTypes == null)
-						continue;
-					RegisterAllTypesInAssembly<InstanceType>(assemblyTypes, false);
-					RegisterAllTypesInAssembly<UpdateType>(assemblyTypes, true);
-					RegisterAllTypesInAssembly<DrawType>(assemblyTypes, true);
-					RegisterAllTypesInAssembly(assemblyTypes);
-				}
-		}
+		protected event Action AllRegistrationCompleted;
 
-		private static IEnumerable<Assembly> TryLoadAllUnloadedAssemblies(Assembly[] loadedAssemblies)
-		{
-			var assemblies = new List<Assembly>(loadedAssemblies);
-			var dllFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.dll");
-			foreach (var filePath in dllFiles)
-				try
-				{
-					string name = Path.GetFileNameWithoutExtension(filePath);
-					if (new AssemblyName(name).IsAllowed() && !AssemblyExtensions.IsPlatformAssembly(name) &&
-						!name.EndsWith(".Mocks") && assemblies.All(a => a.GetName().Name != name))
-						assemblies.Add(Assembly.LoadFrom(filePath));
-				}
-				catch (Exception ex)
-				{
-					Logger.Warning("Failed to load assembly " + filePath + ": " + ex.Message);
-				}
-			foreach (var assembly in loadedAssemblies)
-				if (assembly.IsAllowed() && !AssemblyExtensions.IsPlatformAssembly(assembly.GetName().Name))
-					TryLoadDependentAssemblies(assembly, assemblies);
-			return assemblies;
-		}
-
-		private static void TryLoadDependentAssemblies(Assembly assembly, List<Assembly> assemblies)
-		{
-			try
-			{
-				LoadDependentAssemblies(assembly, assemblies);
-			}
-			catch (FileNotFoundException exception)
-			{
-				throw new DependentAssemblieNotFound(assembly, exception);
-			}
-		}
-
-		private static void LoadDependentAssemblies(Assembly assembly, List<Assembly> assemblies)
-		{
-			foreach (var dependency in assembly.GetReferencedAssemblies())
-				if (dependency.IsAllowed() && !dependency.Name.EndsWith(".Mocks") &&
-					assemblies.All(loaded => dependency.Name != loaded.GetName().Name))
-					assemblies.Add(Assembly.Load(dependency));
-		}
-
-		private class DependentAssemblieNotFound : Exception
-		{
-			public DependentAssemblieNotFound(Assembly assembly, FileNotFoundException exception)
-				: base("Dependency \"" + exception.FileName + "\" for assembly \"" + assembly.FullName +
-				"\" not found") { }
-		}
-
-		private static Type[] TryToGetAssemblyTypes(Assembly assembly)
-		{
-			try
-			{
-				return assembly.GetTypes();
-			}
-			catch (Exception ex)
-			{
-				string errorText = ex.ToString();
-				var loaderError = ex as ReflectionTypeLoadException;
-				if (loaderError != null)
-					foreach (var error in loaderError.LoaderExceptions)
-						errorText += "\n\n" + error;
-				Logger.Warning("Failed to load types from " + assembly.GetName().Name + ": " + errorText);
-				return null;
-			}
-		}
-
-		private void RegisterAllTypesInAssembly<T>(Type[] assemblyTypes, bool registerAsSingleton)
+		internal void RegisterAllTypesInAssembly(Type[] assemblyTypes)
 		{
 			foreach (Type type in assemblyTypes)
-				if (typeof(T).IsAssignableFrom(type) && IsTypeResolveable(type))
-					if (registerAsSingleton)
-						RegisterSingleton(type);
-					else
-						Register(type);
-		}
-
-		/// <summary>
-		/// Allows to ignore most types. IsAbstract will also check if the class is static
-		/// </summary>
-		private static bool IsTypeResolveable(Type type)
-		{
-			if (type.IsEnum || type.IsAbstract || type.IsInterface || type.IsValueType ||
-				typeof(Exception).IsAssignableFrom(type) || type == typeof(Action) ||
-				type == typeof(Action<>) || typeof(MulticastDelegate).IsAssignableFrom(type))
-				return false;
-			if (IsGeneratedType(type) || IsGenericType(type) || type.Name.StartsWith("Mock") ||
-				type.Name == "Program")
-				return false;
-			return !IgnoreForResolverAttribute.IsTypeIgnored(type);
-		}
-
-		private static bool IsGeneratedType(Type type)
-		{
-			return type.FullName.StartsWith("<") || type.Name.StartsWith("<>");
-		}
-
-		private static bool IsGenericType(Type type)
-		{
-			return type.FullName.Contains("`1");
-		}
-
-		private void RegisterAllTypesInAssembly(Type[] assemblyTypes)
-		{
-			foreach (Type type in assemblyTypes)
-				if (IsTypeResolveable(type) && !alreadyRegisteredTypes.Contains(type))
+				if (AssemblyTypeLoader.IsTypeResolveable(type) && !alreadyRegisteredTypes.Contains(type))
 				{
 					builder.RegisterType(type).AsSelf().InstancePerLifetimeScope();
 					AddRegisteredType(type);
@@ -322,7 +230,7 @@ namespace DeltaEngine.Platforms
 			MakeSureContentManagerIsReady();
 			if (parameter is ContentCreationData &&
 				(baseType == typeof(Image) || baseType == typeof(Shader) ||
-					baseType.Assembly.GetName().Name == "DeltaEngine.Graphics"))
+				baseType.Assembly.GetName().Name == "DeltaEngine.Graphics"))
 				return Activator.CreateInstance(FindConcreteType(baseType),
 					BindingFlags.NonPublic | BindingFlags.Instance, default(Binder),
 					new[] { parameter, Resolve<Device>() }, default(CultureInfo));
@@ -338,28 +246,27 @@ namespace DeltaEngine.Platforms
 
 		private Type FindConcreteType(Type baseType)
 		{
-			foreach (var type in alreadyRegisteredTypes)
-				if (!type.IsAbstract && baseType.IsAssignableFrom(type))
-					return type;
-			return null;
+			return alreadyRegisteredTypes.FirstOrDefault(
+				type => !type.IsAbstract && baseType.IsAssignableFrom(type));
 		}
 
+		// ncrunch: no coverage start
 		private void ShowInitializationErrorBox(Type baseType, Exception ex)
 		{
 			var exceptionText = StackTraceExtensions.FormatExceptionIntoClickableMultilineText(ex);
 			var window = Resolve<Window>();
 			window.CopyTextToClipboard(exceptionText);
-			if (
-				window.ShowMessageBox("Fatal Initialization Error",
-					"Unable to resolve class " + baseType + "\n" +
-						(ExceptionExtensions.IsDebugMode ? exceptionText : ex.GetType().Name + " " + ex.Message) +
-						"\n\nMessage was logged and copied to the clipboard. Click Ignore to try to continue.",
-					new[] { "Ignore", "Abort" }) == "Ignore")
+			if (window.ShowMessageBox("Fatal Initialization Error",
+				"Unable to resolve class " + baseType + "\n" +
+					(ExceptionExtensions.IsDebugMode ? exceptionText : ex.GetType().Name + " " + ex.Message) +
+					"\n\nMessage was logged and copied to the clipboard. Click Ignore to try to continue.",
+				new[] { "Ignore", "Abort" }) == "Ignore")
 				return;
 			Dispose();
 			if (!StackTraceExtensions.StartedFromNCrunch)
 				Environment.Exit((int)AppRunner.ExitCode.InitializationError);
 		}
+		// ncrunch: no coverage end
 
 		public virtual void Dispose()
 		{

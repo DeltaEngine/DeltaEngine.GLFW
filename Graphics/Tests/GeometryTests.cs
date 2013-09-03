@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DeltaEngine.Content;
 using DeltaEngine.Datatypes;
@@ -11,8 +12,44 @@ namespace DeltaEngine.Graphics.Tests
 {
 	public class GeometryTests : TestWithMocksOrVisually
 	{
+		[Test, CloseAfterFirstFrame]
+		public void SetInvalidDataThrows()
+		{
+			var geometry =
+				ContentLoader.Create<Geometry>(new GeometryCreationData(VertexFormat.Position3DColor, 1, 1));
+			Assert.Throws<Geometry.InvalidNumberOfVertices>(
+				() => geometry.SetData(new Vertex[] { }, new short[] { 0 }));
+			Assert.Throws<Geometry.InvalidNumberOfIndices>(
+				() =>
+					geometry.SetData(new Vertex[] { new VertexPosition3DColor(Vector.Zero, Color.Red) },
+						new short[] { }));
+		}
+
+		[Test, CloseAfterFirstFrame]
+		public void LoadInvalidDataThrows()
+		{
+			var creationData = new GeometryCreationData(VertexFormat.Position3DColor, 1, 1);
+			var geometry = ContentLoader.Create<TestGeometry>(creationData);
+			Assert.Throws<Geometry.EmptyGeometryFileGiven>(geometry.LoadInvalidData);
+		}
+
+		private class TestGeometry : Geometry
+		{
+			public TestGeometry(GeometryCreationData creationData)
+				: base(creationData) {}
+
+			public override void Draw() {}
+			protected override void SetNativeData(byte[] vertexData, short[] indices) {}
+			protected override void DisposeData() {}
+
+			public void LoadInvalidData()
+			{
+				LoadData(new MemoryStream());
+			}
+		}
+
 		[Test]
-		public void ShowRedTriangle()
+		public void ShowTriangle()
 		{
 			var geometry = ContentLoader.Create<Geometry>(
 				new GeometryCreationData(VertexFormat.Position3DColor, 3, 3));
@@ -49,7 +86,7 @@ namespace DeltaEngine.Graphics.Tests
 				public void Draw(IEnumerable<DrawableEntity> entities)
 				{
 					foreach (var triangle in entities.OfType<Triangle>())
-						drawing.AddGeometry(triangle.geometry, triangle.material);
+						drawing.AddGeometry(triangle.geometry, triangle.material, Matrix.Identity);
 				}
 			}
 		}

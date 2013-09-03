@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using DeltaEngine.Commands;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Input;
 using DeltaEngine.Rendering.Shapes;

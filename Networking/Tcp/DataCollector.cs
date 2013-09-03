@@ -11,6 +11,7 @@ namespace DeltaEngine.Networking.Tcp
 			currentContainerToFill = null;
 		}
 
+		//that is no good!
 		private readonly Queue<byte> availableData;
 		private MessageData currentContainerToFill;
 

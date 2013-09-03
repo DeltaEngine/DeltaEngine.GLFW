@@ -54,7 +54,7 @@ namespace DeltaEngine.Commands
 			ContentLoader.Exists("DefaultCommands");
 			if (RegisteredCommands.Current.TryGetValue(commandName, out loadedTriggers))
 				return loadedTriggers;
-			throw new CommandNameWasNotRegistered();
+		throw new CommandNameWasNotRegistered();
 		}
 
 		public class CommandNameWasNotRegistered : Exception {}

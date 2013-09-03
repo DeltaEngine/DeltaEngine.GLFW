@@ -1,4 +1,4 @@
-﻿using DeltaEngine;
+﻿using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Platforms;
@@ -25,7 +25,7 @@ namespace Snake.Tests
 		[Test]
 		public void CreateSnakeAtOrigin()
 		{
-			var snake = new Snake(gridSize);
+			var snake = new Snake(gridSize, Color.Green);
 			Assert.AreEqual(new Point(startPosition, startPosition),
 				snake.Get<Body>().BodyParts[0].TopLeft);
 		}
@@ -33,28 +33,31 @@ namespace Snake.Tests
 		[Test]
 		public void SnakeHasTwoParts()
 		{
-			var game = new SnakeGame(Resolve<Window>());
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			Assert.AreEqual(2, game.Snake.Get<Body>().BodyParts.Count);
 		}
 
 		[Test]
 		public void AddToSnake()
 		{
-			var game = new SnakeGame(Resolve<Window>());
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			Assert.AreEqual(2, game.Snake.Get<Body>().BodyParts.Count);
 		}
 
 		[Test]
 		public void TouchTopBorder()
 		{
-			new SnakeGame(Resolve<Window>());
+			new Game(Resolve<Window>());
 			AdvanceTimeAndUpdateEntities(moveSpeed * gridSize / 2);
 		}
 
 		[Test]
 		public void TouchLeftBorder()
 		{
-			var game = new SnakeGame(Resolve<Window>());
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			game.MoveLeft();
 			AdvanceTimeAndUpdateEntities(moveSpeed * gridSize / 2);
 		}
@@ -62,7 +65,8 @@ namespace Snake.Tests
 		[Test]
 		public void TouchRightBorder()
 		{
-			var game = new SnakeGame(Resolve<Window>());
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			game.MoveRight();
 			AdvanceTimeAndUpdateEntities(moveSpeed * gridSize / 2);
 		}
@@ -70,7 +74,8 @@ namespace Snake.Tests
 		[Test]
 		public void TouchBottomBorder()
 		{
-			var game = new SnakeGame(Resolve<Window>());
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			game.MoveLeft();
 			AdvanceTimeAndUpdateEntities(moveSpeed);
 			game.MoveDown();
@@ -80,14 +85,15 @@ namespace Snake.Tests
 		[Test]
 		public void CheckTrailingVector()
 		{
-			var snake = new Snake(gridSize);
+			var snake = new Snake(gridSize, Color.Green);
 			Assert.AreEqual(new Point(0, blockSize), snake.Get<Body>().GetTrailingVector());
 		}
 
 		[Test]
 		public void SnakeCollidingWithItselfWillRestart()
 		{
-			var game = new SnakeGame(Resolve<Window>());
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			game.Snake.Get<Body>().AddSnakeBody();
 			game.Snake.Get<Body>().AddSnakeBody();
 			game.Snake.Get<Body>().AddSnakeBody();
@@ -102,7 +108,7 @@ namespace Snake.Tests
 		[Test]
 		public void DisposeSnake()
 		{
-			var snake = new Snake(gridSize) { IsActive = false };
+			var snake = new Snake(gridSize, Color.Green) { IsActive = false };
 			Assert.AreEqual(2, snake.Get<Body>().BodyParts.Count);
 			snake.Dispose();
 			Assert.Throws<Entity.ComponentNotFound>(() => snake.Get<Body>());

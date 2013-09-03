@@ -20,6 +20,6 @@ namespace DeltaEngine.Input
 			Start<Touch>();
 		}
 
-		public class TouchMovementTriggerHasNoParameters : Exception {}
+		public class TouchMovementTriggerHasNoParameters : Exception { }
 	}
 }

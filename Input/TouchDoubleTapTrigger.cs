@@ -7,7 +7,7 @@ namespace DeltaEngine.Input
 	/// </summary>
 	public class TouchDoubleTapTrigger : Trigger
 	{
-		public TouchDoubleTapTrigger()
+		public TouchDoubleTapTrigger(string unused = null)
 		{
 			Start<Touch>();
 		}

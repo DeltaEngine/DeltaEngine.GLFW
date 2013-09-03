@@ -30,7 +30,7 @@ namespace DeltaEngine.Rendering.Graphs
 			Percentiles.Clear();
 		}
 
-		public List<Line2D> Percentiles = new List<Line2D>();
+		public readonly List<Line2D> Percentiles = new List<Line2D>();
 		private readonly List<Line2D> line2DPool = new List<Line2D>();
 
 		private void CreateNewPercentiles(Graph graph)
@@ -44,15 +44,8 @@ namespace DeltaEngine.Rendering.Graphs
 		private void CreatePercentile(Graph graph, int index)
 		{
 			Line2D percentile = CreateBlankPercentile();
-			float borderHeight = graph.DrawArea.Height * Graph.Border;
-			float interval = (graph.DrawArea.Height - 2 * borderHeight) / NumberOfPercentiles;
-			float bottom = graph.DrawArea.Bottom - borderHeight;
-			float y = bottom - index * interval;
-			float borderWidth = graph.DrawArea.Width * Graph.Border;
-			float startX = graph.DrawArea.Left + borderWidth;
-			float endX = graph.DrawArea.Right - borderWidth;
-			percentile.StartPoint = new Point(startX, y);
-			percentile.EndPoint = new Point(endX, y);
+			percentile.StartPoint = GetPercentileStartPoint(graph, index);
+			percentile.EndPoint = GetPercentileEndPoint(graph, index);
 			percentile.Color = PercentileColor;
 			percentile.RenderLayer = graph.RenderLayer + RenderLayerOffset;
 			percentile.Visibility = Visibility.Show;
@@ -60,6 +53,7 @@ namespace DeltaEngine.Rendering.Graphs
 		}
 
 		public Color PercentileColor = Color.Grey;
+		private const int RenderLayerOffset = 1;
 
 		private Line2D CreateBlankPercentile()
 		{
@@ -74,6 +68,26 @@ namespace DeltaEngine.Rendering.Graphs
 			return percentile;
 		}
 
-		private const int RenderLayerOffset = 1;
+		private Point GetPercentileStartPoint(Entity2D graph, int index)
+		{
+			float borderWidth = graph.DrawArea.Width * Graph.Border;
+			float startX = graph.DrawArea.Left + borderWidth;
+			return new Point(startX, GetPercentileYCoord(graph, index));
+		}
+
+		private float GetPercentileYCoord(Entity2D graph, int index)
+		{
+			float borderHeight = graph.DrawArea.Height * Graph.Border;
+			float interval = (graph.DrawArea.Height - 2 * borderHeight) / NumberOfPercentiles;
+			float bottom = graph.DrawArea.Bottom - borderHeight;
+			return bottom - index * interval;
+		}
+
+		private Point GetPercentileEndPoint(Entity2D graph, int index)
+		{
+			float borderWidth = graph.DrawArea.Width * Graph.Border;
+			float endX = graph.DrawArea.Right - borderWidth;
+			return new Point(endX, GetPercentileYCoord(graph, index));
+		}
 	}
 }

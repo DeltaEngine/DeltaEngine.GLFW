@@ -16,7 +16,7 @@ namespace $safeprojectname$
 			var explosionMaterial = new Material(Shader.Position2DColorUv, "Explosion");
 			explosionSound = ContentLoader.Load<Sound>("BrickExplosion");
 			lostBallSound = ContentLoader.Load<Sound>("LostBall");
-			explosionData = new ParticleEffectData {
+			explosionData = new ParticleEmitterData {
 				Color = new RangeGraph<Color>(Color.White, Color.TransparentWhite),
 				Size = new RangeGraph<Size>(ExplosionSize, ExplosionSize * 2),
 				ParticleMaterial = explosionMaterial,
@@ -29,7 +29,7 @@ namespace $safeprojectname$
 		}
 
 		private readonly Material brickMaterial;
-		private ParticleEffectData explosionData;
+		private ParticleEmitterData explosionData;
 		private readonly Sound explosionSound;
 		private readonly Sound lostBallSound;
 		private readonly Score score;

@@ -73,6 +73,7 @@
     <Compile Include="TouchCollectionTests.cs" />
     <Compile Include="TouchHookTests.cs" />
     <Compile Include="WindowsKeyboardTests.cs" />
+    <Compile Include="WindowsMouseTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

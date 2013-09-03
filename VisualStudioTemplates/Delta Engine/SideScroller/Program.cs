@@ -1,4 +1,4 @@
-using DeltaEngine;
+using DeltaEngine.Core;
 using DeltaEngine.Platforms;
 
 namespace $safeprojectname$
@@ -7,8 +7,7 @@ namespace $safeprojectname$
 	{
 		public Program()
 		{
-			Resolve<Window>();
-			new SideScrollerGame();
+			new Game(Resolve<Window>());
 		}
 
 		public static void Main()

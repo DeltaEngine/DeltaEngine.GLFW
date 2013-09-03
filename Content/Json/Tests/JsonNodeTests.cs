@@ -21,7 +21,7 @@ namespace DeltaEngine.Content.Json.Tests
 			Assert.AreEqual(3, json.NumberOfNodes);
 			Assert.IsTrue(json.Get<bool>("Flag"));
 			Assert.AreEqual(1.23f, json.Get<float>("SomeNumber"));
-			Assert.AreEqual("blub", json.GetOrDefault<string>("Text", ""));
+			Assert.AreEqual("blub", json.GetOrDefault("Text", ""));
 		}
 
 		[Test]
@@ -79,5 +79,5 @@ namespace DeltaEngine.Content.Json.Tests
 			var json = new JsonNode("{ \"layers\":[ { \"sky\":[1, 1] }, { \"ground\":[0, 0] } ] }");
 			Assert.Throws<IndexOutOfRangeException>(() => { var nodeValue = json["layers"][3]; });
 		}
-}
+	}
 }

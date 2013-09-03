@@ -1,4 +1,6 @@
-﻿namespace DeltaEngine.Datatypes
+﻿using DeltaEngine.Core;
+
+namespace DeltaEngine.Datatypes
 {
 	/// <summary>
 	/// Interval of two values; Allows a random value in between to be obtained.
@@ -8,7 +10,7 @@
 	{
 		public Range() {}
 
-		public Range(T minimum, T maximum)
+		public Range(T minimum, T maximum) 
 		{
 			Start = minimum;
 			End = maximum;

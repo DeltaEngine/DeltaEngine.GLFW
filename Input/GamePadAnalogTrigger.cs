@@ -1,6 +1,5 @@
 ﻿using System;
 using DeltaEngine.Commands;
-using DeltaEngine.Datatypes;
 using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Input

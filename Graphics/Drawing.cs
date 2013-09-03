@@ -8,7 +8,7 @@ using DeltaEngine.Graphics.Vertices;
 namespace DeltaEngine.Graphics
 {
 	/// <summary>
-	/// Draws shapes, images and geometries. Framework independant, but needs a graphic device.
+	/// Draws shapes, images and geometries. Framework independent, but needs a graphic device.
 	/// </summary>
 	public sealed class Drawing : IDisposable
 	{
@@ -30,15 +30,30 @@ namespace DeltaEngine.Graphics
 				buffer.Dispose();
 		}
 
-		public void AddGeometry(Geometry geometry, Material material)
+		public void AddGeometry(Geometry geometry, Material material, Matrix transform)
 		{
 			foreach (var sorted in sortedShaderGeometries)
 				if (sorted.shader == material.Shader)
 				{
-					sorted.AddGeometry(geometry, material);
+					sorted.AddGeometry(new RenderGeometryTask(geometry, material, transform));
 					return;
 				}
-			sortedShaderGeometries.Add(new GeometryPerShader(geometry, material, device));
+			sortedShaderGeometries.Add(
+				new GeometryPerShader(new RenderGeometryTask(geometry, material, transform), device));
+		}
+
+		private class RenderGeometryTask
+		{
+			public RenderGeometryTask(Geometry geometry, Material material, Matrix transform)
+			{
+				Geometry = geometry;
+				Material = material;
+				Transform = transform;
+			}
+
+			public Geometry Geometry { get; private set; }
+			public Material Material { get; private set; }
+			public Matrix Transform { get; private set; }
 		}
 
 		private readonly List<GeometryPerShader> sortedShaderGeometries =
@@ -46,26 +61,25 @@ namespace DeltaEngine.Graphics
 
 		private class GeometryPerShader
 		{
-			public GeometryPerShader(Geometry geometry, Material material, Device device)
+			public GeometryPerShader(RenderGeometryTask renderGeometry, Device device)
 			{
-				shader = material.Shader;
+				shader = renderGeometry.Material.Shader;
 				this.device = device;
-				AddGeometry(geometry, material);
+				AddGeometry(renderGeometry);
 			}
 
 			private readonly Device device;
-
 			public readonly Shader shader;
 
-			public void AddGeometry(Geometry geometry, Material material)
+			public void AddGeometry(RenderGeometryTask renderGeometry)
 			{
 				foreach (var sorted in sortedTextureGeometries)
-					if (sorted.texture == material.DiffuseMap)
+					if (sorted.texture == renderGeometry.Material.DiffuseMap)
 					{
-						sorted.geometries.Add(geometry);
+						sorted.geometries.Add(renderGeometry);
 						return;
 					}
-				sortedTextureGeometries.Add(new GeometryPerTexture(geometry, material));
+				sortedTextureGeometries.Add(new GeometryPerTexture(renderGeometry, device));
 			}
 
 			private readonly List<GeometryPerTexture> sortedTextureGeometries =
@@ -73,26 +87,32 @@ namespace DeltaEngine.Graphics
 
 			private class GeometryPerTexture
 			{
-				public GeometryPerTexture(Geometry geometry, Material material)
+				public GeometryPerTexture(RenderGeometryTask renderGeometry, Device device)
 				{
-					texture = material.DiffuseMap;
-					geometries.Add(geometry);
+					this.device = device;
+					texture = renderGeometry.Material.DiffuseMap;
+					geometries.Add(renderGeometry);
 				}
 
+				private readonly Device device;
 				public readonly Image texture;
-				public readonly List<Geometry> geometries = new List<Geometry>();
+				public readonly List<RenderGeometryTask> geometries = new List<RenderGeometryTask>();
 
 				public void Draw()
 				{
 					foreach (var geometry in geometries)
-						geometry.Draw();
+					{
+						geometry.Material.Shader.SetModelViewProjectionMatrix(geometry.Transform *
+							device.ModelViewProjectionMatrix);
+						geometry.Material.Shader.BindVertexDeclaration();
+						geometry.Geometry.Draw();
+					}
 				}
 			}
 
 			public void Draw()
 			{
 				shader.Bind();
-				shader.SetModelViewProjectionMatrix(device.ModelViewProjectionMatrix);
 				foreach (var textureGeometries in sortedTextureGeometries)
 				{
 					if (textureGeometries.texture != null)
@@ -106,18 +126,11 @@ namespace DeltaEngine.Graphics
 		/// Adds presorted material DrawableEntities calls. Rendering happens after all vertices have
 		/// been added at the end of the frame in <see cref="DrawEverythingInCurrentLayer"/>.
 		/// </summary>
-		public void Add<T>(Shader shader, Image image, T[] vertices, short[] indices = null,
+		public void Add<T>(Material material, T[] vertices, short[] indices = null,
 			int numberOfVerticesUsed = 0, int numberOfIndicesUsed = 0) where T : struct, Vertex
 		{
-			GetDrawBuffer(shader, image.BlendMode).Add(image, vertices, indices, numberOfVerticesUsed,
-				numberOfIndicesUsed);
-		}
-
-		public void Add<T>(Material material, BlendMode blendMode, T[] vertices,
-			short[] indices = null, int numberOfVerticesUsed = 0, int numberOfIndicesUsed = 0)
-			where T : struct, Vertex
-		{
-			GetDrawBuffer(material.Shader, blendMode).Add(material.DiffuseMap, vertices, indices,
+			var mode = material.DiffuseMap == null ? BlendMode.Normal : material.DiffuseMap.BlendMode;
+			GetDrawBuffer(material.Shader, mode).Add(material.DiffuseMap, vertices, indices,
 				numberOfVerticesUsed, numberOfIndicesUsed);
 		}
 

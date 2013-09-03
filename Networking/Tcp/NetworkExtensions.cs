@@ -10,10 +10,9 @@ namespace DeltaEngine.Networking.Tcp
 		public static IPEndPoint ToEndPoint(this string serverAddress, int serverPort)
 		{
 			IPAddress ipAddress;
-			if (IPAddress.TryParse(serverAddress, out ipAddress))
-				return new IPEndPoint(ipAddress, serverPort);
-
-			return GetEndpointFromHostname(serverAddress, serverPort);
+			return IPAddress.TryParse(serverAddress, out ipAddress)
+				? new IPEndPoint(ipAddress, serverPort)
+				: GetEndpointFromHostname(serverAddress, serverPort);
 		}
 
 		private static IPEndPoint GetEndpointFromHostname(string serverAddress, int serverPort)

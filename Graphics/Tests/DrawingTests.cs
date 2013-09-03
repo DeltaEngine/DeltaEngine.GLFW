@@ -8,6 +8,7 @@ using DeltaEngine.Extensions;
 using DeltaEngine.Graphics.Vertices;
 using DeltaEngine.Platforms;
 using NUnit.Framework;
+using Randomizer = DeltaEngine.Core.Randomizer;
 
 namespace DeltaEngine.Graphics.Tests
 {

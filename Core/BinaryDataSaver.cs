@@ -34,10 +34,11 @@ namespace DeltaEngine.Core
 		{
 			if (data == null)
 				throw new NullReferenceException();
-			if (data is ContentData && !(data as ContentData).Name.StartsWith("<Generated"))
+			if (data is ContentData)
 			{
 				writer.Write((data as ContentData).Name);
-				return;
+				if (!(data as ContentData).Name.StartsWith("<Generated"))
+					return;
 			}
 			if (type.Name.StartsWith("Xml"))
 				throw new DoNotSaveXmlDataAsBinaryData(data);

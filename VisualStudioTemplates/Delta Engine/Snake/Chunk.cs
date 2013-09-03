@@ -9,9 +9,9 @@ namespace $safeprojectname$
 {
 	public class Chunk : FilledRect
 	{
-		public Chunk(int gridSize, float blockSize) : base(new Rectangle(new Point(blockSize * 
-			(int)(gridSize / 2.0f), blockSize * (int)(gridSize / 2.0f)), new Size(blockSize)), 
-				Color.Purple)
+		public Chunk(int gridSize, float blockSize, Color color) : base(new Rectangle(new 
+			Point(blockSize * (int)(gridSize / 2.0f), blockSize * (int)(gridSize / 2.0f)), new 
+				Size(blockSize)), color)
 		{
 			this.gridSize = gridSize;
 			this.blockSize = blockSize;

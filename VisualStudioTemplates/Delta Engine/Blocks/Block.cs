@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using DeltaEngine;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Extensions;

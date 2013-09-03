@@ -10,7 +10,7 @@ namespace DeltaEngine.Rendering.Models
 	/// </summary>
 	public class ModelData : ContentData
 	{
-		private ModelData(string contentName)
+		protected ModelData(string contentName)
 			: base(contentName) {}
 
 		public ModelData(params Mesh[] meshes)

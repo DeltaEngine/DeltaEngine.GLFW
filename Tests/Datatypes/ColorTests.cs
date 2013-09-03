@@ -1,6 +1,7 @@
 ﻿using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using NUnit.Framework;
+using Randomizer = DeltaEngine.Core.Randomizer;
 
 namespace DeltaEngine.Tests.Datatypes
 {

@@ -10,7 +10,7 @@ namespace DeltaEngine.Content.Xml
 	/// </summary>
 	public class InputCommands : XmlContent
 	{
-		public InputCommands(string contentName)
+		protected InputCommands(string contentName)
 			: base(contentName) {}
 
 		protected override bool AllowCreationIfContentNotFound

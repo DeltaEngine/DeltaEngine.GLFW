@@ -152,20 +152,6 @@ namespace DeltaEngine.Tests.Entities
 		private const int BooleanByte = 1;
 
 		[Test]
-		public void SaveAndLoadEntityWithOneHandlerFromMemoryStream()
-		{
-			entityWithTags.Start<MockUpdateBehavior>();
-			var data = BinaryDataExtensions.SaveToMemoryStream(entityWithTags);
-			byte[] savedBytes = data.ToArray();
-			Assert.AreEqual(62, savedBytes.Length);
-			var loadedEntity = data.CreateFromMemoryStream() as Entity;
-			Assert.IsTrue(loadedEntity.ContainsTag(Tag1));
-			Assert.AreEqual(0, loadedEntity.NumberOfComponents);
-			Assert.IsTrue(entityWithTags.ContainsBehavior<MockUpdateBehavior>());
-			Assert.IsTrue(loadedEntity.IsActive);
-		}
-
-		[Test]
 		public void SaveAndLoadEntityWithTwoComponentsFromMemoryStream()
 		{
 			entityWithTags.Add(1).Add(0.1f);
@@ -236,23 +222,6 @@ namespace DeltaEngine.Tests.Entities
 			Assert.IsFalse(entityWithTags.ContainsBehavior<MockUpdateBehavior>());
 			Assert.AreEqual(1, entities.GetEntitiesOfType<MockEntity>().Count);
 			entityWithTags.Stop<MockUpdateBehavior>();
-		}
-
-		[Test]
-		public void AddingTags()
-		{
-			Assert.IsTrue(entityWithTags.ContainsTag(Tag1));
-			Assert.IsTrue(entityWithTags.ContainsTag(Tag2));
-			var entitiesWithTag1 = entities.GetEntitiesWithTag(Tag1);
-			Assert.AreEqual(1, entitiesWithTag1.Count);
-			Assert.AreEqual(entityWithTags, entitiesWithTag1[0]);
-		}
-
-		[Test]
-		public void AddingSameTagAgainDoesNothing()
-		{
-			entityWithTags.AddTag(Tag1);
-			Assert.AreEqual(1, entities.GetEntitiesWithTag(Tag1).Count);
 		}
 
 		[Test]

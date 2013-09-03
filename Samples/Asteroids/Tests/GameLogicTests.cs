@@ -1,5 +1,5 @@
-﻿using DeltaEngine;
-using DeltaEngine.Content;
+﻿using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Platforms;
@@ -32,7 +32,7 @@ namespace Asteroids.Tests
 				Point.Half, 0);
 			EntitiesRunner.Current.GetEntitiesOfType<Projectile>().Add(projectile);
 			interactionLogics.CreateAsteroidsAtPosition(Point.Half, 1, 1);
-			AdvanceTimeAndUpdateEntities(0.2f);
+			AdvanceTimeAndUpdateEntities(1.0f);
 			Assert.IsFalse(projectile.IsActive);
 		}
 

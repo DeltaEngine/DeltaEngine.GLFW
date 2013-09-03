@@ -1,6 +1,6 @@
-﻿using DeltaEngine;
-using DeltaEngine.Commands;
+﻿using DeltaEngine.Commands;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Input;
 using DeltaEngine.Input.Mocks;
@@ -65,6 +65,7 @@ namespace ShadowShot.Tests
 		public void CheckForWeaponFire()
 		{
 			var game = new Game(Resolve<Window>(),Resolve<ScreenSpace>());
+			game.InitializeGame();
 			bool weaponFired = false;
 			game.Ship.ProjectileFired += point =>
 			{

@@ -91,7 +91,6 @@ namespace DeltaEngine.Input
 			return false;
 		}
 
-
 		private const float PositionEpsilon = 0.0025f;
 
 		private bool IsTouchDragDropTriggered(TouchDragDropTrigger trigger)
@@ -111,20 +110,20 @@ namespace DeltaEngine.Input
 
 		private bool IsTouchHoldTriggered(TouchHoldTrigger trigger)
 		{
-			var position = GetPosition(0);
 			if (GetState(0) == State.Pressing)
-				trigger.StartPosition = position;
-			if (CheckHoverState(trigger, position))
+				trigger.StartPosition = GetPosition(0);
+			trigger.Position = GetPosition(0);
+			if (CheckHoverState(trigger))
 				return trigger.IsHovering();
-			trigger.LastPosition = position;
 			trigger.Elapsed = 0.0f;
 			return false;
 		}
 
-		private bool CheckHoverState(TouchHoldTrigger trigger, Point position)
+		private bool CheckHoverState(TouchHoldTrigger trigger)
 		{
-			return trigger.HoldArea.Contains(trigger.StartPosition) && GetState(0) == State.Pressed &&
-				trigger.LastPosition.DistanceTo(position) < PositionEpsilon;
+			return trigger.HoldArea.Contains(trigger.StartPosition) &&
+				GetState(0) == State.Pressed &&
+				trigger.StartPosition.DistanceTo(GetPosition(0)) < PositionEpsilon;
 		}
 	}
 }

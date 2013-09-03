@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using DeltaEngine.Core;
 using NUnit.Framework;
 
 namespace DeltaEngine.Logging.Tests

@@ -101,7 +101,7 @@ namespace DeltaEngine.Multimedia.VideoStreams.Vlc
 		private unsafe delegate void DisplayEventHandler(void* opaque, void* picture);
 
 		[DllImport("libvlc", CallingConvention = CallingConvention.Cdecl)]
-		private static extern void libvlc_video_set_callbacks(IntPtr mp, IntPtr @lock, IntPtr unlock,
+		private static extern void libvlc_video_set_callbacks(IntPtr mp, IntPtr lockPtr, IntPtr unlock,
 			IntPtr display, IntPtr opaque);
 	}
 }

@@ -1,6 +1,5 @@
-using DeltaEngine;
+using DeltaEngine.Core;
 using DeltaEngine.Platforms;
-using DeltaEngine.ScreenSpaces;
 
 namespace $safeprojectname$
 {
@@ -8,7 +7,7 @@ namespace $safeprojectname$
 	{
 		public Program()
 		{
-			new SnakeGame(Resolve<Window>());
+			new Game(Resolve<Window>());
 		}
 
 		public static void Main()

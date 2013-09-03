@@ -7,7 +7,7 @@ namespace DeltaEngine.Graphics.GLFW3
 	/// </summary>
 	public class GLFW3Geometry : Geometry
 	{
-		public GLFW3Geometry(string contentName, GLFW3Device device)
+		protected GLFW3Geometry(string contentName, GLFW3Device device)
 			: base(contentName)
 		{
 			this.device = device;

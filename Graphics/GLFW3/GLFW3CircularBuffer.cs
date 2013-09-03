@@ -60,6 +60,7 @@ namespace DeltaEngine.Graphics.GLFW3
 
 		protected override void DrawChunk(Chunk chunk)
 		{
+			shader.BindVertexDeclaration();
 			if (UsesIndexBuffer)
 			{
 				if (chunk.Texture != null)

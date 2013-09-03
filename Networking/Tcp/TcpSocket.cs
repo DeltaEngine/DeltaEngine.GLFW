@@ -75,33 +75,36 @@ namespace DeltaEngine.Networking.Tcp
 		public void Connect(string serverAddress, int serverPort)
 		{
 			connectionTargetAddress = serverAddress + ":" + serverPort;
-			Connect(serverAddress.ToEndPoint(serverPort));
-		}
-
-		private string connectionTargetAddress;
-
-		public void Connect(EndPoint targetAddress)
-		{
 			try
 			{
-				var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = targetAddress };
-				socketArgs.Completed += SocketConnectionComplete;
-				nativeSocket.ConnectAsync(socketArgs);
-				if (TimedOut != null)
-					ThreadExtensions.Start(() =>
-					{
-						Thread.Sleep((int)(Timeout * 1000));
-						if (IsConnected)
-							return;
-						TimedOut();
-						Dispose();
-					});
+				TryConnect(serverAddress.ToEndPoint(serverPort));
 			}
 			catch (SocketException)
 			{
 				Logger.Warning("An error has occurred when trying to request a connection " +
-					"to the server (" + targetAddress + ")");
+					"to the server (" + connectionTargetAddress + ")");
+				if (TimedOut != null)
+					TimedOut();
+				Dispose();
 			}
+		}
+
+		private string connectionTargetAddress;
+
+		private void TryConnect(EndPoint targetAddress)
+		{
+			var socketArgs = new SocketAsyncEventArgs { RemoteEndPoint = targetAddress };
+			socketArgs.Completed += SocketConnectionComplete;
+			nativeSocket.ConnectAsync(socketArgs);
+			if (TimedOut != null)
+				ThreadExtensions.Start(() =>
+				{
+					Thread.Sleep((int)(Timeout * 1000));
+					if (IsConnected)
+						return;
+					TimedOut();
+					Dispose();
+				});
 		}
 
 		private void SocketConnectionComplete(object sender,
@@ -156,6 +159,9 @@ namespace DeltaEngine.Networking.Tcp
 			int numberOfSendBytes = nativeSocket.Send(byteData);
 			if (numberOfSendBytes == 0)
 				throw new SocketException();
+			if (numberOfSendBytes != byteData.Length)
+				Logger.Warning("Failed to send message " + message + ", numberOfSendBytes=" +
+					numberOfSendBytes + ", messageLength=" + byteData.Length);
 		}
 
 		private void TrySendAllMessagesInTheQueue()

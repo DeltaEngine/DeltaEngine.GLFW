@@ -15,6 +15,12 @@ namespace DeltaEngine.Mocks
 			new MockGlobalTime();
 		}
 
+		public new void Dispose()
+		{
+			GlobalTime.Current.Dispose();
+			base.Dispose();
+		}
+
 		public void RunEntities()
 		{
 			for (int i = 0; i < (int)(MockGlobalTime.UpdatePerSecond * UpdateTimeStep); i++)

@@ -18,7 +18,7 @@
 		/// </summary>
 		GroundPlane,
 		/// <summary>
-		/// Creates a vertical billboard but rotates XY towards camera, useful for rotating signs or logos.
+		/// Creates a vertical billboard but rotates around Z axis towards camera
 		/// </summary>
 		Vertical
 	}

@@ -9,7 +9,7 @@ namespace DeltaEngine.Content
 	/// </summary>
 	public class ImageAnimation : ContentData
 	{
-		public ImageAnimation(string contentName)
+		protected ImageAnimation(string contentName)
 			: base(contentName) {}
 
 		public ImageAnimation(Image[] images, float duration)
@@ -32,6 +32,7 @@ namespace DeltaEngine.Content
 				return;
 			foreach (Image frame in Frames)
 				frame.Dispose();
+			Frames = null;
 		}
 
 		protected override void LoadData(Stream fileData)

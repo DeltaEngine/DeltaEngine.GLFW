@@ -83,7 +83,7 @@
     <Compile Include="UserInterfaces\Controls\Picture.cs" />
     <Compile Include="UserInterfaces\Controls\Scrollbar.cs" />
     <Compile Include="UserInterfaces\Controls\Interact.cs" />
-    <Compile Include="Menu.cs" />
+    <Compile Include="AutoArrangingMenu.cs" />
     <Compile Include="UserInterfaces\Controls\InteractiveState.cs" />
     <Compile Include="UserInterfaces\Controls\PercentageBar.cs" />
     <Compile Include="UserInterfaces\Controls\SelectBox.cs" />
@@ -92,7 +92,6 @@
     <Compile Include="UserInterfaces\Controls\InteractiveButton.cs" />
     <Compile Include="UserInterfaces\Controls\Button.cs" />
     <Compile Include="Scene.cs" />
-    <Compile Include="UserInterfaces\Terminal\CommandManager.cs" />
     <Compile Include="UserInterfaces\Terminal\Console.cs" />
     <Compile Include="UserInterfaces\Controls\Label.cs" />
     <Compile Include="UserInterfaces\Controls\RadioButton.cs" />
@@ -101,7 +100,6 @@
     <Compile Include="UserInterfaces\Controls\TextBox.cs" />
     <Compile Include="UserInterfaces\Controls\Tile.cs" />
     <Compile Include="UserInterfaces\Controls\Tilemap.cs" />
-    <Compile Include="UserInterfaces\Terminal\ConsoleCommandAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

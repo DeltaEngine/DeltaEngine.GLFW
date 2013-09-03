@@ -6,6 +6,7 @@ using DeltaEngine.Entities;
 using DeltaEngine.Graphics.Vertices;
 using DeltaEngine.Platforms;
 using NUnit.Framework;
+using Randomizer = DeltaEngine.Core.Randomizer;
 
 namespace DeltaEngine.Graphics.Tests
 {
@@ -118,7 +119,7 @@ namespace DeltaEngine.Graphics.Tests
 					var vertices = entity.Get<VertexPosition2DColorUV[]>();
 					var indices = entity.Get<short[]>();
 					for (int num = 0; num < 50; num++)
-						drawing.Add(logo, logo.DiffuseMap.BlendMode, vertices, indices);
+						drawing.Add(logo, vertices, indices);
 				}
 			}
 		}

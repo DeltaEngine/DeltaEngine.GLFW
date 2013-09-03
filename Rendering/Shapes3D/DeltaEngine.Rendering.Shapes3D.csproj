@@ -58,6 +58,7 @@
     <Compile Include="Box.cs" />
     <Compile Include="DrawLine3D.cs" />
     <Compile Include="Line3D.cs" />
+    <Compile Include="PlaneQuad.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

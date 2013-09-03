@@ -31,15 +31,21 @@ namespace DeltaEngine.Graphics
 			Format = data.Format;
 			VertexCode = data.VertexCode;
 			PixelCode = data.FragmentCode;
+			Dx11Code = data.Dx11Code;
+			Dx9Code = data.Dx9Code;
 		}
 
-		private class UnableToCreateShaderNoCreationDataWasGiven : NullReferenceException { }
-		private class UnableToCreateShaderWithoutValidVertexFormat : Exception { }
-		private class UnableToCreateShaderWithoutValidVertexAndPixelCode : Exception { }
+		internal class UnableToCreateShaderNoCreationDataWasGiven : NullReferenceException {}
+
+		internal class UnableToCreateShaderWithoutValidVertexFormat : Exception {}
+
+		private class UnableToCreateShaderWithoutValidVertexAndPixelCode : Exception {}
 
 		public VertexFormat Format { get; private set; }
 		protected string VertexCode { get; private set; }
 		protected string PixelCode { get; private set; }
+		protected string Dx11Code;
+		protected string Dx9Code;
 
 		protected override void LoadData(Stream fileData)
 		{
@@ -58,9 +64,8 @@ namespace DeltaEngine.Graphics
 		{
 			get
 			{
-				return Name == Shader.Position2DUv || Name == Shader.Position3DUv ||
-					Name == Shader.Position2DColor || Name == Shader.Position3DColor ||
-					Name == Shader.Position2DColorUv || Name == Shader.Position3DColorUv;
+				return Name == Position2DUv || Name == Position3DUv || Name == Position2DColor ||
+					Name == Position3DColor || Name == Position2DColorUv || Name == Position3DColorUv;
 			}
 		}
 
@@ -68,36 +73,35 @@ namespace DeltaEngine.Graphics
 		{
 			switch (Name)
 			{
-			case Shader.Position2DUv:
+			case Position2DUv:
 				Initialize(new ShaderCreationData(UvVertexCode, UvFragmentCode, UvHlslCode,
-					VertexFormat.Position2DUv));
+					Dx9Position2DTexture, VertexFormat.Position2DUv));
 				break;
-			case Shader.Position2DColor:
+			case Position2DColor:
 				Initialize(new ShaderCreationData(ColorVertexCode, ColorFragmentCode, ColorHlslCode,
-					VertexFormat.Position2DColor));
+					Dx9Position2DColor, VertexFormat.Position2DColor));
 				break;
-			case Shader.Position2DColorUv:
+			case Position2DColorUv:
 				Initialize(new ShaderCreationData(ColorUvVertexCode, ColorUvFragmentCode, ColorUvHlslCode,
-					VertexFormat.Position2DColorUv));
+					Dx9Position2DColorTexture, VertexFormat.Position2DColorUv));
 				break;
-			case Shader.Position3DUv:
+			case Position3DUv:
 				Initialize(new ShaderCreationData(UvVertexCode, UvFragmentCode, UvHlslCode,
-					VertexFormat.Position3DUv));
+					Dx9Position3DTexture, VertexFormat.Position3DUv));
 				break;
-			case Shader.Position3DColor:
+			case Position3DColor:
 				Initialize(new ShaderCreationData(ColorVertexCode, ColorFragmentCode, ColorHlslCode,
-					VertexFormat.Position3DColor));
+					Dx9Position3DColor, VertexFormat.Position3DColor));
 				break;
-			case Shader.Position3DColorUv:
+			case Position3DColorUv:
 				Initialize(new ShaderCreationData(ColorUvVertexCode, ColorUvFragmentCode, ColorUvHlslCode,
-					VertexFormat.Position3DColorUv));
+					Dx9Position3DColorTexture, VertexFormat.Position3DColorUv));
 				break;
 			}
 			Create();
 		}
 
-		internal const string UvVertexCode =
-@"uniform mat4 ModelViewProjection;
+		internal const string UvVertexCode = @"uniform mat4 ModelViewProjection;
 attribute vec4 aPosition;
 attribute vec2 aTextureUV;
 varying vec2 vTexcoord;
@@ -107,8 +111,7 @@ void main()
 	gl_Position = ModelViewProjection * aPosition;
 }";
 
-		internal const string UvFragmentCode =
-@"precision mediump float;
+		internal const string UvFragmentCode = @"precision mediump float;
 uniform sampler2D Texture;
 varying vec2 vTexcoord;
 void main()
@@ -116,8 +119,7 @@ void main()
 	gl_FragColor = texture2D(Texture, vTexcoord);
 }";
 
-		internal const string ColorVertexCode =
-@"uniform mat4 ModelViewProjection;
+		internal const string ColorVertexCode = @"uniform mat4 ModelViewProjection;
 attribute vec4 aPosition;
 attribute vec4 aColor;
 varying vec4 diffuseColor;
@@ -127,16 +129,14 @@ void main()
 	diffuseColor = aColor;
 }";
 
-		internal const string ColorFragmentCode =
-@"precision mediump float;
+		internal const string ColorFragmentCode = @"precision mediump float;
 varying vec4 diffuseColor;
 void main()
 {
 	gl_FragColor = diffuseColor;
 }";
 
-		internal const string ColorUvVertexCode =
-@"uniform mat4 ModelViewProjection;
+		internal const string ColorUvVertexCode = @"uniform mat4 ModelViewProjection;
 attribute vec4 aPosition;
 attribute vec4 aColor;
 attribute vec2 aTextureUV;
@@ -149,8 +149,7 @@ void main()
 	diffuseTexCoord = aTextureUV;
 }";
 
-		internal const string ColorUvFragmentCode =
-@"precision mediump float;
+		internal const string ColorUvFragmentCode = @"precision mediump float;
 uniform sampler2D Texture;
 varying vec4 diffuseColor;
 varying vec2 diffuseTexCoord;
@@ -263,5 +262,65 @@ float4 PsMain(PixelInputType input) : SV_TARGET
 {
 	return DiffuseTexture.Sample(TextureSamplerState, input.texCoord) * input.color;
 }";
+
+		internal const string Dx9Position3DColor =
+			"float4x4 WorldViewProjection;" + "struct VS_OUTPUT" + "{" + "float4 Pos       : POSITION;" +
+				"float4 Color     : COLOR0;" + "};" +
+				"VS_OUTPUT VS( float3 Pos : POSITION, float4 Color : COLOR )" + "{" +
+				"VS_OUTPUT output = (VS_OUTPUT)0;" +
+				"output.Pos = mul(float4(Pos, 1.0f), WorldViewProjection);" +
+				"output.Color = float4(Color[2], Color[1], Color[0], Color[3]);" + "return output;" + "}" +
+				"float4 PS( VS_OUTPUT input ) : COLOR0" + "{" + "return input.Color;" + "}";
+
+		internal const string Dx9Position3DColorTexture =
+			"float4x4 WorldViewProjection;" + "struct VS_OUTPUT" + "{" + "float4 Pos       : POSITION;" +
+				"float4 Color     : COLOR0;" + "float2 TextureUV : TEXCOORD0;" + "};" +
+				"VS_OUTPUT VS( float3 Pos : POSITION, float4 Color : COLOR, float2 TextureUV : TEXCOORD0 )" +
+				"{" + "VS_OUTPUT output = (VS_OUTPUT)0;" +
+				"output.Pos = mul(float4(Pos, 1.0f), WorldViewProjection);" +
+				"output.Color = float4(Color[2], Color[1], Color[0], Color[3]);" +
+				"output.TextureUV = TextureUV;" + "return output;" + "}" + "sampler DiffuseTexture;" +
+				"float4 PS( VS_OUTPUT input ) : COLOR0" + "{" +
+				"return tex2D(DiffuseTexture, input.TextureUV) * input.Color;" + "}";
+
+		internal const string Dx9Position3DTexture =
+			"float4x4 WorldViewProjection;" + "struct VS_OUTPUT" + "{" + "float4 Pos       : POSITION;" +
+				"float2 TextureUV : TEXCOORD0;" + "};" +
+				"VS_OUTPUT VS( float3 Pos : POSITION, float2 TextureUV : TEXCOORD0 )" + "{" +
+				"VS_OUTPUT output = (VS_OUTPUT)0;" +
+				"output.Pos = mul(float4(Pos, 1.0f), WorldViewProjection);" +
+				"output.TextureUV = TextureUV;" + "return output;" + "}" + "sampler DiffuseTexture;" +
+				"float4 PS( VS_OUTPUT input ) : COLOR0" + "{" +
+				"return tex2D(DiffuseTexture, input.TextureUV);" + "}";
+
+		internal const string Dx9Position2DColor =
+			"float4x4 WorldViewProjection;" + "struct VS_OUTPUT" + "{" + "float4 Pos       : POSITION;" +
+				"float4 Color     : COLOR0;" + "};" +
+				"VS_OUTPUT VS( float2 Pos : POSITION, float4 Color : COLOR )" + "{" +
+				"VS_OUTPUT output = (VS_OUTPUT)0;" +
+				"output.Pos = mul(float4(Pos[0], Pos[1], 0.0f, 1.0f), WorldViewProjection);" +
+				"output.Color = float4(Color[2], Color[1], Color[0], Color[3]);" + "return output;" + "}" +
+				"float4 PS( VS_OUTPUT input ) : COLOR0" + "{" + "return input.Color;" + "}";
+
+		internal const string Dx9Position2DColorTexture =
+			"float4x4 WorldViewProjection;" + "struct VS_OUTPUT" + "{" + "float4 Pos       : POSITION;" +
+				"float4 Color     : COLOR0;" + "float2 TextureUV : TEXCOORD0;" + "};" +
+				"VS_OUTPUT VS( float2 Pos : POSITION, float4 Color : COLOR, float2 TextureUV : TEXCOORD0 )" +
+				"{" + "VS_OUTPUT output = (VS_OUTPUT)0;" +
+				"output.Pos = mul(float4(Pos[0],Pos[1], 0.0f, 1.0f), WorldViewProjection);" +
+				"output.Color = float4(Color[2], Color[1], Color[0], Color[3]);" +
+				"output.TextureUV = TextureUV;" + "return output;" + "}" + "sampler DiffuseTexture;" +
+				"float4 PS( VS_OUTPUT input ) : COLOR0" + "{" +
+				"return tex2D(DiffuseTexture, input.TextureUV) * input.Color;" + "}";
+
+		internal const string Dx9Position2DTexture =
+			"float4x4 WorldViewProjection;" + "struct VS_OUTPUT" + "{" + "float4 Pos       : POSITION;" +
+				"float2 TextureUV : TEXCOORD0;" + "};" +
+				"VS_OUTPUT VS( float2 Pos : POSITION, float2 TextureUV : TEXCOORD0 )" + "{" +
+				"VS_OUTPUT output = (VS_OUTPUT)0;" +
+				"output.Pos = mul(float4(Pos[0],Pos[1], 0.0f, 1.0f), WorldViewProjection);" +
+				"output.TextureUV = TextureUV;" + "return output;" + "}" + "sampler DiffuseTexture;" +
+				"float4 PS( VS_OUTPUT input ) : COLOR0" + "{" +
+				"return tex2D(DiffuseTexture, input.TextureUV);" + "}";
 	}
 }

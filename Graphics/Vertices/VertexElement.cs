@@ -9,7 +9,7 @@ namespace DeltaEngine.Graphics.Vertices
 	/// </summary>
 	public class VertexElement : IEquatable<VertexElement>
 	{
-		private VertexElement() {}
+		private VertexElement() {} //ncrunch: no coverage
 
 		public VertexElement(VertexElementType elementType)
 		{

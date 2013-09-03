@@ -9,7 +9,10 @@ namespace SideScroller
 	{
 		public void FireShotByPlayer(Point startPosition)
 		{
-			var bulletTrail = new Line2D(startPosition, new Point(1, startPosition.Y), Color.Orange);
+			var bulletTrail = new Line2D(startPosition, new Point(1, startPosition.Y), Color.Orange)
+			{
+				RenderLayer = (int)DefRenderLayer.Player - 1
+			};
 			bulletTrail.Add(new Duration(0.2f)).Start<SelfDestructTimer>();
 			//bulletTrail.Start<Transition>().Add(new Transition.Duration(0.2f)).Add(
 			//	new Transition.ColorRange(Color.Orange, Color.TransparentBlack));
@@ -18,7 +21,7 @@ namespace SideScroller
 		public void FireShotByEnemy(Point startPosition)
 		{
 			var bulletTrail = new Line2D(startPosition, new Point(0, startPosition.Y), Color.Red);
-			bulletTrail.Add(new Duration(0.2f)).Start<SelfDestructTimer>();
+			bulletTrail.Add(new Duration(0.1f)).Start<SelfDestructTimer>();
 			//bulletTrail.Start<Transition>().Add(new Transition.Duration(0.2f)).Add(
 			//	new Transition.ColorRange(Color.Red, Color.TransparentBlack));
 		}

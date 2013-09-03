@@ -1,6 +1,6 @@
-﻿using DeltaEngine;
-using DeltaEngine.Commands;
+﻿using DeltaEngine.Commands;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Multimedia;
 using DeltaEngine.Physics2D;
@@ -14,12 +14,17 @@ namespace LogoApp
 	public class BouncingLogo : Sprite
 	{
 		public BouncingLogo()
-			: base(ContentLoader.Load<Material>("Logo"), Point.Half)
+			: base(new Material(Shader.Position2DColorUv, "DeltaEngineLogo"), Point.Half)
 		{
 			Color = Color.GetRandomColor();
-			this.StartRotating(random.Get(-50, 50));
-			this.StartBouncingOffScreenEdges(
-				new Point(random.Get(-0.4f, 0.4f), random.Get(-0.4f, 0.4f)), () => sound.Play(0.03f));
+			Add(new SimplePhysics.Data
+			{
+				RotationSpeed = random.Get(-50, 50),
+				Velocity = new Point(random.Get(-0.4f, 0.4f), random.Get(-0.4f, 0.4f)),
+				Bounced = () => sound.Play(0.1f)
+			});
+			Start<SimplePhysics.BounceIfAtScreenEdge>();
+			Start<SimplePhysics.Rotate>();
 			new Command(Command.Click, position => Center = position);
 		}
 

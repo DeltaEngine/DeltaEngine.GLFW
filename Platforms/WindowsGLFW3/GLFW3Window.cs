@@ -3,10 +3,12 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 using DeltaEngine.ScreenSpaces;
 using Pencil.Gaming;
 using Color = DeltaEngine.Datatypes.Color;
+using Orientation = DeltaEngine.Core.Orientation;
 using Point = DeltaEngine.Datatypes.Point;
 using Size = DeltaEngine.Datatypes.Size;
 
@@ -33,7 +35,7 @@ namespace DeltaEngine.Platforms
 			Icon appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 			if (appIcon != null && hwnd != IntPtr.Zero)
 				SetIcon(appIcon);
-			ScreenSpace.Current = new QuadraticScreenSpace(this);
+			new QuadraticScreenSpace(this);
 		}
 
 		private static void ErrorCallback(GlfwError code, string desc)
@@ -292,7 +294,6 @@ namespace DeltaEngine.Platforms
 			CloseAfterFrame();
 			Glfw.DestroyWindow(nativeWindow);
 			Glfw.Terminate();
-			ScreenSpace.Current = null;
 		}
 	}
 }

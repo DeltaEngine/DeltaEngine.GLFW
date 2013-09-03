@@ -6,10 +6,17 @@ namespace DeltaEngine.Tests.Extensions
 {
 	public class ChangeableListTests
 	{
+		[SetUp]
+		public void SetUp()
+		{
+			list = new ChangeableList<int> { 1, 3, 5 };
+		}
+
+		private ChangeableList<int> list;
+
 		[Test]
 		public void AddAndRemoveWhileEnumerating()
 		{
-			var list = new ChangeableList<int> { 1, 3, 5 };
 			foreach (int num in list)
 				if (num == 5)
 					list.Add(7);
@@ -21,7 +28,6 @@ namespace DeltaEngine.Tests.Extensions
 		[Test]
 		public void AddRangeOfElementsWhileEnumerating()
 		{
-			var list = new ChangeableList<int> { 1, 3, 5 };
 			foreach (int num in list)
 				if (num == 5)
 					list.AddRange(new[] { 2, 2, 2 });
@@ -33,7 +39,6 @@ namespace DeltaEngine.Tests.Extensions
 		[Test]
 		public void AddElementWhileEnumeratingInInnerLoop()
 		{
-			var list = new ChangeableList<int> { 1, 3, 5 };
 			foreach (int num in list)
 			{
 				if (num == 5)
@@ -50,20 +55,19 @@ namespace DeltaEngine.Tests.Extensions
 		[Test]
 		public void TestCloningChangeableList()
 		{
-			var testList = new ChangeableList<int> { 1, 2, 3 };
-			foreach (int num1 in testList)
+			foreach (int num1 in list)
 			{
 				Assert.AreEqual(1, num1);
-				testList.Add(1);
-				var testList2 = new ChangeableList<int>(testList);
+				list.Add(1);
+				var testList2 = new ChangeableList<int>(list);
 				foreach (int num2 in testList2)
 				{
 					Assert.AreEqual(1, num2);
 					testList2.Add(2);
 					// The lists should be different here (testList2 is cloned)
-					Assert.False(testList == testList2);
+					Assert.False(list == testList2);
 					// But the data in it should be still equal.
-					Assert.AreEqual(testList.ToText(), testList2.ToText());
+					Assert.AreEqual(list.ToText(), testList2.ToText());
 					break;
 				}
 				break;
@@ -73,7 +77,6 @@ namespace DeltaEngine.Tests.Extensions
 		[Test]
 		public void GetEmulatorAndResetAndClearIt()
 		{
-			var list = new ChangeableList<int> { 1, 3, 5 };
 			Assert.IsFalse(list.IsReadOnly);
 			var emulator = list.GetEnumerator();
 			Assert.AreEqual(emulator.Current, 0);
@@ -88,7 +91,6 @@ namespace DeltaEngine.Tests.Extensions
 		[Test]
 		public void ConvertChangebleListToArray()
 		{
-			var list = new ChangeableList<int> { 1, 3, 5 };
 			var array = list.ToArray();
 			Assert.AreEqual(new[] { 1, 3, 5 }, array);
 		}
@@ -96,22 +98,32 @@ namespace DeltaEngine.Tests.Extensions
 		[Test]
 		public void RemoveItemFromList()
 		{
-			var list = new ChangeableList<int> { 1, 3, 5 };
 			list.RemoveAt(1);
-			Assert.AreEqual(new List<int>() { 1, 5 }, list);
+			Assert.AreEqual(new List<int> { 1, 5 }, list);
 		}
 
 		[Test]
 		public void RemoveItemFromListFromEnumerationDepth()
 		{
-			var list = new ChangeableList<int> { 1, 3 };
+			list.Remove(5);
 			var emulator = list.GetEnumerator();
 			emulator.MoveNext();
 			emulator.MoveNext();
 			emulator.MoveNext();
 			emulator.Reset();
 			list.RemoveAt(1);
-			Assert.AreEqual(new List<int>() { 1, 3 }, list);
+			Assert.AreEqual(new List<int> { 1, 3 }, list);
+		}
+
+		[Test]
+		public void RemoveItemImmediatelyAfterAddingWhileEnumerating()
+		{
+			foreach (int num in list)
+			{
+				list.Add(9);
+				list.Remove(9);
+			}
+			Assert.IsFalse(list.Contains(9));
 		}
 	}
 }

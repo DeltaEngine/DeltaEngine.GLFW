@@ -1,5 +1,6 @@
 ﻿using System;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 
 namespace DeltaEngine.Multimedia
 {
@@ -8,8 +9,8 @@ namespace DeltaEngine.Multimedia
 	/// </summary>
 	public abstract class Music : ContentData
 	{
-		protected Music(string filename, SoundDevice device, Settings settings)
-			: base(filename)
+		protected Music(string contentName, SoundDevice device, Settings settings)
+			: base(contentName)
 		{
 			this.device = device;
 			this.settings = settings;

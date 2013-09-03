@@ -10,7 +10,7 @@ namespace DeltaEngine.Content
 	/// </summary>
 	public class SpriteSheetAnimation : ContentData
 	{
-		public SpriteSheetAnimation(string contentName)
+		protected SpriteSheetAnimation(string contentName)
 			: base(contentName) {}
 
 		public SpriteSheetAnimation(SpriteSheetAnimationCreationData creationData)
@@ -60,8 +60,9 @@ namespace DeltaEngine.Content
 
 		protected override void DisposeData()
 		{
-			if (IsDisposed)
+			if (Image != null)
 				Image.Dispose();
+			Image = null;
 		}
 
 		public Material CreateMaterial(Shader shader)

@@ -72,6 +72,7 @@ namespace DeltaEngine.Content.Xml.Tests
 			child1.AddAttribute("Attr1", "Value1");
 			child1.AddAttribute("Attr2", "Value2");
 			root.AddChild(child1);
+			root.AddChild(null);
 			var child2 = new XmlData("Child2");
 			child2.AddAttribute("Attr3", "Value3");
 			child2.AddAttribute("Attr4", "Value4");
@@ -257,6 +258,16 @@ namespace DeltaEngine.Content.Xml.Tests
 			root.AddAttribute("number", "123");
 			Assert.AreEqual(123, root.GetAttributeValue("number", 0));
 			Assert.AreEqual("", root.GetAttributeValue("nonexistant", ""));
+		}
+
+		[Test]
+		public void GetDefaultChildren()
+		{
+			var root = new XmlData("root");
+			var child1 = new XmlData("Child1") { Value = "testValue" };
+			root.AddChild(child1);
+			Assert.AreEqual(child1.Value, root.GetChildValue("Child1", root.Value));
+			Assert.AreEqual(root.Value, root.GetChildValue("default", root.Value));
 		}
 
 		[Test]

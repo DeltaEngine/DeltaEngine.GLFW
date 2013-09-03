@@ -11,10 +11,10 @@ namespace Snake
 	/// </summary>
 	public class Snake : Entity2D
 	{
-		public Snake(int gridSize)
+		public Snake(int gridSize, Color color)
 			: base(Rectangle.Zero)
 		{
-			Add(new Body(gridSize));
+			Add(new Body(gridSize, color));
 			Start<SnakeHandler>();
 		}
 

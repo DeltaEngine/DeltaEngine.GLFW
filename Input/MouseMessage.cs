@@ -9,7 +9,7 @@ namespace DeltaEngine.Input
 	{
 		protected MouseMessage() {}
 
-		public MouseMessage(Point position,  int scrollWheel, MouseButton[] pressedButtons = null)
+		public MouseMessage(Point position, int scrollWheel, MouseButton[] pressedButtons = null)
 		{
 			Position = position;
 			ScrollWheel = scrollWheel;

@@ -10,18 +10,21 @@ namespace DeltaEngine.Rendering.Particles
 	/// <summary>
 	/// Holds data on how to spawn particles and currently existant ones.
 	/// </summary>
-	public class ParticleEmitter : Entity2D, Updateable
+	public sealed class ParticleEmitter : Entity2D, Updateable
 	{
-		public ParticleEmitter(ParticleEffectData effectData, Point spawnPosition)
+		public ParticleEmitter(ParticleEmitterData data, Point spawnPosition)
 			: base(new Rectangle(spawnPosition, Size.Zero))
 		{
-			if (effectData.ParticleMaterial == null)
+			Add(data);
+			if (data.ParticleMaterial == null)
+			{
+				IsActive = false;
 				throw new UnableToCreateWithoutMaterial();
-			Add(effectData);
+			}
 			OnDraw<ParticleRenderer>();
-			if (effectData.ParticleMaterial.Animation != null)
+			if (data.ParticleMaterial.Animation != null)
 				Stop<UpdateImageAnimation>();
-			if (effectData.ParticleMaterial.SpriteSheet != null)
+			if (data.ParticleMaterial.SpriteSheet != null)
 				Stop<UpdateSpriteSheetAnimation>();
 		}
 
@@ -30,17 +33,17 @@ namespace DeltaEngine.Rendering.Particles
 		public void Update()
 		{
 			if (IsActive)
-				UpdateEmitterAndParticles(Get<ParticleEffectData>());
+				UpdateEmitterAndParticles(Get<ParticleEmitterData>());
 		}
 
-		private void UpdateEmitterAndParticles(ParticleEffectData data)
+		private void UpdateEmitterAndParticles(ParticleEmitterData data)
 		{
 			UpdateAndLimitNumberOfActiveParticles(data);
 			UpdateAnimation(data);
 			SpawnNewParticles(data);
 		}
 
-		private void UpdateAndLimitNumberOfActiveParticles(ParticleEffectData data)
+		private void UpdateAndLimitNumberOfActiveParticles(ParticleEmitterData data)
 		{
 			int lastIndex = -1;
 			for (int index = 0; index < NumberOfActiveParticles; index++)
@@ -52,7 +55,7 @@ namespace DeltaEngine.Rendering.Particles
 			NumberOfActiveParticles = lastIndex + 1;
 		}
 
-		private void UpdateParticleProperties(ParticleEffectData data, int index)
+		private void UpdateParticleProperties(ParticleEmitterData data, int index)
 		{
 			var interpolation = particles[index].ElapsedTime / data.LifeTime;
 			particles[index].Color = data.Color.Start.Lerp(data.Color.End, interpolation);
@@ -60,7 +63,7 @@ namespace DeltaEngine.Rendering.Particles
 			particles[index].Force = data.Force.Start.Lerp(data.Force.End, interpolation);
 		}
 
-		private void UpdateAnimation(ParticleEffectData data)
+		private void UpdateAnimation(ParticleEmitterData data)
 		{
 			if (data.ParticleMaterial.Animation != null)
 				for (int index = 0; index < NumberOfActiveParticles; index++)
@@ -88,7 +91,7 @@ namespace DeltaEngine.Rendering.Particles
 			particles[index].CurrentUV = animationData.UVs[particles[index].CurrentFrame];
 		}
 
-		private void SpawnNewParticles(ParticleEffectData data)
+		private void SpawnNewParticles(ParticleEmitterData data)
 		{
 			if (particles == null || particles.Length != data.MaximumNumberOfParticles)
 				CreateParticlesArray(data);
@@ -113,7 +116,7 @@ namespace DeltaEngine.Rendering.Particles
 		public Particle[] particles;
 		public float ElapsedSinceLastSpawn { get; set; }
 
-		public void CreateParticlesArray(ParticleEffectData data)
+		public void CreateParticlesArray(ParticleEmitterData data)
 		{
 			if (data.MaximumNumberOfParticles > 512)
 				throw new MaximumNumberOfParticlesExceeded(data.MaximumNumberOfParticles, 512);
@@ -127,7 +130,7 @@ namespace DeltaEngine.Rendering.Particles
 				: base("Specified=" + specified + ", Maximum allowed=" + maxAllowed) {}
 		}
 
-		private void SpawnOneParticle(ParticleEffectData data)
+		private void SpawnOneParticle(ParticleEmitterData data)
 		{
 			ElapsedSinceLastSpawn -= data.SpawnInterval;
 			int freeSpot = FindFreeSpot(data);
@@ -146,7 +149,7 @@ namespace DeltaEngine.Rendering.Particles
 			particles[freeSpot].Rotation = data.StartRotation.GetRandomValue();
 		}
 
-		private int FindFreeSpot(ParticleEffectData data)
+		private int FindFreeSpot(ParticleEmitterData data)
 		{
 			for (int index = 0; index < NumberOfActiveParticles; index++)
 				if (particles[index].ElapsedTime >= data.LifeTime)
@@ -159,7 +162,7 @@ namespace DeltaEngine.Rendering.Particles
 
 		public void SpawnBurst(int numberOfParticles, bool destroyAfterwards = false)
 		{
-			var data = Get<ParticleEffectData>();
+			var data = Get<ParticleEmitterData>();
 			if (particles == null || particles.Length != data.MaximumNumberOfParticles)
 				CreateParticlesArray(data);
 			for (int i = 0; i < numberOfParticles; i++)

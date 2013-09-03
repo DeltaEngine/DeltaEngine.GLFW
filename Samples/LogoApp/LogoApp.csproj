@@ -38,9 +38,6 @@
     <ApplicationIcon>LogoAppIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\DeltaEngine.csproj">
       <Project>{20FA8D33-A964-4000-AD82-67BD6900793B}</Project>
       <Name>DeltaEngine</Name>
@@ -61,6 +58,10 @@
       <Project>{BDDB4AA4-5D31-43B3-9A3B-BF3030EDE927}</Project>
       <Name>DeltaEngine.Rendering</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Rendering\Shapes\DeltaEngine.Rendering.Shapes.csproj">
+      <Project>{BB73D940-CBD2-4F00-B246-2A25CA5ACD7E}</Project>
+      <Name>DeltaEngine.Rendering.Shapes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Rendering\Sprites\DeltaEngine.Rendering.Sprites.csproj">
       <Project>{FCA7BAAA-3F6E-4CA3-B354-C34AF4F1BDDD}</Project>
       <Name>DeltaEngine.Rendering.Sprites</Name>
@@ -72,9 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="LogoAppIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

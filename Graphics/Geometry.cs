@@ -49,6 +49,7 @@ namespace DeltaEngine.Graphics
 
 		public class GeometryData
 		{
+			public String Name;
 			public VertexFormat Format;
 			public int NumberOfVertices;
 			public byte[] VerticesData;

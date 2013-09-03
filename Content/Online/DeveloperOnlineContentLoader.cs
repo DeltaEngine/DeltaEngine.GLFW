@@ -65,12 +65,15 @@ namespace DeltaEngine.Content.Online
 
 		private void ParseXmlNode(XmlData currentNode)
 		{
-			var currentElement = ParseContentMetaData(currentNode.Attributes);
-			var name = currentNode.GetAttributeValue("Name");
-			if (!metaData.ContainsKey(name) && currentNode.Parent != null)
-				metaData.Add(name, currentElement);
-			foreach (var node in currentNode.Children)
-				ParseXmlNode(node);
+			lock (XmlFile)
+			{
+				var currentElement = ParseContentMetaData(currentNode.Attributes);
+				var name = currentNode.GetAttributeValue("Name");
+				if (!metaData.ContainsKey(name) && currentNode.Parent != null)
+					metaData.Add(name, currentElement);
+				foreach (var node in currentNode.Children)
+					ParseXmlNode(node);
+			}
 		}
 
 		private static ContentMetaData ParseContentMetaData(List<XmlAttribute> attributes)
@@ -83,7 +86,7 @@ namespace DeltaEngine.Content.Online
 					data.Name = attribute.Value;
 					break;
 				case "Type":
-					data.Type = attribute.Value.Parse<ContentType>();
+					data.Type = attribute.Value.TryParse(ContentType.Image);
 					break;
 				case "LastTimeUpdated":
 					data.LastTimeUpdated = DateExtensions.Parse(attribute.Value);
@@ -167,11 +170,14 @@ namespace DeltaEngine.Content.Online
 		{
 			if (!Directory.Exists(contentPath))
 				Directory.CreateDirectory(contentPath);
-			UpdateContentMetaDataFile(content.MetaData, XmlFile.Root);
-			XmlFile.Save(ContentMetaDataFilePath);
-			foreach (var contentFile in content.Files)
-				if (contentFile.name != null)
-					File.WriteAllBytes(Path.Combine(contentPath, contentFile.name), contentFile.data);
+			lock (XmlFile)
+			{
+				UpdateContentMetaDataFile(content.MetaData, XmlFile.Root);
+				XmlFile.Save(ContentMetaDataFilePath);
+				foreach (var contentFile in content.Files)
+					if (contentFile.name != null)
+						File.WriteAllBytes(Path.Combine(contentPath, contentFile.name), contentFile.data);
+			}
 			if (ContentChanged != null)
 				ContentChanged();
 		}
@@ -217,15 +223,18 @@ namespace DeltaEngine.Content.Online
 
 		private void DeleteLocalContent(DeleteContent content)
 		{
-			XmlData entryToDelete = null;
-			foreach (var child in XmlFile.Root.Children)
-				if (child.GetAttributeValue("Name") == content.ContentName)
-					entryToDelete = child;
-			if (entryToDelete == null)
-				return;
-			DeleteFiles(entryToDelete);
-			XmlFile.Root.RemoveChild(entryToDelete);
-			XmlFile.Save(ContentMetaDataFilePath);
+			lock (XmlFile)
+			{
+				XmlData entryToDelete = null;
+				foreach (var child in XmlFile.Root.Children)
+					if (child.GetAttributeValue("Name") == content.ContentName)
+						entryToDelete = child;
+				if (entryToDelete == null)
+					return;
+				DeleteFiles(entryToDelete);
+				XmlFile.Root.RemoveChild(entryToDelete);
+				XmlFile.Save(ContentMetaDataFilePath);
+			}
 			if (ContentChanged != null)
 				ContentChanged();
 		}

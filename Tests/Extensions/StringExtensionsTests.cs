@@ -20,7 +20,7 @@ namespace DeltaEngine.Tests.Extensions
 		}
 
 		[Test]
-		public void FromInvariantString()
+		public void Convert()
 		{
 			Assert.AreEqual(1.0f, "1.0".Convert<float>());
 			Assert.AreEqual("abc", "abc".Convert<string>());
@@ -32,6 +32,7 @@ namespace DeltaEngine.Tests.Extensions
 			Assert.AreEqual(true, "True".Convert<bool>());
 			Assert.AreEqual(false, "False".Convert<bool>());
 			Assert.AreEqual(SomeEnum.Additive, "Additive".Convert<SomeEnum>());
+			Assert.AreEqual(new DateTime(2002, 12, 24), "2002-12-24".Convert<DateTime>());
 		}
 
 		public enum SomeEnum

@@ -25,17 +25,16 @@ namespace DeltaEngine.Input
 
 		public override void Update(IEnumerable<Entity> entities)
 		{
-			if (!IsAvailable)
-				return;
-			foreach (Entity entity in entities)
-			{
-				var button = entity as GamePadButtonTrigger;
-				if (button != null)
-					button.WasInvoked = GetButtonState(button.Button) == button.State;
-				var stick = entity as GamePadAnalogTrigger;
-				if (stick != null)
-					stick.WasInvoked = IsGamePadStickTriggered(stick);
-			}
+			if (IsAvailable)
+				foreach (Entity entity in entities)
+				{
+					var button = entity as GamePadButtonTrigger;
+					if (button != null)
+						button.WasInvoked = GetButtonState(button.Button) == button.State;
+					var stick = entity as GamePadAnalogTrigger;
+					if (stick != null)
+						stick.WasInvoked = IsGamePadStickTriggered(stick);
+				}
 		}
 
 		private bool IsGamePadStickTriggered(GamePadAnalogTrigger trigger)

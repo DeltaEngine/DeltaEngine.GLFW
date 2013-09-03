@@ -23,6 +23,7 @@
 				<ProjectItem ReplaceParameters="true" TargetFileName="Game.cs">Game.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Grid.cs">Grid.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="BlocksContent.cs">BlocksContent.cs</ProjectItem>
+				<ProjectItem ReplaceParameters="true" TargetFileName="MainMenu.cs">MainMenu.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Program.cs">Program.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="RenderLayer.cs">RenderLayer.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Block.cs">Block.cs</ProjectItem>

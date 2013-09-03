@@ -9,7 +9,7 @@ namespace DeltaEngine.Rendering.Models
 	/// </summary>
 	public class Mesh : ContentData
 	{
-		protected Mesh(string contentName)
+		public Mesh(string contentName)
 			: base(contentName) {}
 
 		public Mesh(Geometry geometry, Material material)
@@ -24,8 +24,8 @@ namespace DeltaEngine.Rendering.Models
 
 		protected override void LoadData(Stream fileData)
 		{
-			Geometry = ContentLoader.Load<Geometry>(MetaData.Get("Geometry", ""));
-			Material = ContentLoader.Load<Material>(MetaData.Get("Material", ""));
+			Geometry = ContentLoader.Load<Geometry>(MetaData.Get("GeometryName", ""));
+			Material = ContentLoader.Load<Material>(MetaData.Get("MaterialName", ""));
 		}
 
 		protected override void DisposeData() {}

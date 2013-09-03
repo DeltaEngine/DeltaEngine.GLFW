@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using DeltaEngine.Content;
 using DeltaEngine.Content.Mocks;
 using DeltaEngine.Core;
@@ -14,7 +12,7 @@ using NUnit.Framework;
 
 namespace DeltaEngine.Tests.Core
 {
-	public class BinaryDataLoadSaveTests
+	public partial class BinaryDataLoadSaveTests
 	{
 		[Test]
 		public void SaveAndLoadPrimitiveDataTypes()
@@ -31,13 +29,6 @@ namespace DeltaEngine.Tests.Core
 			SaveDataTypeAndLoadAgain(false);
 		}
 
-		private static void SaveDataTypeAndLoadAgain<Primitive>(Primitive input)
-		{
-			var data = BinaryDataExtensions.SaveDataIntoMemoryStream(input);
-			var output = BinaryDataExtensions.LoadDataWithKnownTypeFromMemoryStream<Primitive>(data);
-			Assert.AreEqual(input, output);
-		}
-
 		[Test]
 		public void SaveAndLoadOtherDatatypes()
 		{
@@ -49,29 +40,11 @@ namespace DeltaEngine.Tests.Core
 			SaveDataTypeAndLoadAgain(TestEnum.SomeFlag);
 		}
 
-		private enum TestEnum
-		{
-			SomeFlag,
-		}
-
 		[Test]
 		public void SaveAndLoadLists()
 		{
 			SaveAndLoadList(new List<int> { 2, 4, 7, 15 });
 			SaveAndLoadList(new List<Object> { 2, 0.5f, "Hello" });
-		}
-
-		private static void SaveAndLoadList<Primitive>(List<Primitive> listData)
-		{
-			var data = BinaryDataExtensions.SaveDataIntoMemoryStream(listData);
-			var retrievedList =
-				BinaryDataExtensions.LoadDataWithKnownTypeFromMemoryStream<List<Primitive>>(data);
-			Assert.AreEqual(listData.Count, retrievedList.Count);
-			if (typeof(Primitive).IsValueType)
-				Assert.IsTrue(listData.Compare(retrievedList));
-
-			for (int index = 0; index < listData.Count; index ++)
-				Assert.AreEqual(listData[index].GetType(), retrievedList[index].GetType());
 		}
 
 		[Test]
@@ -84,17 +57,6 @@ namespace DeltaEngine.Tests.Core
 			SaveAndLoadDictionary(new Dictionary<int, object> { { 1, Point.One }, { 2, Color.Red } });
 		}
 
-		private static void SaveAndLoadDictionary<Key, Value>(Dictionary<Key, Value> dictionaryData)
-		{
-			var data = BinaryDataExtensions.SaveDataIntoMemoryStream(dictionaryData);
-			var retrievedDictionary =
-				BinaryDataExtensions.LoadDataWithKnownTypeFromMemoryStream<Dictionary<Key, Value>>(data);
-			Assert.AreEqual(dictionaryData.Count, retrievedDictionary.Count);
-			if (typeof(Key).IsValueType && typeof(Value).IsValueType)
-				Assert.IsTrue(dictionaryData.Compare(retrievedDictionary));
-			Assert.IsTrue(!dictionaryData.Except(retrievedDictionary).Any());
-		}
-
 		[Test]
 		public void SaveAndLoadArrays()
 		{
@@ -104,12 +66,10 @@ namespace DeltaEngine.Tests.Core
 			SaveAndLoadArray(new byte[0]);
 		}
 
-		private static void SaveAndLoadArray<T>(T[] array)
+		[Test]
+		public void SaveAndLoadEnumArray()
 		{
-			var data = BinaryDataExtensions.SaveDataIntoMemoryStream(array);
-			var retrievedArray = BinaryDataExtensions.LoadDataWithKnownTypeFromMemoryStream<T[]>(data);
-			Assert.AreEqual(array.Length, retrievedArray.Length);
-			Assert.IsTrue(array.Compare(retrievedArray));
+			SaveAndLoadArray(new[] { TestEnum.SomeFlag, TestEnum.SomeFlag });
 		}
 
 		[Test]
@@ -139,22 +99,6 @@ namespace DeltaEngine.Tests.Core
 				retrieved.byteEnumData.ToText());
 		}
 
-		private class ClassWithArrays
-		{
-			public readonly byte[] byteData = { 1, 2, 3, 4, 5 };
-			public readonly char[] charData = { 'a', 'b', 'c' };
-			public readonly int[] intData = { 10, 20, 30 };
-			public readonly string[] stringData = { "Hi", "there" };
-			public readonly DayOfWeek[] enumData = { DayOfWeek.Monday, DayOfWeek.Sunday };
-			public readonly ByteEnum[] byteEnumData = { ByteEnum.Normal, ByteEnum.High };
-		}
-
-		private enum ByteEnum : byte
-		{
-			Normal,
-			High,
-		}
-
 		[Test]
 		public void SaveAndLoadClassWithEmptyByteArray()
 		{
@@ -163,11 +107,6 @@ namespace DeltaEngine.Tests.Core
 			var retrieved =
 				BinaryDataExtensions.LoadDataWithKnownTypeFromMemoryStream<ClassWithByteArray>(data);
 			Assert.IsTrue(instance.data.Compare(retrieved.data));
-		}
-
-		private class ClassWithByteArray
-		{
-			public byte[] data;
 		}
 
 		[Test]
@@ -205,17 +144,6 @@ namespace DeltaEngine.Tests.Core
 			Assert.AreEqual(7, retrieved.unionValue);
 		}
 
-		[StructLayout(LayoutKind.Explicit)]
-		private class ExplicitLayoutTestClass
-		{
-			[FieldOffset(0)]
-			public int someValue;
-			[FieldOffset(4)]
-			public int anotherValue;
-			[FieldOffset(4)]
-			public int unionValue;
-		}
-
 		[Test]
 		public void SaveAndLoadClassWithAnotherClassInside()
 		{
@@ -236,43 +164,12 @@ namespace DeltaEngine.Tests.Core
 			Assert.AreEqual(instance.SecondInstanceNotSet, retrieved.SecondInstanceNotSet);
 		}
 
-		private class ClassWithAnotherClassInside
-		{
-			internal class InnerClass
-			{
-				public double Value { get; set; }
-			}
-
-			internal class InnerDerivedClass : InnerClass
-			{
-				internal bool additionalFlag;
-			}
-
-			public int Number { get; set; }
-
-			public InnerDerivedClass Data;
-			public InnerDerivedClass SecondInstanceNotSet;
-		}
-
 		[Test]
 		public void ThrowExceptionTypeNameStartsWithXml()
 		{
 			Assert.Throws<BinaryDataSaver.UnableToSave>(
 				() => BinaryDataExtensions.SaveToMemoryStream(new XmlBinaryData("Xml")));
 			Assert.AreEqual("Xml", new XmlBinaryData("Xml").Text);
-		}
-
-		private class XmlBinaryData
-		{
-			public XmlBinaryData(string text)
-				: this()
-			{
-				Text = text;
-			}
-
-			public string Text { get; private set; }
-
-			private XmlBinaryData() {}
 		}
 
 		[Test]
@@ -293,36 +190,6 @@ namespace DeltaEngine.Tests.Core
 			Assert.IsTrue(instance.Bytes.Compare(retrieved.Bytes), retrieved.Bytes.ToText());
 		}
 
-		private class ClassWithMemoryStream
-		{
-			private ClassWithMemoryStream()
-			{
-				data = new MemoryStream();
-				reader = new BinaryReader(data);
-				Writer = new BinaryWriter(data);
-			}
-
-			public ClassWithMemoryStream(byte[] bytes)
-				: this()
-			{
-				Writer.Write(bytes);
-			}
-
-			public int Length
-			{
-				get { return (int)data.Length; }
-			}
-			public int Version { get; set; }
-			private readonly MemoryStream data;
-			internal readonly BinaryReader reader;
-			public BinaryWriter Writer { get; private set; }
-
-			public IEnumerable<byte> Bytes
-			{
-				get { return data.ToArray(); }
-			}
-		}
-
 		[Test]
 		public void LoadingAndSavingKnownTypeShouldNotCauseLoggerMessage()
 		{
@@ -338,26 +205,19 @@ namespace DeltaEngine.Tests.Core
 		[Test]
 		public void LoadUnknowTypeShouldThrowException()
 		{
-			Assert.Throws<Exception>(() => BinaryDataLoader.TryCreateAndLoad(typeof(Point),
-				new BinaryReader(new MemoryStream()), new Version(0, 0)));
+			Assert.Throws<Exception>(
+				() =>
+					BinaryDataLoader.TryCreateAndLoad(typeof(Point), new BinaryReader(new MemoryStream()),
+						new Version(0, 0)));
 		}
 
 		[Test]
 		public void CreateInstanceOfTypeWithCtorParamsShouldThrowException()
 		{
-			Assert.Throws<MissingMethodException>(() =>
-				BinaryDataLoader.TryCreateAndLoad(typeof(ClassThatRequiresConstructorParameter),
-				new BinaryReader(new MemoryStream()), new Version(0, 0)));
-		}
-
-		private class ClassThatRequiresConstructorParameter
-		{
-			//ncrunch: no coverage start 
-			public ClassThatRequiresConstructorParameter(string parameter)
-			{
-				Assert.NotNull(parameter);
-			}
-			//ncrunch: no coverage end
+			Assert.Throws<MissingMethodException>(
+				() =>
+					BinaryDataLoader.TryCreateAndLoad(typeof(ClassThatRequiresConstructorParameter),
+						new BinaryReader(new MemoryStream()), new Version(0, 0)));
 		}
 
 		[Test]
@@ -375,17 +235,6 @@ namespace DeltaEngine.Tests.Core
 			var content = returnedContentType as MockXmlContentType;
 			Assert.IsNotNull(content);
 			Assert.AreEqual(ContentName, content.Name);
-		}
-
-		private class MockXmlContentType : ContentData
-		{
-			//ncrunch: no coverage start
-			public MockXmlContentType(string contentName)
-				: base(contentName) {}
-
-			protected override void DisposeData() {}
-			protected override void LoadData(Stream fileData) { }
-			//ncrunch: no coverage end
 		}
 
 		[Test]
@@ -416,7 +265,7 @@ namespace DeltaEngine.Tests.Core
 		public void ThrowExceptionOnSavingAnInvalidObject()
 		{
 			Assert.Throws<NullReferenceException>(
-				() =>BinaryDataSaver.TrySaveData(null, typeof(object), null));
+				() => BinaryDataSaver.TrySaveData(null, typeof(object), null));
 		}
 
 		[Test]

@@ -15,6 +15,7 @@ namespace DeltaEngine.Content
 		public abstract void SetModelViewProjectionMatrix(Matrix matrix);
 		public abstract void SetDiffuseTexture(Image texture);
 		public abstract void Bind();
+		public abstract void BindVertexDeclaration();
 
 		public const string Position2DUv = "Position2DUv";
 		public const string Position2DColorUv = "Position2DColorUv";

@@ -1,4 +1,5 @@
 ﻿using System;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.ScreenSpaces;
 using SysPoint = System.Drawing.Point;
@@ -33,8 +34,9 @@ namespace DeltaEngine.Input.Windows
 			newPosition = ScreenSpace.Current.ToPixelSpace(newPosition);
 			var newScreenPosition = ToSysPoint(newPosition);
 			if ((IntPtr)window.Handle != IntPtr.Zero)
+				//ncrunch: no coverage start
 				NativeMethods.ClientToScreen((IntPtr)window.Handle, ref newScreenPosition);
-
+				//ncrunch: no coverage end
 			return FromSysPoint(newScreenPosition);
 		}
 
@@ -55,7 +57,9 @@ namespace DeltaEngine.Input.Windows
 		{
 			var screenPoint = ToSysPoint(newPosition);
 			if ((IntPtr)window.Handle != IntPtr.Zero)
+				//ncrunch: no coverage start
 				NativeMethods.ScreenToClient((IntPtr)window.Handle, ref screenPoint);
+					//ncrunch: no coverage end
 			return ScreenSpace.Current.FromPixelSpace(FromSysPoint(screenPoint));
 		}
 	}

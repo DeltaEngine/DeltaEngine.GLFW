@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Extensions;
 using DeltaEngine.Graphics.Mocks;

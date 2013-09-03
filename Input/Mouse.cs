@@ -36,19 +36,18 @@ namespace DeltaEngine.Input
 
 		public override void Update(IEnumerable<Entity> entities)
 		{
-			if (!IsAvailable)
-				return;
-			foreach (Entity entity in entities)
-			{
-				TryInvokeTriggerOfType<MouseButtonTrigger>(entity, IsMouseButtonTriggered);
-				TryInvokeTriggerOfType<MouseDragTrigger>(entity, IsMouseDragTriggered);
-				TryInvokeTriggerOfType<MouseDragDropTrigger>(entity, IsMouseDragDropTriggered);
-				TryInvokeTriggerOfType<MouseHoldTrigger>(entity, IsMouseHoldTriggered);
-				TryInvokeTriggerOfType<MouseHoverTrigger>(entity, IsMouseHoverTriggered);
-				TryInvokeTriggerOfType<MouseMovementTrigger>(entity, IsMouseMovementTriggered);
-				TryInvokeTriggerOfType<MousePositionTrigger>(entity, IsMousePositionTriggered);
-				TryInvokeTriggerOfType<MouseTapTrigger>(entity, IsMouseTapTriggered);
-			}
+			if (IsAvailable)
+				foreach (Entity entity in entities)
+				{
+					TryInvokeTriggerOfType<MouseButtonTrigger>(entity, IsMouseButtonTriggered);
+					TryInvokeTriggerOfType<MouseDragTrigger>(entity, IsMouseDragTriggered);
+					TryInvokeTriggerOfType<MouseDragDropTrigger>(entity, IsMouseDragDropTriggered);
+					TryInvokeTriggerOfType<MouseHoldTrigger>(entity, IsMouseHoldTriggered);
+					TryInvokeTriggerOfType<MouseHoverTrigger>(entity, IsMouseHoverTriggered);
+					TryInvokeTriggerOfType<MouseMovementTrigger>(entity, IsMouseMovementTriggered);
+					TryInvokeTriggerOfType<MousePositionTrigger>(entity, IsMousePositionTriggered);
+					TryInvokeTriggerOfType<MouseTapTrigger>(entity, IsMouseTapTriggered);
+				}
 		}
 
 		private static void TryInvokeTriggerOfType<T>(Entity entity, Func<T, bool> triggeredCode)

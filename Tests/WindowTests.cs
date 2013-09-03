@@ -1,4 +1,6 @@
-﻿using DeltaEngine.Datatypes;
+﻿using System;
+using DeltaEngine.Core;
+using DeltaEngine.Datatypes;
 using DeltaEngine.Mocks;
 using NUnit.Framework;
 
@@ -76,9 +78,17 @@ namespace DeltaEngine.Tests
 		public void CheckMessageBoxAndClipboard()
 		{
 			Assert.AreEqual("OK", window.ShowMessageBox("Test Message", "Any Message", new string[0]));
-			var logger = new MockLogger();
-			window.CopyTextToClipboard("Test");
-			Assert.AreEqual("Copied to mock clipboard: Test", logger.LastMessage);
+			using (var logger = new MockLogger())
+			{
+				window.CopyTextToClipboard("Test");
+				Assert.AreEqual("Copied to mock clipboard: Test", logger.LastMessage);
+			}
+		}
+
+		[Test]
+		public void GetHande()
+		{
+			Assert.AreEqual(IntPtr.Zero, window.Handle);
 		}
 	}
 }

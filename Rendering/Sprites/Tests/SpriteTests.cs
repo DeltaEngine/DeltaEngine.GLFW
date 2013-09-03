@@ -29,6 +29,21 @@ namespace DeltaEngine.Rendering.Sprites.Tests
 		}
 
 		[Test, ApproveFirstFrameScreenshot]
+		public void RenderSpriteWithImageName()
+		{
+			new Sprite("DeltaEngineLogo", Rectangle.HalfCentered);
+		}
+
+		[Test, CloseAfterFirstFrame]
+		public void ResetNonAnimationSprite()
+		{
+			var sprite = new Sprite(logoMaterial, Rectangle.HalfCentered);
+			sprite.Elapsed = 4f;
+			sprite.Reset();
+			Assert.AreEqual(0f, sprite.Elapsed);
+		}
+
+		[Test, ApproveFirstFrameScreenshot]
 		public void RenderInactivatedAndReactivatedSprite()
 		{
 			var sprite = new Sprite(logoMaterial, Rectangle.HalfCentered);
@@ -203,7 +218,7 @@ namespace DeltaEngine.Rendering.Sprites.Tests
 		[Test]
 		public void RenderPanAndZoomIntoLogo()
 		{
-			ScreenSpace.Current = new Camera2DScreenSpace(Resolve<Window>());
+			new Camera2DScreenSpace(Resolve<Window>());
 			var logo = new Sprite(logoMaterial, Rectangle.FromCenter(Point.One, new Size(0.25f)));
 			logo.Start<PanAndZoom>();
 		}

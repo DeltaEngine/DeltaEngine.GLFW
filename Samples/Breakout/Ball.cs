@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using DeltaEngine;
 using DeltaEngine.Commands;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Extensions;

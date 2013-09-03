@@ -28,7 +28,7 @@ namespace DeltaEngine.Rendering.Graphs
 			PercentileLabels.Clear();
 		}
 
-		public List<FontText> PercentileLabels = new List<FontText>();
+		public readonly List<FontText> PercentileLabels = new List<FontText>();
 
 		private void CreateNewPercentileLabels(Graph graph)
 		{
@@ -40,24 +40,33 @@ namespace DeltaEngine.Rendering.Graphs
 
 		private void CreatePercentileLabel(Graph graph, int index)
 		{
-			float borderHeight = graph.DrawArea.Height * Graph.Border;
-			float interval = (graph.DrawArea.Height - 2 * borderHeight) / NumberOfPercentiles;
-			float bottom = graph.DrawArea.Bottom - borderHeight;
-			float y = bottom - index * interval;
-			float borderWidth = graph.DrawArea.Width * Graph.Border;
-			float x = graph.DrawArea.Right + 2 * borderWidth;
-			float value = graph.Viewport.Top + index * graph.Viewport.Height / NumberOfPercentiles;
-			if (ArePercentileLabelsInteger)
-				value = (int)value;
-			PercentileLabels.Add(new FontText(FontXml.Default,
-				PercentilePrefix + value + PercentileSuffix,
-				new Rectangle(x, y - interval / 2, 1.0f, interval))
+			PercentileLabels.Add(new FontText(FontXml.Default, GetPercentileLabelText(graph, index),
+				GetPercentileLabelDrawArea(graph, index))
 			{
 				RenderLayer = graph.RenderLayer + RenderLayerOffset,
 				Color = PercentileLabelColor,
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Center,
 			});
+		}
+
+		private string GetPercentileLabelText(Graph graph, int index)
+		{
+			float value = graph.Viewport.Top + index * graph.Viewport.Height / NumberOfPercentiles;
+			if (ArePercentileLabelsInteger)
+				value = (int)value;
+			return PercentilePrefix + value + PercentileSuffix;
+		}
+
+		private Rectangle GetPercentileLabelDrawArea(Entity2D graph, int index)
+		{
+			float borderWidth = graph.DrawArea.Width * Graph.Border;
+			float x = graph.DrawArea.Right + 2 * borderWidth;
+			float borderHeight = graph.DrawArea.Height * Graph.Border;
+			float interval = (graph.DrawArea.Height - 2 * borderHeight) / NumberOfPercentiles;
+			float bottom = graph.DrawArea.Bottom - borderHeight;
+			float y = bottom - index * interval;
+			return new Rectangle(x, y - interval / 2, 1.0f, interval);
 		}
 
 		public bool ArePercentileLabelsInteger;

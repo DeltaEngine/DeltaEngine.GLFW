@@ -1,4 +1,4 @@
-﻿using DeltaEngine;
+﻿using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Multimedia;
 using DeltaEngine.Platforms;
@@ -35,6 +35,7 @@ namespace Blocks.Tests
 		public void AffixingBlockAddsToScore()
 		{
 			var game = new Game(Resolve<Window>(), new JewelBlocksContent(), Resolve<SoundDevice>());
+			game.StartGame();
 			Assert.AreEqual(0, game.UserInterface.Score);
 			AdvanceTimeAndUpdateEntities(10.0f);
 			Assert.AreEqual(1, game.UserInterface.Score);
@@ -45,6 +46,7 @@ namespace Blocks.Tests
 		{
 			var content = new JewelBlocksContent();
 			var game = new Game(Resolve<Window>(), content, Resolve<SoundDevice>());
+			game.StartGame();
 			InitializeBlocks(game.Controller, content);
 			//mockResolver.input.SetKeyboardState(Key.CursorLeft, State.Pressing);
 			AdvanceTimeAndUpdateEntities(0.01f);
@@ -62,6 +64,7 @@ namespace Blocks.Tests
 		{
 			var content = new JewelBlocksContent();
 			var game = new Game(Resolve<Window>(), content, Resolve<SoundDevice>());
+			game.StartGame();
 			InitializeBlocks(game.Controller, content);
 			//mockResolver.input.SetKeyboardState(Key.CursorLeft, State.Pressing);
 			AdvanceTimeAndUpdateEntities(0.01f);
@@ -77,6 +80,7 @@ namespace Blocks.Tests
 		{
 			var content = new JewelBlocksContent();
 			var game = new Game(Resolve<Window>(), content, Resolve<SoundDevice>());
+			game.StartGame();
 			InitializeBlocks(game.Controller, content);
 			//mockResolver.input.SetKeyboardState(Key.CursorRight, State.Pressing);
 			AdvanceTimeAndUpdateEntities(0.01f);

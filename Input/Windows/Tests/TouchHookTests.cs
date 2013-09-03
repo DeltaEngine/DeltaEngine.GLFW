@@ -6,12 +6,23 @@ namespace DeltaEngine.Input.Windows.Tests
 {
 	public class TouchHookTests
 	{
-		public TouchHookTests()
+		[SetUp]
+		public void CreateHook()
 		{
 			resolver = new MockResolver();
+			var window = resolver.Window;
+			hook = new TouchHook(window);
 		}
 
-		private readonly MockResolver resolver;
+		private MockResolver resolver;
+		private TouchHook hook;
+
+		[TearDown]
+		public void DisposeHook()
+		{
+			hook.Dispose();
+			resolver.Dispose();
+		}
 
 		[Test]
 		public void GetTouchDataFromHandleWithInvalidHandle()
@@ -20,21 +31,11 @@ namespace DeltaEngine.Input.Windows.Tests
 			Assert.Null(nativeTouches);
 		}
 
-		/*[Test]
+		[Test]
 		public void HandleProcMessage()
 		{
-			var window = resolver.Window;
-			var hook = new TouchHook(window);
-			hook.HandleProcMessage((IntPtr)4, IntPtr.Zero, 0);
+			//hook.HandleProcMessage((IntPtr)4, IntPtr.Zero, 0);
 			Assert.IsEmpty(hook.nativeTouches);
-		}*/
-
-		[Test]
-		public void DisposeHook()
-		{
-			var window = resolver.Window;
-			var hook = new TouchHook(window);
-			hook.Dispose();
 		}
 	}
 }

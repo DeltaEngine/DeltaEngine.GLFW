@@ -1,4 +1,4 @@
-﻿using DeltaEngine;
+﻿using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Platforms;
 using NUnit.Framework;
@@ -22,41 +22,41 @@ namespace Snake.Tests
 		[Test]
 		public void StartGame()
 		{
-			new SnakeGame(Resolve<Window>());
+			new Game(Resolve<Window>());
 		}
 
 		[Test]
 		public void RespawnChunkIfCollidingWithSnake()
 		{
-			var snakeGame = new SnakeGame(Resolve<Window>());
-			snakeGame.Chunk.DrawArea = snakeGame.Snake.Get<Body>().BodyParts[0].DrawArea;
-			Assert.IsTrue(snakeGame.Chunk.IsCollidingWithSnake(snakeGame.Snake.Get<Body>().BodyParts));
-			snakeGame.RespawnChunk();
-			Assert.IsFalse(snakeGame.Chunk.IsCollidingWithSnake(snakeGame.Snake.Get<Body>().BodyParts));
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
+			game.Chunk.DrawArea = game.Snake.Get<Body>().BodyParts[0].DrawArea;
+			Assert.IsTrue(game.Chunk.IsCollidingWithSnake(game.Snake.Get<Body>().BodyParts));
+			game.RespawnChunk();
+			Assert.IsFalse(game.Chunk.IsCollidingWithSnake(game.Snake.Get<Body>().BodyParts));
 		}
 
 		[Test]
 		public void SnakeEatsChunk()
 		{
-			var game = new SnakeGame(Resolve<Window>());
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			var snakeHead = game.Snake.Get<Body>().BodyParts[0].DrawArea;
 			var direction = game.Snake.Get<Body>().Direction;
-			var snakeBodyParts = game.Snake.Get<Body>().BodyParts;
-			var oldTailTopLeftCorner = snakeBodyParts[snakeBodyParts.Count - 1].DrawArea.TopLeft;
+			var originalLength = game.Snake.Get<Body>().BodyParts.Count;
 			game.Chunk.DrawArea =
 				new Rectangle(new Point(snakeHead.Left + direction.X, snakeHead.Top + direction.Y),
 					new Size(blockSize));
 			game.MoveUp();
 			AdvanceTimeAndUpdateEntities(moveSpeed);
-			Assert.AreEqual(3, game.Snake.Get<Body>().BodyParts.Count);
-			var newTailTopLeftCorner = snakeBodyParts[snakeBodyParts.Count - 1].DrawArea.TopLeft;
-			Assert.AreEqual(oldTailTopLeftCorner, newTailTopLeftCorner);
+			Assert.AreEqual(originalLength + 1, game.Snake.Get<Body>().BodyParts.Count);
 		}
 
 		[Test]
 		public void DisplayGameOver()
 		{
-			var game = new SnakeGame(Resolve<Window>());
+			var game = new Game(Resolve<Window>());
+			game.StartGame();
 			game.Reset();
 		}
 	}

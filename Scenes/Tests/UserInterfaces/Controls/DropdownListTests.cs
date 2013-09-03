@@ -152,6 +152,16 @@ namespace DeltaEngine.Scenes.Tests.UserInterfaces.Controls
 		}
 
 		[Test, CloseAfterFirstFrame]
+		public void HideSelectBoxAndThenClickOnSelectBoxLine()
+		{
+			if (mouse == null)
+				return; //ncrunch: no coverage
+			dropdownList.selectBox.Visibility = Visibility.Hide;
+			dropdownList.selectBox.LineClicked(0);
+			Assert.AreEqual(Visibility.Hide, dropdownList.selectBox.Visibility);
+		}
+
+		[Test, CloseAfterFirstFrame]
 		public void ClickingHiddenSelectionBoxDoesNothing()
 		{
 			if (mouse == null)

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using DeltaEngine.Mocks;
 using DeltaEngine.Networking.Tcp;
 using Microsoft.Win32;
 using NUnit.Framework;
 
 namespace DeltaEngine.Content.Online.Tests
 {
-	[Category("Slow"), Ignore]
+	[Ignore]
 	public class DeveloperOnlineContentLoaderTests
 	{
 		//ncrunch: no coverage start
@@ -18,7 +19,7 @@ namespace DeltaEngine.Content.Online.Tests
 				Directory.Delete("Content", true);
 			bool ready = false;
 			var connection = OnlineServiceConnection.CreateForAppRunner(GetApiKeyFromRegistry(),
-				() => { throw new ConnectionTimedOut(); },
+				new MockSettings(), () => { throw new ConnectionTimedOut(); },
 				error => { throw new ServerErrorReceived(error); }, () => ready = true);
 			using (var loader = new DeveloperOnlineContentLoader(connection))
 			{
@@ -55,7 +56,7 @@ namespace DeltaEngine.Content.Online.Tests
 		public void TryUseContentBeforeReadyThrows()
 		{
 			var connection = OnlineServiceConnection.CreateForAppRunner(GetApiKeyFromRegistry(),
-				() => { }, s => { }, () => { });
+				new MockSettings(), () => { }, s => { }, () => { });
 			using (var loader = new DeveloperOnlineContentLoader(connection))
 			{
 				loader.resolver = new ContentDataResolver();

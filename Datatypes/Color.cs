@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Datatypes

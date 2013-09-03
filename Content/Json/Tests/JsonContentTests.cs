@@ -1,11 +1,12 @@
-﻿using NUnit.Framework;
+﻿using DeltaEngine.Platforms;
+using NUnit.Framework;
 
 namespace DeltaEngine.Content.Json.Tests
 {
-	public class JsonContentTests
+	public class JsonContentTests :TestWithMocksOrVisually
 	{
 		[Test, Category("Slow"), Ignore]
-		public void LoadXmlContentFromFile()
+		public void LoadJsonContentFromFile()
 		{
 			var json = ContentLoader.Load<JsonContent>("Level");
 			Assert.False(json.IsDisposed);

@@ -1,4 +1,4 @@
-using DeltaEngine;
+using DeltaEngine.Core;
 using DeltaEngine.Multimedia;
 using DeltaEngine.Platforms;
 

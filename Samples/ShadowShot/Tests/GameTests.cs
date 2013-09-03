@@ -1,4 +1,4 @@
-﻿using DeltaEngine;
+﻿using DeltaEngine.Core;
 using DeltaEngine.Input;
 using DeltaEngine.Input.Mocks;
 using DeltaEngine.Platforms;
@@ -13,6 +13,7 @@ namespace ShadowShot.Tests
 		public void SetUp()
 		{
 			game = new Game(Resolve<Window>(),Resolve<ScreenSpace>());
+			game.InitializeGame();
 		}
 
 		private Game game;

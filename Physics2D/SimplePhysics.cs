@@ -61,7 +61,6 @@ namespace DeltaEngine.Physics2D
 			{
 				physics.Velocity += physics.Gravity * Time.Delta;
 				entity.Center += physics.Velocity * Time.Delta;
-				entity.Rotation += physics.RotationSpeed * Time.Delta;
 				physics.Elapsed += Time.Delta;
 				if (physics.Duration > 0.0f && physics.Elapsed >= physics.Duration)
 					entity.IsActive = false;
@@ -85,6 +84,7 @@ namespace DeltaEngine.Physics2D
 					var velocity = physics.Velocity;
 					physics.Velocity = physics.Velocity.ReflectIfHittingBorder(entity.DrawArea,
 						ScreenSpace.Current.Viewport);
+					entity.DrawArea = new Rectangle(entity.TopLeft + physics.Velocity * Time.Delta, entity.Size);
 					if (physics.Velocity != velocity && entity.Get<Data>().Bounced != null)
 						entity.Get<Data>().Bounced();
 				}

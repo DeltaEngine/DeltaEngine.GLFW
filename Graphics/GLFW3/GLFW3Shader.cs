@@ -1,5 +1,6 @@
 ﻿using System;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 
 namespace DeltaEngine.Graphics.GLFW3
@@ -9,7 +10,7 @@ namespace DeltaEngine.Graphics.GLFW3
 	/// </summary>
 	public class GLFW3Shader : ShaderWithFormat
 	{
-		public GLFW3Shader(string contentName, GLFW3Device device)
+		protected GLFW3Shader(string contentName, GLFW3Device device)
 			: base(contentName)
 		{
 			this.device = device;
@@ -30,6 +31,7 @@ namespace DeltaEngine.Graphics.GLFW3
 			if (programHandle == GLFW3Device.InvalidHandle)
 				throw new UnableToCreateOpenGLShader();
 			LoadAttributeLocations();
+			LoadUniformLocations();
 		}
 
 		private int programHandle;
@@ -52,24 +54,33 @@ namespace DeltaEngine.Graphics.GLFW3
 		private const string AttributePrefix = "a";
 		private int[] attributeLocations;
 
+		private void LoadUniformLocations()
+		{
+			diffuseTextureUniformLocation = device.GetShaderUniformLocation(programHandle, "Texture");
+			modelViewProjectionMatrixLocation = device.GetShaderUniformLocation(programHandle,
+				"ModelViewProjection");
+		}
+
+		private int diffuseTextureUniformLocation;
+		private int modelViewProjectionMatrixLocation;
+
 		public override void SetModelViewProjectionMatrix(Matrix matrix)
 		{
-			device.SetUniformValue(0, matrix);
+			device.SetUniformValue(modelViewProjectionMatrixLocation, matrix);
 		}
 
 		public override void SetDiffuseTexture(Image texture)
 		{
 			device.BindTexture((texture as GLFW3Image).Handle);
-			device.SetUniformValue(1, 0);
+			device.SetUniformValue(diffuseTextureUniformLocation, 0);
 		}
 
 		public override void Bind()
 		{
 			device.UseShaderProgram(programHandle);
-			DefineVertexDeclaration();
 		}
 
-		private void DefineVertexDeclaration()
+		public override void BindVertexDeclaration()
 		{
 			for (int i = 0; i < Format.Elements.Length; i++)
 				if (Format.Elements[i].Size == Format.Elements[i].ComponentCount)

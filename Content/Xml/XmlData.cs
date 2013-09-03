@@ -102,7 +102,6 @@ namespace DeltaEngine.Content.Xml
 		{
 			foreach (XmlAttribute attribute in Attributes.Where(a => a.Name.Compare(attributeName)))
 				return attribute.Value.Convert<T>();
-
 			return defaultValue;
 		}
 
@@ -110,7 +109,6 @@ namespace DeltaEngine.Content.Xml
 		{
 			foreach (var child in Children.Where(child => child.Name.Compare(childName)))
 				return child.Value.Convert<T>();
-
 			return defaultValue;
 		}
 

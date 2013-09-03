@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DeltaEngine.Datatypes;
+using DeltaEngine.Entities;
 using DeltaEngine.Rendering.Shapes;
 
 namespace DeltaEngine.Rendering.Graphs
@@ -160,8 +161,9 @@ namespace DeltaEngine.Rendering.Graphs
 			line.StartPoint = ToQuadratic(points[i - 1], viewport, drawArea);
 			line.EndPoint = ToQuadratic(points[i], viewport, drawArea);
 			line.RenderLayer = graph.RenderLayer + RenderLayerOffset;
-			line.Visibility = graph.Visibility;
 			line.Clip(clippingBounds);
+			if (graph.Visibility == Visibility.Hide)
+				line.Visibility = Visibility.Hide;
 		}
 
 		private const int RenderLayerOffset = 3;

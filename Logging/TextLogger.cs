@@ -1,4 +1,5 @@
 ﻿using System;
+using DeltaEngine.Core;
 
 namespace DeltaEngine.Logging
 {

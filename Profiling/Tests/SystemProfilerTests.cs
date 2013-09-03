@@ -83,5 +83,37 @@ namespace DeltaEngine.Profiling.Tests
 			Assert.AreEqual(0, profiler.GetProfilingResults(ProfilingMode.Fps).Calls);
 			Assert.AreEqual(0, count);
 		}
+
+		[Test]
+		public void ResetProfilingResult()
+		{
+			var profiler = new SystemProfiler();
+			profiler.Log(ProfilingMode.Fps, systemInformation);
+			SystemProfilerSection results = profiler.GetProfilingResults(ProfilingMode.Fps);
+			results.Reset();
+			Assert.AreEqual(0, results.Calls);
+			Assert.AreEqual(0, results.TotalValue);
+		}
+
+		[Test]
+		public void CompareProfilerToSameResult()
+		{
+			var profiler = new SystemProfiler();
+			profiler.Log(ProfilingMode.Fps, systemInformation);
+			SystemProfilerSection results = profiler.GetProfilingResults(ProfilingMode.Fps);
+			Assert.AreEqual(0, results.CompareTo(results));
+		}
+
+		[Test]
+		public void CompareProfilerToOtherResult()
+		{
+			var profiler1 = new SystemProfiler();
+			profiler1.Log(ProfilingMode.Fps, systemInformation);
+			SystemProfilerSection results1 = profiler1.GetProfilingResults(ProfilingMode.Fps);
+			var profiler2 = new SystemProfiler();
+			profiler2.Log(ProfilingMode.Engine, systemInformation);
+			SystemProfilerSection results2 = profiler2.GetProfilingResults(ProfilingMode.Fps);
+			Assert.AreNotEqual(0, results1.CompareTo(results2));
+		}
 	}
 }

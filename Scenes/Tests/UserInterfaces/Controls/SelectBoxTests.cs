@@ -88,5 +88,11 @@ namespace DeltaEngine.Scenes.Tests.UserInterfaces.Controls
 				point => selectBox.DrawArea = Rectangle.FromCenter(point, selectBox.DrawArea.Size)).Add(
 					new MouseMovementTrigger());
 		}
+
+		[Test]
+		public void SetValuesAsNull()
+		{			
+			Assert.Throws<SelectBox.MustBeAtLeastOneValue>(() => selectBox.Values = null);
+		}
 	}
 }

@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using DeltaEngine;
 using DeltaEngine.Commands;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
-using DeltaEngine.Entities;
 using DeltaEngine.Input;
 using DeltaEngine.Rendering.Fonts;
 using DeltaEngine.Rendering.Sprites;
@@ -17,13 +15,20 @@ namespace $safeprojectname$
 		{
 			this.window = window;
 			this.screenSpace = screenSpace;
-			InitializeGame();
+			mainMenu = new Menu();
+			mainMenu.QuitGame += window.CloseAfterFrame;
+			mainMenu.InitGame += () => 
+			{
+				mainMenu.Hide();
+				InitializeGame();
+			};
 		}
 
 		private readonly Window window;
 		private readonly ScreenSpace screenSpace;
+		private Menu mainMenu;
 
-		private void InitializeGame()
+		public void InitializeGame()
 		{
 			if (restartCommand != null && restartCommand.IsActive)
 				restartCommand.IsActive = false;

@@ -31,7 +31,8 @@ namespace DeltaEngine.Tests.Extensions
 		[Test]
 		public void TextToEnum()
 		{
-			Assert.AreEqual(TestEnum.AnotherValue, EnumExtensions.Parse<TestEnum>("AnotherValue"));
+			Assert.AreEqual(TestEnum.AnotherValue, "AnotherValue".TryParse(TestEnum.AnotherValue));
+			Assert.AreEqual(TestEnum.SomeValue, "InvalidValue".TryParse(TestEnum.SomeValue));
 		}
 	}
 }

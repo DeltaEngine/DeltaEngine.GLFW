@@ -16,6 +16,7 @@
 			<Folder Name="" TargetFolderName="">
 				<ProjectItem ReplaceParameters="true" TargetFileName="GhostWars.ico">GhostWars.ico</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Effects.cs">Effects.cs</ProjectItem>
+				<ProjectItem ReplaceParameters="true" TargetFileName="GameLogic.cs">GameLogic.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="GameState.cs">GameState.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="MainMenu.cs">MainMenu.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Game.cs">Game.cs</ProjectItem>

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DeltaEngine;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Physics2D;
 using DeltaEngine.Rendering;
@@ -18,7 +18,7 @@ namespace Blocks
 		public Grid(BlocksContent content)
 		{
 			this.content = content;
-			zoomBrickData = new ParticleEffectData
+			zoomBrickData = new ParticleEmitterData
 			{
 				LifeTime = 0.2f,
 				Color = new RangeGraph<Color>(Color.White, Color.TransparentWhite),
@@ -31,7 +31,7 @@ namespace Blocks
 		}
 
 		private readonly BlocksContent content;
-		private ParticleEffectData zoomBrickData;
+		private ParticleEmitterData zoomBrickData;
 
 		public int AffixBlock(Block block)
 		{

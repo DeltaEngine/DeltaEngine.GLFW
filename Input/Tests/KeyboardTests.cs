@@ -88,6 +88,12 @@ namespace DeltaEngine.Input.Tests
 			VerifyKeyPressIsHandled("xx1", "xx", Key.D1);
 		}
 
+		[Test, CloseAfterFirstFrame]
+		public void VerifyNumpadNumberKeyPress()
+		{
+			VerifyKeyPressIsHandled("xx2", "xx", Key.NumPad2);
+		}
+
 		private void VerifyKeyPressIsHandled(string expectedResult, string startText, Key key)
 		{
 			VerifyKeyPressesAreHandled(expectedResult, startText, new List<Key> { key });

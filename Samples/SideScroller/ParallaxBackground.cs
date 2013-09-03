@@ -1,68 +1,62 @@
-﻿using DeltaEngine.Content;
+﻿using System;
+using DeltaEngine.Content;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
-using DeltaEngine.Rendering;
 using DeltaEngine.Rendering.Sprites;
-using DeltaEngine.ScreenSpaces;
 
 namespace SideScroller
 {
-	internal class ParallaxBackground : Entity2D
+	public class ParallaxBackground : Entity, Updateable
 	{
-		public ParallaxBackground(float baseScrollSpeed = 1)
-			: base(Rectangle.Zero)
+		public ParallaxBackground(int numberOfLayers, string[] layerImageNames, float[] scrollFactors)
 		{
-			CreateLayers();
-			//Start<ParallaxScroller>();
-			BaseScrollSpeed = baseScrollSpeed;
+			layers = new BackgroundLayer[numberOfLayers];
+			for (int i = 0; i < numberOfLayers; i++)
+			{
+				layers[i] = new BackgroundLayer(layerImageNames[i], scrollFactors[i]);
+			}
+			RenderLayer = 0;
 		}
 
-		private void CreateLayers()
+		public int RenderLayer
 		{
-			//layerAlpha = new BackgroundLayer(contentLoader, "BgLowest", screenSpace, 0.2f);
-			layerBeta = new BackgroundLayer("BgMiddle", 0.4f);
-			//layerGamma = new BackgroundLayer(contentLoader, "BgForemost", screenSpace,0.8f);
+			get { return layers[0].RenderLayer; }
+			set
+			{
+				for (int i = 0; i < layers.Length; i++)
+					layers[i].RenderLayer = value + i;
+			}
 		}
 
-		internal BackgroundLayer /*layerAlpha,*/ layerBeta /*, layerGamma*/;
-		public float BaseScrollSpeed { get; set; }
+		private readonly BackgroundLayer[] layers;
+		public float BaseSpeed { get; set; }
 
-		internal class BackgroundLayer
+		public void Update()
 		{
-			public BackgroundLayer(string layerMaterialName, float factorToBaseSpeed)
+			foreach (var backgroundLayer in layers)
+				backgroundLayer.ScrollByBaseSpeed(BaseSpeed);
+		}
+
+		private class BackgroundLayer : Sprite
+		{
+			public BackgroundLayer(string imageName, float speedFactor)
+				: base(CreateMaterial(imageName), Rectangle.One)
 			{
-				FactorToBaseSpeed = factorToBaseSpeed;
-				var layerMaterial = new Material(Shader.Position2DColorUv, layerMaterialName);
-				var alphaDrawArea = new Rectangle(ScreenSpace.Current.Viewport.TopLeft,
-					ScreenSpace.Current.Viewport.Size);
-				var betaDrawArea = new Rectangle(ScreenSpace.Current.Viewport.TopRight,
-					ScreenSpace.Current.Viewport.Size);
-				SpriteAlpha = new Sprite(layerMaterial, alphaDrawArea);
-				SpriteBeta = new Sprite(layerMaterial, betaDrawArea);
-				SpriteAlpha.RenderLayer = (int)DefRenderLayer.Background + 1;
-				SpriteBeta.RenderLayer = (int)DefRenderLayer.Background + 1;
+				this.speedFactor = speedFactor;
 			}
 
-			internal Sprite SpriteAlpha, SpriteBeta;
-			internal float FactorToBaseSpeed;
-
-			public void MoveLayer(float offset)
+			private static Material CreateMaterial(string imageName)
 			{
-				var pointAlpha = GetFuturePointForLayer(SpriteAlpha.TopLeft, offset);
-				var pointBeta = GetFuturePointForLayer(SpriteBeta.TopLeft, offset);
-
-				if (pointAlpha.X < ScreenSpace.Current.Viewport.Left)
-					pointAlpha.X = pointBeta.X + SpriteBeta.Size.Width;
-				else if (pointBeta.X < ScreenSpace.Current.Viewport.Left)
-					pointBeta.X = pointAlpha.X + SpriteAlpha.Size.Width;
-
-				SpriteAlpha.TopLeft = pointAlpha;
-				SpriteBeta.TopLeft = pointBeta;
+				return new Material(Shader.Position2DUv, imageName);
 			}
 
-			private Point GetFuturePointForLayer(Point currentPoint, float offset)
+			private readonly float speedFactor;
+
+			internal void ScrollByBaseSpeed(float baseSpeed)
 			{
-				return new Point(currentPoint.X - offset * FactorToBaseSpeed * Time.Delta, currentPoint.Y);
+				var uv = Get<SpriteCoordinates>().UV;
+				uv.Left = uv.Left + baseSpeed * speedFactor * Time.Delta;
+				Set(new SpriteCoordinates(uv));
 			}
 		}
 	}

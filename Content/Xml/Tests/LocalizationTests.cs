@@ -1,4 +1,5 @@
-﻿using DeltaEngine.Content.Mocks;
+﻿using System.Collections.Generic;
+using DeltaEngine.Content.Mocks;
 using NUnit.Framework;
 
 namespace DeltaEngine.Content.Xml.Tests
@@ -17,6 +18,8 @@ namespace DeltaEngine.Content.Xml.Tests
 				Assert.AreEqual(localization.GetText("Go"), "Los");
 				localization.TwoLetterLanguageName = "es";
 				Assert.AreEqual(localization.GetText("Go"), "¡vamos!");
+				Assert.Throws <KeyNotFoundException>(() => 
+					localization.GetText("ThatIsATestExampleToThrowOneException"));
 			}
 		} 
 	}

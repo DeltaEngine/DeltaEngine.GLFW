@@ -39,16 +39,17 @@
     <Compile Include="Commands\DragTrigger.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\PositionTrigger.cs" />
-    <Compile Include="Commands\ManualTrigger.cs" />
     <Compile Include="Commands\Trigger.cs" />
+    <Compile Include="Core\ConsoleCommandAttribute.cs" />
     <Compile Include="Content\ImageAnimation.cs" />
     <Compile Include="Content\ContentCreationData.cs" />
     <Compile Include="Content\ImageCreationData.cs" />
     <Compile Include="Content\Image.cs" />
     <Compile Include="Content\Material.cs" />
     <Compile Include="Content\SpriteSheetAnimationCreationData.cs" />
-    <Compile Include="Core\RenderSyze.cs" />
+    <Compile Include="Core\RenderSize.cs" />
     <Compile Include="Datatypes\RangeGraph.cs" />
+    <Compile Include="Extensions\LinearMapExtensions.cs" />
     <Compile Include="Multimedia\Music.cs" />
     <Compile Include="Content\Shader.cs" />
     <Compile Include="Multimedia\Sound.cs" />
@@ -104,10 +105,10 @@
     <Compile Include="Core\FixedRandom.cs" />
     <Compile Include="Extensions\MathExtensions.cs" />
     <Compile Include="Extensions\UniqueList.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="Orientation.cs" />
+    <Compile Include="Core\Logger.cs" />
+    <Compile Include="Core\Orientation.cs" />
     <Compile Include="Core\PseudoRandom.cs" />
-    <Compile Include="Randomizer.cs" />
+    <Compile Include="Core\Randomizer.cs" />
     <Compile Include="Extensions\StackTraceExtensions.cs" />
     <Compile Include="Core\StopwatchTime.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -118,9 +119,9 @@
     <Compile Include="ScreenSpaces\QuadraticScreenSpace.cs" />
     <Compile Include="ScreenSpaces\RelativeScreenSpace.cs" />
     <Compile Include="ScreenSpaces\ScreenSpace.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="Core\Settings.cs" />
     <Compile Include="Core\GlobalTime.cs" />
-    <Compile Include="Window.cs" />
+    <Compile Include="Core\Window.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

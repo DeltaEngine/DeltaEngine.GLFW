@@ -1,4 +1,5 @@
 ﻿using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Extensions;
@@ -97,7 +98,7 @@ namespace DeltaEngine.Rendering.Particles
 					CurrentUV.BottomLeft);
 		}
 
-		public bool UpdateIfStillActive(ParticleEffectData data)
+		public bool UpdateIfStillActive(ParticleEmitterData data)
 		{
 			ElapsedTime += Time.Delta;
 			if (ElapsedTime > data.LifeTime)

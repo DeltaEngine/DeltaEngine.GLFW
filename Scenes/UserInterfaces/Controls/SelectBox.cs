@@ -129,7 +129,7 @@ namespace DeltaEngine.Scenes.UserInterfaces.Controls
 		{
 			float x = Get<InteractiveState>().RelativePointerPosition.X;
 			if (scrollbar.Visibility == Visibility.Show && x >= 1.0f - ScrollbarPercentageWidth)
-				return -1;
+				return -1; //ncrunch: no coverage
 			float y = Get<InteractiveState>().RelativePointerPosition.Y;
 			return y < 0.0f || y > 1.0f ? -1 : (int)(y * DisplayCount);
 		}

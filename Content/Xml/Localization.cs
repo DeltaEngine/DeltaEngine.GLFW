@@ -7,7 +7,7 @@ namespace DeltaEngine.Content.Xml
 	/// </summary>
 	public class Localization : XmlContent
 	{
-		public Localization(string contentName)
+		protected Localization(string contentName)
 			: base(contentName) {}
 
 		public string GetText(string languageKey)

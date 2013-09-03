@@ -7,35 +7,35 @@ using DeltaEngine.Rendering.Particles;
 
 namespace FountainApp
 {
-	public class ParticleFountain : ParticleEmitter
+	public class ParticleFountain
 	{
 		public ParticleFountain(Point position)
-			: base(EmitterData, position)
 		{
+			emitter = new ParticleEmitter(EmitterData, position);
 			CreateCommands();
 		}
 
-		private static ParticleEffectData EmitterData
+		private ParticleEmitter emitter;
+
+		private static ParticleEmitterData EmitterData
 		{
 			get
 			{
-				return
-					emitterData =
-						new ParticleEffectData
-						{
-							StartVelocity = new RangeGraph<Point>(new Point(0.0f, -1.0f), new Point(0.5f, 0.1f)),
-							Force = new RangeGraph<Point>(new Point(0, 0.9f), new Point(0, 0.9f)),
-							LifeTime = 1.0f,
-							MaximumNumberOfParticles = 512,
-							Size = new RangeGraph<Size>(new Size(0.01f), new Size(0.015f)),
-							ParticleMaterial = new Material(Shader.Position2DColorUv, "Particle"),
-							SpawnInterval = 0.01f,
-							Color = new RangeGraph<Color>(Color.Red, Color.Orange),
-						};
+				return emitterData = new ParticleEmitterData
+				{
+					StartVelocity = new RangeGraph<Point>(new Point(0.0f, -1.0f), new Point(0.5f, 0.1f)),
+					Force = new RangeGraph<Point>(new Point(0, 0.9f), new Point(0, 0.9f)),
+					LifeTime = 1.0f,
+					MaximumNumberOfParticles = 512,
+					Size = new RangeGraph<Size>(new Size(0.01f), new Size(0.015f)),
+					ParticleMaterial = new Material(Shader.Position2DColorUv, "Particle"),
+					SpawnInterval = 0.01f,
+					Color = new RangeGraph<Color>(Color.Red, Color.Orange),
+				};
 			}
 		}
 
-		private static ParticleEffectData emitterData;
+		private static ParticleEmitterData emitterData;
 
 		private static void CreateCommands()
 		{

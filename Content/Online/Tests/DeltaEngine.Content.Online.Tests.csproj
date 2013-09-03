@@ -43,6 +43,10 @@
       <Project>{20FA8D33-A964-4000-AD82-67BD6900793B}</Project>
       <Name>DeltaEngine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Mocks\DeltaEngine.Mocks.csproj">
+      <Project>{A5F4EF37-7B5F-4AAE-BFF2-C2D04DB805F7}</Project>
+      <Name>DeltaEngine.Mocks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Networking\DeltaEngine.Networking.csproj">
       <Project>{5231706E-2955-43BF-9C06-291E12AF5C5C}</Project>
       <Name>DeltaEngine.Networking</Name>

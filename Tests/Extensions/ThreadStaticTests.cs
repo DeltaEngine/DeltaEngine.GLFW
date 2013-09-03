@@ -4,6 +4,7 @@ using System.Threading;
 using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 using NUnit.Framework;
+using Randomizer = DeltaEngine.Core.Randomizer;
 
 namespace DeltaEngine.Tests.Extensions
 {

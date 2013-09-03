@@ -54,6 +54,7 @@ namespace DeltaEngine.Content
 
 		internal void InternalLoad(Func<ContentData, Stream> getContentDataStream)
 		{
+			var name = GetType().FullName;
 			if (!GetType().FullName.Contains(MetaData.Type.ToString()))
 				throw new DoesNotMatchMetaDataType(this);
 			using (var stream = getContentDataStream(this))

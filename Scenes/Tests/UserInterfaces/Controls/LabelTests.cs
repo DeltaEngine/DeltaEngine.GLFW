@@ -8,6 +8,7 @@ using DeltaEngine.Rendering.Fonts;
 using DeltaEngine.Rendering.Shapes;
 using DeltaEngine.Scenes.UserInterfaces.Controls;
 using NUnit.Framework;
+using Randomizer = DeltaEngine.Core.Randomizer;
 
 namespace DeltaEngine.Scenes.Tests.UserInterfaces.Controls
 {

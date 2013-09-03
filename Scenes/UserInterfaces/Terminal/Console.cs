@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using DeltaEngine.Commands;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Extensions;
 using DeltaEngine.Input;
+using DeltaEngine.Platforms;
 using DeltaEngine.Rendering.Fonts;
 using DeltaEngine.Rendering.Shapes;
 using DeltaEngine.Scenes.UserInterfaces.Controls;
@@ -129,12 +129,12 @@ namespace DeltaEngine.Scenes.UserInterfaces.Terminal
 		private void UpdateAutoCompletions()
 		{
 			string trimmedCommand = Text.Trim();
-			List<string> autoCompletionList = commandManager.GetAutoCompletionList(trimmedCommand);
+			List<string> autoCompletionList = consoleCommands.GetAutoCompletionList(trimmedCommand);
 			autoCompletionCount = trimmedCommand == "" ? 0 : autoCompletionList.Count;
 			autoCompletions.Text = trimmedCommand == "" ? "" : string.Join("\n", autoCompletionList);
 		}
 
-		private readonly CommandManager commandManager = new CommandManager();
+		private readonly ConsoleCommands consoleCommands = ConsoleCommands.Current;
 
 		private void ExecuteCommandAndMoveToHistory()
 		{
@@ -142,7 +142,7 @@ namespace DeltaEngine.Scenes.UserInterfaces.Terminal
 			commands.Add(input);
 			commandsPosition = commands.Count;
 			AddToHistory("> " + input);
-			AddToHistory(commandManager.ExecuteCommand(input));
+			AddToHistory(consoleCommands.ExecuteCommand(input));
 			history.Text = string.Join("\n", historyLines);
 			command.Text = "> _";
 		}
@@ -181,7 +181,7 @@ namespace DeltaEngine.Scenes.UserInterfaces.Terminal
 
 		private void AutoCompleteText()
 		{
-			Text = commandManager.AutoCompleteString(Text.Trim());
+			Text = consoleCommands.AutoCompleteString(Text.Trim());
 		}
 
 		public bool IsEnabled
@@ -208,11 +208,6 @@ namespace DeltaEngine.Scenes.UserInterfaces.Terminal
 				if (value)
 					Get<InteractiveState>().WantsFocus = true;
 			}
-		}
-
-		public void AddCommand(MethodInfo method, object target)
-		{
-			commandManager.AddCommand(method, target);
 		}
 
 		public bool HasFocus

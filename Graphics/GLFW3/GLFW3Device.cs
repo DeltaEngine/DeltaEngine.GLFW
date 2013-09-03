@@ -244,6 +244,11 @@ namespace DeltaEngine.Graphics.GLFW3
 			return GL.GetAttribLocation(programHandle, attributeName);
 		}
 
+		public int GetShaderUniformLocation(int programHandle, string uniformName)
+		{
+			return GL.GetUniformLocation(programHandle, uniformName);
+		}
+
 		public void DefineVertexAttributeWithFloats(int attributeLocation, int numberOfFloatComponents, int vertexTotalSize, int attributeOffsetInVertex)
 		{
 			GL.EnableVertexAttribArray(attributeLocation);

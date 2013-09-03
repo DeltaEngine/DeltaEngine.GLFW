@@ -22,6 +22,7 @@
 				<ProjectItem ReplaceParameters="true" TargetFileName="GameState.cs">GameState.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="InteractionLogics.cs">InteractionLogics.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="HudInterface.cs">HudInterface.cs</ProjectItem>
+				<ProjectItem ReplaceParameters="true" TargetFileName="Menu.cs">Menu.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="PlayerShip.cs">PlayerShip.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Program.cs">Program.cs</ProjectItem>
 				<ProjectItem ReplaceParameters="true" TargetFileName="Projectile.cs">Projectile.cs</ProjectItem>

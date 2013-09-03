@@ -71,9 +71,9 @@ namespace DeltaEngine.Multimedia.VideoStreams
 				byte[] pixelData = video.GetStreamData(frameIndex, out bitmapHeader);
 				Bitmap conversionBmp;
 				fixed (byte* ptr = &pixelData[0])
-					conversionBmp = new Bitmap(Width, Height, Width * 3, PixelFormat.Format32bppArgb,
+					conversionBmp = new Bitmap(Width, Height, Width * 3, PixelFormat.Format32bppRgb,
 						(IntPtr)ptr);
-				byte[] result = new byte[Width * Height * 4];
+				var result = new byte[Width * Height * 4];
 				BitmapData bitmapData = conversionBmp.LockBits(new Rectangle(0, 0, Width, Height),
 					ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 				Marshal.Copy(bitmapData.Scan0, result, 0, result.Length);

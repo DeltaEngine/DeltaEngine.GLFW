@@ -1,6 +1,5 @@
 ﻿using System;
 using DeltaEngine.Commands;
-using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
 using DeltaEngine.Mocks;
 using DeltaEngine.Platforms.Mocks;
@@ -14,24 +13,26 @@ namespace DeltaEngine.Tests.Commands
 		public void InitializeResolver()
 		{
 			resolver = new MockResolver();
+			entities = new MockEntitiesRunner(typeof(MockUpdateBehavior));
 		}
 
 		private MockResolver resolver;
+		private MockEntitiesRunner entities;
 
 		[TearDown]
 		public void RunTestAndDisposeResolverWhenDone()
 		{
+			entities.Dispose();
 			resolver.Dispose();
 		}
 
 		[Test]
 		public void CreateCommandWithManualTrigger()
 		{
-			var entities = new MockEntitiesRunner(typeof(MockUpdateBehavior));
 			customTrigger = new MockTrigger();
 			new Command(() => pos += Time.Delta).Add(customTrigger);
 			InvokingTriggerWithoutRunningEntitiesDoesNotCauseAction();
-			InvokingTriggerOnceWithMultipleRunsOnlyCausesOneAction(entities);
+			InvokingTriggerOnceWithMultipleRunsOnlyCausesOneAction();
 		}
 
 		private MockTrigger customTrigger;
@@ -43,8 +44,7 @@ namespace DeltaEngine.Tests.Commands
 			Assert.AreEqual(0.0f, pos);
 		}
 
-		private void InvokingTriggerOnceWithMultipleRunsOnlyCausesOneAction(
-			MockEntitiesRunner entities)
+		private void InvokingTriggerOnceWithMultipleRunsOnlyCausesOneAction()
 		{
 			customTrigger.Invoke();
 			entities.RunEntities();
@@ -64,7 +64,6 @@ namespace DeltaEngine.Tests.Commands
 		[Test]
 		public void RegisteringSameCommandTwiceOverwritesIt()
 		{
-			new MockEntitiesRunner(typeof(MockUpdateBehavior));
 			var exitTrigger = new MockTrigger();
 			Command.Register("Exit", exitTrigger);
 			Command.Register("Exit", exitTrigger);
@@ -73,7 +72,6 @@ namespace DeltaEngine.Tests.Commands
 		[Test]
 		public void CommandNameMustBeRegisteredToCreateANewCommand()
 		{
-			new MockEntitiesRunner(typeof(MockUpdateBehavior));
 			Assert.Throws<Command.CommandNameWasNotRegistered>(
 				() => new Command("UnregisteredCommand", (Action)null));
 		}
@@ -82,17 +80,16 @@ namespace DeltaEngine.Tests.Commands
 		public void CommandWithPositionAction()
 		{
 			const string CommandName = "PositionActionCommand";
-			var entities = new MockEntitiesRunner(typeof(MockUpdateBehavior));
 			var trigger = new MockTrigger();
 			Command.Register(CommandName, trigger);
 			actionPerformed = false;
-			new Command(CommandName, (Point point) => actionPerformed = true);
-			AssertActionPerformed(trigger, entities);
+			new Command(CommandName, point => actionPerformed = true);
+			AssertActionPerformed(trigger);
 		}
 
 		private bool actionPerformed;
 
-		private void AssertActionPerformed(MockTrigger trigger, MockEntitiesRunner entities)
+		private void AssertActionPerformed(MockTrigger trigger)
 		{
 			Assert.IsFalse(actionPerformed);
 			trigger.Invoke();
@@ -104,19 +101,17 @@ namespace DeltaEngine.Tests.Commands
 		public void CommandWithDrawAreaAction()
 		{
 			const string CommandName = "DrawAreaActionCommand";
-			var entities = new MockEntitiesRunner(typeof(MockUpdateBehavior));
 			var trigger = new MockTrigger();
 			Command.Register(CommandName, trigger);
 			actionPerformed = false;
 			new Command(CommandName, (start, end, dragDone) => actionPerformed = true);
-			AssertActionPerformed(trigger, entities);
+			AssertActionPerformed(trigger);
 		}
 
 		[Test]
 		public void RegisterCommandWithSeveralTriggers()
 		{
 			const string CommandName = "CommandWithSeveralTriggers";
-			new MockEntitiesRunner(typeof(MockUpdateBehavior));
 			var trigger1 = new MockTrigger();
 			var trigger2 = new MockTrigger();
 			Command.Register(CommandName, trigger1, trigger2);

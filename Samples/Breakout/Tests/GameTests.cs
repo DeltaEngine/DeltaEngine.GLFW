@@ -1,5 +1,5 @@
 ﻿using System;
-using DeltaEngine;
+using DeltaEngine.Core;
 using DeltaEngine.Entities;
 using DeltaEngine.Platforms;
 using DeltaEngine.ScreenSpaces;

@@ -58,7 +58,7 @@
     <Compile Include="BillBoardMode.cs" />
     <Compile Include="Particle.cs" />
     <Compile Include="ParticleEmitter.cs" />
-    <Compile Include="ParticleEffectData.cs" />
+    <Compile Include="ParticleEmitterData.cs" />
     <Compile Include="ParticleRenderer.cs" />
     <Compile Include="ValueRange.cs" />
   </ItemGroup>

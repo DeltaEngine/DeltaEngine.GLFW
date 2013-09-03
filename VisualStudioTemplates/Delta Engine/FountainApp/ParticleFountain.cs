@@ -7,18 +7,21 @@ using DeltaEngine.Rendering.Particles;
 
 namespace $safeprojectname$
 {
-	public class ParticleFountain : ParticleEmitter
+	public class ParticleFountain
 	{
-		public ParticleFountain(Point position) : base(EmitterData, position)
+		public ParticleFountain(Point position)
 		{
+			emitter = new ParticleEmitter(EmitterData, position);
 			CreateCommands();
 		}
 
-		private static ParticleEffectData EmitterData
+		private ParticleEmitter emitter;
+
+		private static ParticleEmitterData EmitterData
 		{
 			get
 			{
-				return emitterData = new ParticleEffectData {
+				return emitterData = new ParticleEmitterData {
 					StartVelocity = new RangeGraph<Point>(new Point(0.0f, -1.0f), new Point(0.5f, 0.1f)),
 					Force = new RangeGraph<Point>(new Point(0, 0.9f), new Point(0, 0.9f)),
 					LifeTime = 1.0f,
@@ -31,7 +34,7 @@ namespace $safeprojectname$
 			}
 		}
 
-		private static ParticleEffectData emitterData;
+		private static ParticleEmitterData emitterData;
 
 		private static void CreateCommands()
 		{

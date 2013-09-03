@@ -1,10 +1,12 @@
-﻿namespace DeltaEngine.Core
+﻿using System;
+
+namespace DeltaEngine.Core
 {
 	/// <summary>
 	/// Provides total run time and delta time for the current frame in seconds. Only used for
 	/// profiling, debugging and fps display. All game logic uses Time.Delta, Time.CheckEvery, etc.
 	/// </summary>
-	public abstract class GlobalTime
+	public abstract class GlobalTime : IDisposable
 	{
 		/// <summary>
 		/// StopwatchTime by default, easy to change (tests use MockTime, resolvers restart time).
@@ -12,7 +14,7 @@
 		public static GlobalTime Current
 		{
 			get { return currentGlobalTime ?? (currentGlobalTime = new StopwatchTime()); }
-			set { currentGlobalTime = value; }
+			private set { currentGlobalTime = value; }
 		}
 		private static GlobalTime currentGlobalTime;
 
@@ -20,6 +22,11 @@
 		{
 			Current = this;
 			SetFpsTo60InitiallyAndSetUsefulInitialValues();
+		}
+
+		public void Dispose()
+		{
+			Current = null;
 		}
 
 		private void SetFpsTo60InitiallyAndSetUsefulInitialValues()
@@ -62,6 +69,7 @@
 		/// <summary>
 		/// Returns an accurate seconds float value for today, would get inaccurate with more days.
 		/// </summary>
+		[ConsoleCommand("GetSecondsSinceStartToday")]
 		public float GetSecondsSinceStartToday()
 		{
 			long ticksInADay = TicksPerSecond * 60 * 60 * 24;

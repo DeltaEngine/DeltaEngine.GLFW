@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Entities;
 using DeltaEngine.Graphics;
 using DeltaEngine.Graphics.Vertices;
@@ -98,13 +99,14 @@ namespace DeltaEngine.Rendering.Particles
 					hasVerticesWithImage = false;
 			if (hasVerticesWithImage)
 				verticesPerTexture.Add(new VerticesToRender(particle.Image,
-					emitter.Get<ParticleEffectData>().ParticleMaterial));
+					emitter.Get<ParticleEmitterData>().ParticleMaterial));
 		}
 
 		private void RenderBatch(VerticesToRender vertices)
 		{
-			drawing.Add(vertices.material.Shader, vertices.Texture, vertices.Data, vertices.Indices,
-				vertices.CurrentIndex, vertices.CurrentIndex * 6 / 4);
+			var newMaterial = new Material(vertices.material.Shader, vertices.Texture);
+			drawing.Add(newMaterial, vertices.Data, vertices.Indices, vertices.CurrentIndex,
+				vertices.CurrentIndex * 6 / 4);
 			vertices.CurrentIndex = 0;
 		}
 	}

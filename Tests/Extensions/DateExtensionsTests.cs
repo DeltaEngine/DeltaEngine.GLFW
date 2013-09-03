@@ -34,29 +34,10 @@ namespace DeltaEngine.Tests.Extensions
 		}
 
 		[Test]
-		public void ParsePureIsoAndGermanAndEnglishDate()
+		public void ParsePureIsoDate()
 		{
-			const int Day = 21;
-			const int Month = 8;
-			const int Year = 2013;
-			var expectedDate = new DateTime(Year, Month, Day);
-			Assert.AreEqual(expectedDate, DateExtensions.Parse(Year + "-" + Month + "-" + Day));
-			Assert.AreEqual(expectedDate, DateExtensions.Parse(Day + "." + Month + "." + Year));
-			Assert.AreEqual(expectedDate, DateExtensions.Parse(Month + "/" + Day + "/" + Year));
-		}
-
-		[Test]
-		public void GetDateTimeFromString()
-		{
-			var isoDateTime = DateExtensions.Parse("2013-08-22 22:37:46Z");
-			var germanDateTime = DateExtensions.Parse("22.8.2013 22:37:46");
-			var englishDateTime = DateExtensions.Parse("08/22/2013 10:37:46 PM");
-			Assert.AreEqual(isoDateTime, germanDateTime);
-			Assert.AreEqual(isoDateTime, englishDateTime);
-			var currentTime = DateTime.Now;
-			Assert.That(currentTime,
-				Is.EqualTo(DateExtensions.Parse(currentTime.ToString())).Within
-					(999).Milliseconds);
+			var expectedDate = new DateTime(2013, 8, 21);
+			Assert.AreEqual(expectedDate, DateExtensions.Parse(2013 + "-" + 8 + "-" + 21));
 		}
 
 		[Test]
@@ -65,6 +46,14 @@ namespace DeltaEngine.Tests.Extensions
 			Assert.IsTrue(DateExtensions.IsDateNewer(DateTime.Now, DateTime.Today));
 			Assert.IsTrue(DateExtensions.IsDateNewer(DateTime.Today, DateTime.MinValue));
 			Assert.IsFalse(DateExtensions.IsDateNewer(DateTime.MinValue, DateTime.MaxValue));
+		}
+
+		[Test]
+		public void GetDateTimeFromString()
+		{
+			var isoDateTime = DateExtensions.Parse("2013-08-22 22:37:46");
+			var englishDateTime = DateExtensions.Parse("08/22/2013 10:37:46 PM");
+			Assert.AreEqual(isoDateTime, englishDateTime);
 		}
 	}
 }

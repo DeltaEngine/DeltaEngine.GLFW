@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
+using DeltaEngine.Input;
+using DeltaEngine.Input.Mocks;
 using DeltaEngine.Platforms;
+using DeltaEngine.Platforms.Mocks;
 using DeltaEngine.Rendering.Fonts;
 using DeltaEngine.Rendering.Shapes;
 using DeltaEngine.Scenes.UserInterfaces.Controls;
@@ -66,5 +69,56 @@ namespace DeltaEngine.Scenes.Tests.UserInterfaces.Controls
 			}
 		}
 		//ncrunch: no coverage end
+
+		[Test]
+		public void TestWithMouseDrag()
+		{
+			var tilemap = new ColoredLogoTilemap(World, Map);
+			tilemap.State.DragStart = new Point(0.5f, 0.5f);
+			tilemap.State.DragEnd = new Point(0.7f, 0.9f);
+			tilemap.Update();
+			Assert.AreEqual(tilemap.State.DragDelta, new Point(0.2f, 0.4f));
+		}
+
+		[Test]
+		public void TestWithMockKeyboard()
+		{
+			new ColoredLogoTilemap(World, Map);
+			if (resolver.GetType() != typeof(MockResolver))
+				return;
+			var keyboard = Resolve<MockKeyboard>();
+			keyboard.SetKeyboardState(Key.A, State.Pressed);
+			AdvanceTimeAndUpdateEntities();
+			keyboard.SetKeyboardState(Key.D, State.Pressed);
+			AdvanceTimeAndUpdateEntities();
+			keyboard.SetKeyboardState(Key.W, State.Pressed);
+			AdvanceTimeAndUpdateEntities();
+			keyboard.SetKeyboardState(Key.S, State.Pressed);
+			AdvanceTimeAndUpdateEntities();
+		}
+
+		[Test]
+		public void MoveToLeft()
+		{
+			new ColoredLogoTilemap(World, Map);
+			if (resolver.GetType() != typeof(MockResolver))
+				return;
+			var keyboard = Resolve<MockKeyboard>();
+			keyboard.SetKeyboardState(Key.D, State.Pressed);
+			AdvanceTimeAndUpdateEntities(1);
+		}
+
+		[Test]
+		public void TestBorderIntersection()
+		{
+			new ColoredLogoTilemap(new Size(1), new Size(1));
+			if (resolver.GetType() != typeof(MockResolver))
+				return;
+			var keyboard = Resolve<MockKeyboard>();
+			keyboard.SetKeyboardState(Key.D, State.Pressed);
+			AdvanceTimeAndUpdateEntities(1);
+			keyboard.SetKeyboardState(Key.S, State.Pressed);
+			AdvanceTimeAndUpdateEntities(1);
+		}
 	}
 }

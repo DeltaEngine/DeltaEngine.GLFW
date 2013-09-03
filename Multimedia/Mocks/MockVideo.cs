@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using DeltaEngine.Content;
 
 namespace DeltaEngine.Multimedia.Mocks
 {
@@ -8,7 +7,7 @@ namespace DeltaEngine.Multimedia.Mocks
 	/// </summary>
 	public class MockVideo : Video
 	{
-		public MockVideo(string contentName, SoundDevice soundDevice)
+		protected MockVideo(string contentName, SoundDevice soundDevice)
 			: base(contentName, soundDevice) {}
 
 		protected override void LoadData(Stream fileData) {}

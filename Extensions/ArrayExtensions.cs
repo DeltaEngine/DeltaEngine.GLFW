@@ -20,9 +20,9 @@ namespace DeltaEngine.Extensions
 				array1 != null && array2 != null && array1.SequenceEqual(array2);
 		}
 
-		public static string ToText<T>(this IEnumerable<T> texts)
+		public static string ToText<T>(this IEnumerable<T> texts, string separator = ", ")
 		{
-			return string.Join(", ", texts);
+			return string.Join(separator, texts);
 		}
 
 		public static Value GetWithDefault<Key, Value>(Dictionary<Key, object> dict, Key key)

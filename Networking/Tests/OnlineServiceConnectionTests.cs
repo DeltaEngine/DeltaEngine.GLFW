@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using DeltaEngine.Mocks;
 using DeltaEngine.Networking.Tcp;
 using Microsoft.Win32;
 using NUnit.Framework;
@@ -16,7 +17,7 @@ namespace DeltaEngine.Networking.Tests
 			string errorReceived = "";
 			bool readyReceived = false;
 			var connection = OnlineServiceConnection.CreateForAppRunner(GetApiKeyFromRegistry(),
-				() => { }, text => errorReceived = text, () => readyReceived = true);
+				new MockSettings(), () => { }, text => errorReceived = text, () => readyReceived = true);
 			Thread.Sleep(1000);
 			Assert.IsTrue(connection.IsLoggedIn);
 			Assert.AreEqual("", errorReceived);
@@ -52,7 +53,7 @@ namespace DeltaEngine.Networking.Tests
 		public void ReceiveResultFromServer()
 		{
 			var connection = OnlineServiceConnection.CreateForAppRunner(GetApiKeyFromRegistry(),
-				() => { }, text => { }, () => { });
+				new MockSettings(), () => { }, text => { }, () => { });
 			object lastMessageReceived = null;
 			connection.DataReceived += message => lastMessageReceived = message;
 			Assert.IsNull(lastMessageReceived);

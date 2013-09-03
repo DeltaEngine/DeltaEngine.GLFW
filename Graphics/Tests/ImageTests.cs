@@ -48,7 +48,7 @@ namespace DeltaEngine.Graphics.Tests
 				public void Draw(IEnumerable<DrawableEntity> entities)
 				{
 					foreach (var sprite in entities.OfType<Sprite>())
-						drawing.Add(sprite.material, BlendMode.Normal, QuadVertices, QuadIndices);
+						drawing.Add(sprite.material, QuadVertices, QuadIndices);
 				}
 
 				private static readonly VertexPosition2DColorUV[] QuadVertices = new[]
@@ -103,6 +103,18 @@ namespace DeltaEngine.Graphics.Tests
 		}
 
 		[Test, ApproveFirstFrameScreenshot]
+		public void FillCustomImageWitDiffrentSizeThanImageCausesException()
+		{
+			var customImage = ContentLoader.Create<Image>(new ImageCreationData(new Size(8, 9)));
+			var colors = new Color[8 * 8];			
+			Assert.Throws<Image.InvalidNumberOfColors>(() => customImage.Fill(colors));
+			var byteArray = new byte[8 * 8];
+			Assert.Throws<Image.InvalidNumberOfBytes>(() => customImage.Fill(byteArray));
+			var goodByteArray = new byte[8 * 9 * 4];
+			customImage.Fill(goodByteArray);
+		}
+
+		[Test, ApproveFirstFrameScreenshot]
 		public void BlendModes()
 		{
 			new DrawableEntity().OnDraw<RenderBlendModes>();
@@ -113,11 +125,15 @@ namespace DeltaEngine.Graphics.Tests
 			public RenderBlendModes(Drawing drawing)
 			{
 				this.drawing = drawing;
-				logo = new Material(Shader.Position2DUv, "DeltaEngineLogoAlpha");
+				logoOpaque = new Material(Shader.Position2DUv, "DeltaEngineLogoOpaque");
+				logoAlpha = new Material(Shader.Position2DUv, "DeltaEngineLogoAlpha");
+				additive = new Material(Shader.Position2DUv, "CoronaAdditive");
 			}
 
 			private readonly Drawing drawing;
-			private readonly Material logo;
+			private readonly Material logoOpaque;
+			private readonly Material logoAlpha;
+			private readonly Material additive;
 
 			public void Draw(IEnumerable<DrawableEntity> entities)
 			{
@@ -128,8 +144,10 @@ namespace DeltaEngine.Graphics.Tests
 
 			private void DrawAlphaImageTwice(int x, int y, BlendMode blendMode)
 			{
-				drawing.Add(logo, blendMode, GetVertices(x, y));
-				drawing.Add(logo, blendMode, GetVertices(x + Size / 2, y + Size / 2));
+				drawing.Add(logoOpaque, GetVertices(x, y));
+				Material top = blendMode == BlendMode.Normal
+					? logoAlpha : (blendMode == BlendMode.Additive ? additive : logoOpaque);
+				drawing.Add(top, GetVertices(x + Size / 2, y + Size / 2));
 			}
 
 			private const int Size = 120;

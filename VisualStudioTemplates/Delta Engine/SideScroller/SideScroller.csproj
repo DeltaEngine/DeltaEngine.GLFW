@@ -58,6 +58,9 @@
     <Reference Include="DeltaEngine.Rendering.Sprites">
 	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Rendering.Sprites.dll</HintPath>
     </Reference>
+    <Reference Include="DeltaEngine.Scenes">
+	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Scenes.dll</HintPath>
+    </Reference>
     <Reference Include="DeltaEngine.WindowsGLFW3">
 	  <HintPath>$(DeltaEnginePath)\DeltaEngine.WindowsGLFW3.dll</HintPath>
     </Reference>
@@ -73,11 +76,12 @@
     <Compile Include="EnemyPlane.cs" />
     <Compile Include="GameControls.cs" />
     <Compile Include="InteractionLogics.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="ParallaxBackground.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="PlayerPlane.cs" />
     <Compile Include="DefRenderLayer.cs" />
-    <Compile Include="SideScrollerGame.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Velocity2D.cs" />
   </ItemGroup>

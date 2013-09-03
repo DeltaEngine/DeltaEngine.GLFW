@@ -61,7 +61,7 @@ namespace DeltaEngine.Content.Json
 			{
 				if (data is JArray)
 					return FindJsonArrayElement(arrayIndex);
-				return new JsonNode(data[arrayIndex]);
+				return new JsonNode(data[arrayIndex]); //ncrunch: no coverage
 			}
 		}
 

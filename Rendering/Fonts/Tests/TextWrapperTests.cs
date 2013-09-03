@@ -48,6 +48,14 @@ namespace DeltaEngine.Rendering.Fonts.Tests
 		}
 
 		[Test]
+		public void GetLinesWithNoSpaceLetters()
+		{
+			var lines = textWrapper.SplitTextIntoLines("aaaa aaaaa aaa!",
+				new Size(70, fontDescription.PixelLineHeight * 3), true);
+			Assert.AreEqual(2, lines.Count);
+		}
+
+		[Test]
 		public void ClipTextHeight()
 		{
 			var lines = textWrapper.SplitTextIntoLines(ThreeLineText,

@@ -54,6 +54,8 @@ namespace DeltaEngine.Extensions
 				return (T)(System.Convert.ToChar(value) as object);
 			if (type.IsEnum)
 				return (T)Enum.Parse(type, value);
+			if (type == typeof(DateTime))
+				return (T)(DateTime.Parse(value) as object);
 			if (RegisteredConvertCallbacks.ContainsKey(type))
 				return (T)RegisteredConvertCallbacks[type](value);
 			throw new NotSupportedException("Type " + type + " was not registered for conversion!");

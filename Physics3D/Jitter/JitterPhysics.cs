@@ -1,4 +1,5 @@
-﻿using DeltaEngine.Datatypes;
+﻿using DeltaEngine.Core;
+using DeltaEngine.Datatypes;
 using Jitter;
 using Jitter.Collision;
 using Jitter.Collision.Shapes;

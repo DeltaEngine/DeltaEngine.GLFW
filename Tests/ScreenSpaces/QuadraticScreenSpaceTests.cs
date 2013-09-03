@@ -1,4 +1,5 @@
 ﻿using System;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Extensions;
 using DeltaEngine.Mocks;
@@ -151,16 +152,6 @@ namespace DeltaEngine.Tests.ScreenSpaces
 			Assert.AreEqual(1f, ScreenSpace.Current.AspectRatio);
 			window.ViewportPixelSize = new Size(1920, 1080);
 			Assert.AreEqual(0.5625f, ScreenSpace.Current.AspectRatio);
-		}
-	}
-
-	class ScreenSpaceWithoutWindow
-	{
-		[Test]
-		public void TestScreenSpaceHasNotBeenInitialized()
-		{
-			Assert.Throws<ScreenSpace.ScreenSpaceHasNotBeenInitializedCreateAWindowFirst>(
-				() => { var screenSpace = ScreenSpace.Current; });
 		}
 	}
 }

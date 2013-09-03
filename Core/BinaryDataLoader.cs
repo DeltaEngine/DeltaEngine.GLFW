@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using DeltaEngine.Content;
-using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Core
 {
@@ -47,10 +46,6 @@ namespace DeltaEngine.Core
 		{
 			topLevelTypeToCreate = typeToCreate;
 			nestingDepth = 0;
-			if (ExceptionExtensions.IsDebugMode && dataVersion != null &&
-				typeToCreate.Assembly.GetName().Version != dataVersion)
-				Logger.Warning("Version " + dataVersion + " of data to load is different from the type " +
-					"to be created: " + typeToCreate + " (" + typeToCreate.Assembly.GetName().Version + ")");
 			return CreateAndLoad(typeToCreate, reader);
 		}
 
@@ -91,6 +86,8 @@ namespace DeltaEngine.Core
 			if (typeof(ContentData).IsAssignableFrom(type))
 			{
 				var contentName = reader.ReadString();
+				if (contentName.Length <= 1)
+					throw new UnableToLoadContentDataWithoutName();
 				data = ContentLoader.Load(type, contentName);
 				if (!contentName.StartsWith("<Generated"))
 					return;
@@ -116,6 +113,8 @@ namespace DeltaEngine.Core
 			else if (type.IsClass || type.IsValueType)
 				LoadClassData(data, type, reader);
 		}
+
+		private class UnableToLoadContentDataWithoutName : Exception {}
 
 		private static bool LoadPrimitiveData(ref object data, Type type, BinaryReader reader)
 		{
@@ -221,6 +220,7 @@ namespace DeltaEngine.Core
 				list.Clear();
 			for (int i = 0; i < count; i++)
 				if (arrayType.IsArray)
+					// If objects cannot be cast to the type here the BinaryDataExtensions.TypeMap is wrong!
 					list[i] = CreateAndLoad(elementType, reader);
 				else
 					list.Add(CreateAndLoad(elementType, reader));

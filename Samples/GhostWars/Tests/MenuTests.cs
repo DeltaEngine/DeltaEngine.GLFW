@@ -1,5 +1,5 @@
-﻿using DeltaEngine;
-using DeltaEngine.Content.Disk;
+﻿using DeltaEngine.Content.Disk;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Input;
 using DeltaEngine.Platforms;

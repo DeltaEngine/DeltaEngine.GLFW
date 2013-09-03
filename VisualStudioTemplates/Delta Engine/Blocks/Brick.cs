@@ -1,5 +1,5 @@
-using DeltaEngine;
 using DeltaEngine.Content;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Rendering.Sprites;
 

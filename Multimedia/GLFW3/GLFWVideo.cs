@@ -42,8 +42,8 @@ namespace DeltaEngine.Multimedia.GLFW
 			}
 		}
 
-		public GLFWVideo(string filename, GLFWSoundDevice soundDevice)
-			: base(filename,soundDevice)
+		protected GLFWVideo(string contentName, GLFWSoundDevice soundDevice)
+			: base(contentName,soundDevice)
 		{
 			channelHandle = openAL.CreateChannel();
 			buffers = openAL.CreateBuffers(NumberOfBuffers);

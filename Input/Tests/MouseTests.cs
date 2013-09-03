@@ -1,5 +1,4 @@
 ﻿using DeltaEngine.Commands;
-using DeltaEngine.Datatypes;
 using DeltaEngine.Input.Mocks;
 using DeltaEngine.Platforms;
 using NUnit.Framework;
@@ -39,7 +38,7 @@ namespace DeltaEngine.Input.Tests
 		[Test, CloseAfterFirstFrame]
 		public void TestLeftMouseButtonClickPassingPositionAction()
 		{
-			new Command((Point point) => isClicked = true).Add(new MouseButtonTrigger(MouseButton.Left,
+			new Command(point => isClicked = true).Add(new MouseButtonTrigger(MouseButton.Left,
 				State.Pressed));
 			TestCommand();
 		}
@@ -53,6 +52,24 @@ namespace DeltaEngine.Input.Tests
 			Assert.AreEqual(State.Released, mouse.GetButtonState(MouseButton.Right));
 			Assert.AreEqual(State.Released, mouse.GetButtonState(MouseButton.X1));
 			Assert.AreEqual(State.Released, mouse.GetButtonState(MouseButton.X2));
+		}
+
+		[Test, CloseAfterFirstFrame]
+		public void SetButtonState()
+		{
+			var mockMouse = Resolve<Mouse>() as MockMouse;
+			if (mockMouse == null)
+				return; //ncrunch: no coverage
+			mockMouse.SetButtonState(MouseButton.Left, State.Pressed);
+			Assert.AreEqual(State.Pressed, mockMouse.GetButtonState(MouseButton.Left));
+			mockMouse.SetButtonState(MouseButton.Middle, State.Pressed);
+			Assert.AreEqual(State.Pressed, mockMouse.GetButtonState(MouseButton.Middle));
+			mockMouse.SetButtonState(MouseButton.Right, State.Pressed);
+			Assert.AreEqual(State.Pressed, mockMouse.GetButtonState(MouseButton.Right));
+			mockMouse.SetButtonState(MouseButton.X1, State.Pressed);
+			Assert.AreEqual(State.Pressed, mockMouse.GetButtonState(MouseButton.X1));
+			mockMouse.SetButtonState(MouseButton.X2, State.Pressed);
+			Assert.AreEqual(State.Pressed, mockMouse.GetButtonState(MouseButton.X2));
 		}
 	}
 }

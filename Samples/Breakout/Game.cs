@@ -1,5 +1,5 @@
-﻿using DeltaEngine;
-using DeltaEngine.Commands;
+﻿using DeltaEngine.Commands;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Input;
 using DeltaEngine.Multimedia;
@@ -18,12 +18,19 @@ namespace Breakout
 			new RelativeScreenSpace(window);
 			this.window = window;
 			device = soundDevice;
-			InitGame();
+
+			menu = new MainMenu();
+			menu.InitGame += InitGame;
+			menu.QuitGame += window.CloseAfterFrame;
 			window.ViewportPixelSize = new Size(900, 900);
 		}
 
+		private readonly MainMenu menu;
+
 		private void InitGame()
 		{
+			if(menu!= null)
+				menu.Hide();
 			if (restartCommand != null && restartCommand.IsActive)
 				restartCommand.IsActive = false;
 			if (gameOverMessage != null)

@@ -46,7 +46,7 @@ namespace DeltaEngine.Entities
 			EntitiesRunner.Current.Add(this);
 		}
 
-		private void Inactivate()
+		protected void Inactivate()
 		{
 			isActive = false;
 			EntitiesRunner.Current.Remove(this);

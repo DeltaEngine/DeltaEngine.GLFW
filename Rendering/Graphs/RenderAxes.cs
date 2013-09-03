@@ -65,7 +65,6 @@ namespace DeltaEngine.Rendering.Graphs
 			axis.EndPoint = endPoint;
 			axis.RenderLayer = renderLayer;
 			axis.Clip(clippingBounds);
-			axis.Visibility = Visibility.Show;
 		}
 
 		internal void HideAxes()

@@ -25,6 +25,12 @@ namespace DeltaEngine.Scenes.Tests
 		private Material material;
 
 		[Test, CloseAfterFirstFrame]
+		public void CreateSceneFromLoader()
+		{
+			var loadedScene = ContentLoader.Load<Scene>("TestScene");
+		}
+
+		[Test, CloseAfterFirstFrame]
 		public void AddingControlAddsToListOfControls()
 		{
 			Assert.AreEqual(0, scene.Controls.Count);

@@ -36,6 +36,17 @@ namespace DeltaEngine.Rendering.Sprites.Tests
 
 		private readonly Rectangle center = Rectangle.FromCenter(Point.Half, new Size(0.2f, 0.2f));
 
+		[Test, CloseAfterFirstFrame]
+		public void PlayFullAnimation()
+		{
+			var animation = new Sprite(material, center);
+			bool endedHasBeenRaised = false;
+			animation.AnimationEnded += () => endedHasBeenRaised = true;
+			animation.Elapsed = animation.Material.Duration;
+			AdvanceTimeAndUpdateEntities();
+			Assert.True(endedHasBeenRaised);
+		}
+
 		[Test]
 		public void CreateSpriteSheetAnimationWithNewTexture()
 		{

@@ -20,7 +20,7 @@ namespace DeltaEngine.Rendering.Particles.Tests
 		private void CreateDataAndEmitter(int maxParticles = 1, float spawnInterval = 0.01f,
 			float lifeTime = 0.2f)
 		{
-			effectData = new ParticleEffectData
+			emitterData = new ParticleEmitterData
 			{
 				MaximumNumberOfParticles = maxParticles,
 				SpawnInterval = spawnInterval,
@@ -34,10 +34,10 @@ namespace DeltaEngine.Rendering.Particles.Tests
 				ParticleMaterial = new Material(Shader.Position2DColorUv, "DeltaEngineLogo"),
 				StartPosition = new RangeGraph<Point>(new Point(-0.1f, -0.1f), new Point(0.1f, 0.1f))
 			};
-			emitter = new ParticleEmitter(effectData, Point.Half);
+			emitter = new ParticleEmitter(emitterData, Point.Half);
 		}
 
-		private ParticleEffectData effectData;
+		private ParticleEmitterData emitterData;
 		private ParticleEmitter emitter;
 
 		[Test]
@@ -64,7 +64,7 @@ namespace DeltaEngine.Rendering.Particles.Tests
 		public void MultipleEmittersShallNotInterfere()
 		{
 			CreateDataAndEmitter(12, 0.1f, 5);
-			var data = new ParticleEffectData
+			var data = new ParticleEmitterData
 			{
 				MaximumNumberOfParticles = 12,
 				SpawnInterval = 0.4f,
@@ -92,7 +92,7 @@ namespace DeltaEngine.Rendering.Particles.Tests
 		public void CreateParticleEmitterAddingDefaultComponents()
 		{
 			var emptyMaterial = new Material(Shader.Position2DColor, "");
-			new ParticleEmitter(new ParticleEffectData { ParticleMaterial = emptyMaterial }, Point.Zero);
+			new ParticleEmitter(new ParticleEmitterData { ParticleMaterial = emptyMaterial }, Point.Zero);
 		}
 
 		[Test]
@@ -104,9 +104,9 @@ namespace DeltaEngine.Rendering.Particles.Tests
 			new PerformanceTests.FpsDisplay();
 		}
 
-		private ParticleEffectData CreateDataAndEmitterWithAnimation(string contentName)
+		private ParticleEmitterData CreateDataAndEmitterWithAnimation(string contentName)
 		{
-			effectData = new ParticleEffectData
+			emitterData = new ParticleEmitterData
 			{
 				MaximumNumberOfParticles = 512,
 				SpawnInterval = 0.1f,
@@ -117,37 +117,37 @@ namespace DeltaEngine.Rendering.Particles.Tests
 				StartVelocity = new RangeGraph<Point>(new Point(0, -0.3f), new Point(0.05f, 0.01f)),
 				ParticleMaterial = new Material(Shader.Position2DColorUv, contentName)
 			};
-			return effectData;
+			return emitterData;
 		}
 
 		[Test]
 		public void CreateEmitterAndKeepRunningWithSpriteSheetAnimation()
 		{
-			effectData = CreateDataAndEmitterWithAnimation("EarthSpriteSheet");
-			emitter = new ParticleEmitter(effectData, Point.Half);
+			emitterData = CreateDataAndEmitterWithAnimation("EarthSpriteSheet");
+			emitter = new ParticleEmitter(emitterData, Point.Half);
 			emitter.Center = new Point(0.5f, 0.7f);
 			new PerformanceTests.FpsDisplay();
 		}
 
 		[Test]
-		public void CreatRotatedParticles()
+		public void CreateRotatedParticles()
 		{
-			effectData = CreateDataAndEmitterWithAnimation("DeltaEngineLogo");
-			effectData.StartRotation = new ValueRange(45, 50);
-			effectData.Size = new RangeGraph<Size>(new Size(0.05f), new Size(0.05f));
-			emitter = new ParticleEmitter(effectData, Point.Half);
+			emitterData = CreateDataAndEmitterWithAnimation("DeltaEngineLogo");
+			emitterData.StartRotation = new ValueRange(45, 50);
+			emitterData.Size = new RangeGraph<Size>(new Size(0.05f), new Size(0.05f));
+			emitter = new ParticleEmitter(emitterData, Point.Half);
 			emitter.Center = new Point(0.5f, 0.7f);
 			new PerformanceTests.FpsDisplay();
 		}
 
 		[Test]
-		public void CreatRotatingParticles()
+		public void CreateRotatingParticles()
 		{
-			effectData = CreateDataAndEmitterWithAnimation("DeltaEngineLogo");
-			effectData.StartRotation = new ValueRange(0, 45);
-			effectData.RotationForce = new ValueRange(1, 1.2f);
-			effectData.Size = new RangeGraph<Size>(new Size(0.05f), new Size(0.05f));
-			emitter = new ParticleEmitter(effectData, Point.Half);
+			emitterData = CreateDataAndEmitterWithAnimation("DeltaEngineLogo");
+			emitterData.StartRotation = new ValueRange(0, 45);
+			emitterData.RotationForce = new ValueRange(1, 1.2f);
+			emitterData.Size = new RangeGraph<Size>(new Size(0.05f), new Size(0.05f));
+			emitter = new ParticleEmitter(emitterData, Point.Half);
 			emitter.Center = new Point(0.5f, 0.7f);
 			new PerformanceTests.FpsDisplay();
 		}
@@ -162,10 +162,10 @@ namespace DeltaEngine.Rendering.Particles.Tests
 		[Test, CloseAfterFirstFrame]
 		public void DisposeEmitterAfterSetTime()
 		{
-			effectData = CreateDataAndEmitterWithAnimation("DeltaEngineLogo");
-			effectData.SpawnInterval = 0.2f;
-			effectData.LifeTime = 0.005f;
-			emitter = new ParticleEmitter(effectData, new Point(0.5f, 0.5f));
+			emitterData = CreateDataAndEmitterWithAnimation("DeltaEngineLogo");
+			emitterData.SpawnInterval = 0.2f;
+			emitterData.LifeTime = 0.005f;
+			emitter = new ParticleEmitter(emitterData, new Point(0.5f, 0.5f));
 			if (resolver.GetType() == typeof(MockResolver))
 				AdvanceTimeAndUpdateEntities(0.2f);
 			Assert.AreEqual(1, emitter.NumberOfActiveParticles);
@@ -175,18 +175,18 @@ namespace DeltaEngine.Rendering.Particles.Tests
 		}
 
 		[Test]
-		public void LoadInAParticle()
+		public void LoadParticle()
 		{
-			ContentLoader.Load<ParticleEffectData>("TestParticle");
+			ContentLoader.Load<ParticleEmitterData>("TestParticle");
 		}
 
 		[Test]
 		public void ParticleWithNoMaterialThrowsException()
 		{
-			effectData = CreateDataAndEmitterWithAnimation("DeltaEngineLogo");
-			effectData.ParticleMaterial = null;
+			emitterData = CreateDataAndEmitterWithAnimation("DeltaEngineLogo");
+			emitterData.ParticleMaterial = null;
 			Assert.Throws<ParticleEmitter.UnableToCreateWithoutMaterial>(
-				() => new ParticleEmitter(effectData, new Point(0.5f, 0.5f)));
+				() => new ParticleEmitter(emitterData, new Point(0.5f, 0.5f)));
 		}
 	}
 }

@@ -6,7 +6,7 @@ namespace DeltaEngine.Mocks
 {
 	internal class MockImage : Image
 	{
-		public MockImage(string contentName)
+		protected MockImage(string contentName)
 			: base(contentName) {}
 
 		public MockImage(ImageCreationData creationData)
@@ -15,7 +15,7 @@ namespace DeltaEngine.Mocks
 		protected override void LoadImage(Stream fileData)
 		{
 			if (!AllowCreationIfContentNotFound)
-				return;
+				return; //ncrunch: no coverage
 			DisposeData();
 			CreateDefault();
 			Fill(new byte[0]);

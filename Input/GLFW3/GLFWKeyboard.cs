@@ -1,4 +1,5 @@
 ﻿using System;
+using DeltaEngine.Core;
 using Pencil.Gaming;
 
 namespace DeltaEngine.Input.GLFW3

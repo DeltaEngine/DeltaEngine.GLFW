@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using DeltaEngine.Content;
 using DeltaEngine.Content.Xml;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Platforms
@@ -18,35 +19,11 @@ namespace DeltaEngine.Platforms
 			if (File.Exists(filePath))
 				data = new XmlFile(filePath).Root;
 			else
-				TryToGenerateSettingsFromContentDefaultSettings();
+				AppRunner.ContentIsReady += LoadDefaultSettings;
 		}
 
 		private readonly string filePath;
 		private XmlData data;
-
-		private void TryToGenerateSettingsFromContentDefaultSettings()
-		{
-			SetFallbackSettings();
-			AppRunner.ContentIsReady += LoadDefaultSettings;
-		}
-
-		protected void SetFallbackSettings()
-		{
-			data = new XmlData("Settings");
-			data.AddChild("Resolution", DefaultResolution);
-			data.AddChild("StartInFullscreen", false);
-			data.AddChild("PlayerName", Environment.UserName);
-			data.AddChild("Language", Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName);
-			data.AddChild("SoundVolume", 1.0f);
-			data.AddChild("MusicVolume", 0.75f);
-			data.AddChild("DepthBufferBits", 24);
-			data.AddChild("ColorBufferBits", 32);
-			data.AddChild("AntiAliasingSamples", 4);
-			data.AddChild("LimitFramerate", 0);
-			data.AddChild("UpdatesPerSecond", DefaultUpdatesPerSecond);
-			data.AddChild("ProfilingModes", ProfilingMode.None);
-			wasChanged = true;
-		}
 
 		private void LoadDefaultSettings()
 		{
@@ -61,7 +38,7 @@ namespace DeltaEngine.Platforms
 
 		protected override T GetValue<T>(string key, T defaultValue)
 		{
-			return data.GetChildValue(key, defaultValue);
+			return data == null ? defaultValue : data.GetChildValue(key, defaultValue);
 		}
 
 		protected override void SetValue(string key, object value)

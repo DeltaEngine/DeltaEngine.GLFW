@@ -1,6 +1,6 @@
-﻿using System;
+﻿using DeltaEngine.Core;
+using System;
 using System.IO;
-using DeltaEngine.Content;
 using DeltaEngine.Extensions;
 using DeltaEngine.Multimedia.GLFW.Helpers;
 using System.Diagnostics;
@@ -37,8 +37,8 @@ namespace DeltaEngine.Multimedia.GLFW
 			}
 		}
 
-		public GLFWMusic(string filename, GLFWSoundDevice soundDevice, Settings settings)
-			: base(filename,soundDevice,settings)
+		protected GLFWMusic(string contentName, GLFWSoundDevice soundDevice, Settings settings)
+			: base(contentName,soundDevice,settings)
 		{
 			openAL = soundDevice;
 			channelHandle = openAL.CreateChannel();

@@ -1,4 +1,5 @@
 ﻿using System;
+using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 
 namespace DeltaEngine.ScreenSpaces

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DeltaEngine.Core;
 
 namespace DeltaEngine.Mocks
 {

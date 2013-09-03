@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BackgroundTests.cs" />
     <Compile Include="GameControlsTests.cs" />
     <Compile Include="PlaneTests.cs" />
   </ItemGroup>

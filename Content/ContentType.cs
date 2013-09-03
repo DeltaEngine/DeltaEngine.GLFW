@@ -58,10 +58,10 @@
 		/// </summary>
 		Model = 11,
 		/// <summary>
-		/// .DeltaParticleEffect represent the content of a particle effect system. Use the Particle
+		/// .DeltaParticleEmitter represent the content of a particle effect system. Use the Particle
 		/// Effect Editor to edit particle effects.
 		/// </summary>
-		ParticleEffect = 12,
+		ParticleEmitter = 12,
 		/// <summary>
 		/// Just a true type font
 		/// </summary>
@@ -113,6 +113,10 @@
 		/// Input commands for a game or whatever else you need
 		/// </summary>
 		InputCommand = 24,
+		/// <summary>
+		/// Contains geometry data with its own VertexFormat and an identifier name.
+		/// </summary>
+		Geometry = 25,
 		/// <summary>
 		/// Just store the file entry, this can be used for any file (binary makes most sense). All the
 		/// logic to load and use this file has to be done by the application.

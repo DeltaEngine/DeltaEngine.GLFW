@@ -84,6 +84,10 @@
       <Project>{FCA7BAAA-3F6E-4CA3-B354-C34AF4F1BDDD}</Project>
       <Name>DeltaEngine.Rendering.Sprites</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Scenes\DeltaEngine.Scenes.csproj">
+      <Project>{75BB4C75-DE36-47B3-9910-10EA8E8973B7}</Project>
+      <Name>DeltaEngine.Scenes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Platforms\WindowsGLFW3\DeltaEngine.WindowsGLFW3.csproj">
       <Project>{157F559D-CF12-488B-AD0F-3F3477990B1F}</Project>
       <Name>DeltaEngine.WindowsGLFW3</Name>
@@ -100,6 +104,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameController.cs" />
     <Compile Include="GameInputControls.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="PlayerShip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Projectile.cs" />

@@ -7,7 +7,7 @@ namespace DeltaEngine.Input
 	/// <summary>
 	/// Allows a touch hold to be detected.
 	/// </summary>
-	public class TouchHoldTrigger : Trigger
+	public class TouchHoldTrigger : PositionTrigger
 	{
 		public TouchHoldTrigger(Rectangle holdArea, float holdTime = DefaultHoldTime)
 		{
@@ -22,7 +22,7 @@ namespace DeltaEngine.Input
 
 		public bool IsHovering()
 		{
-			if (Elapsed >= HoldTime)
+			if (Elapsed >= HoldTime || !HoldArea.Contains(Position))
 				return false;
 			Elapsed += Time.Delta;
 			return Elapsed >= HoldTime;
