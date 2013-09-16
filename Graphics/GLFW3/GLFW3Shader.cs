@@ -57,16 +57,23 @@ namespace DeltaEngine.Graphics.GLFW3
 		private void LoadUniformLocations()
 		{
 			diffuseTextureUniformLocation = device.GetShaderUniformLocation(programHandle, "Texture");
+			lightmapTextureUniformLocation = device.GetShaderUniformLocation(programHandle, "Lightmap");
 			modelViewProjectionMatrixLocation = device.GetShaderUniformLocation(programHandle,
 				"ModelViewProjection");
 		}
 
 		private int diffuseTextureUniformLocation;
+		private int lightmapTextureUniformLocation;
 		private int modelViewProjectionMatrixLocation;
 
 		public override void SetModelViewProjectionMatrix(Matrix matrix)
 		{
 			device.SetUniformValue(modelViewProjectionMatrixLocation, matrix);
+		}
+
+		public override void SetJointMatrices(Matrix[] jointMatrices)
+		{
+			device.SetUniformValues(modelViewProjectionMatrixLocation, jointMatrices);
 		}
 
 		public override void SetDiffuseTexture(Image texture)
@@ -75,8 +82,15 @@ namespace DeltaEngine.Graphics.GLFW3
 			device.SetUniformValue(diffuseTextureUniformLocation, 0);
 		}
 
+		public override void SetLightmapTexture(Image texture)
+		{
+			device.BindTexture((texture as GLFW3Image).Handle, 1);
+			device.SetUniformValue(lightmapTextureUniformLocation, 1);
+		}
+
 		public override void Bind()
 		{
+			device.Shader = this;
 			device.UseShaderProgram(programHandle);
 		}
 

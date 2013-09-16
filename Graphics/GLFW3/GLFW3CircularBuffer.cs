@@ -40,7 +40,7 @@ namespace DeltaEngine.Graphics.GLFW3
 				return;
 			if (indices == null)
 				indices = ComputeIndices(textureChunk.NumberOfVertices, numberOfVertices);
-			else if (textureChunk.FirstVertexOffsetInBytes > 0)
+			else if (totalIndicesCount > 0)
 				indices = RemapIndices(indices, numberOfIndices);
 			glDevice.BindIndexBuffer(nativeIndexBuffer);
 			glDevice.LoadIndices(totalIndexOffsetInBytes, indices, indexSize * numberOfIndices);
@@ -51,16 +51,13 @@ namespace DeltaEngine.Graphics.GLFW3
 			glDevice.BindVertexBuffer(nativeVertexBuffer);
 			if (UsesIndexBuffer)
 				glDevice.BindIndexBuffer(nativeIndexBuffer);
-			if (UsesTexturing)
-				glDevice.EnableTexturing();
-			else
-				glDevice.DisableTexturing();
 			base.DrawAllTextureChunks();
 		}
 
 		protected override void DrawChunk(Chunk chunk)
 		{
-			shader.BindVertexDeclaration();
+			if (Is3D && blendMode == BlendMode.Additive)
+				device.DisableDepthTest();
 			if (UsesIndexBuffer)
 			{
 				if (chunk.Texture != null)

@@ -89,7 +89,7 @@ namespace DeltaEngine.Input.Windows
 		public override bool IsAvailable
 		{
 			get { return GetPresence(GetJoystickByNumber()); }
-			protected set { }
+			protected set { } //ncrunch: no coverage (senselesss regarding what "get" does)
 		}
 
 		private bool GetPresence(uint index)

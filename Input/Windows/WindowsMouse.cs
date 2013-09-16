@@ -29,7 +29,7 @@ namespace DeltaEngine.Input.Windows
 		public override bool IsAvailable
 		{
 			get { return mouseCounter.GetNumberOfAvailableMice() > 0; }
-			protected set { }
+			protected set { } //ncrunch: no coverage (senseless regarding the "get" part)
 		}
 
 		public override void SetPosition(Point newPosition)

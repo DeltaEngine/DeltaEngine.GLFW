@@ -5,7 +5,6 @@ using System.Threading;
 using System.Windows.Forms;
 using DeltaEngine.Core;
 using DeltaEngine.Extensions;
-using DeltaEngine.ScreenSpaces;
 using Pencil.Gaming;
 using Color = DeltaEngine.Datatypes.Color;
 using Orientation = DeltaEngine.Core.Orientation;
@@ -35,7 +34,6 @@ namespace DeltaEngine.Platforms
 			Icon appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 			if (appIcon != null && hwnd != IntPtr.Zero)
 				SetIcon(appIcon);
-			new QuadraticScreenSpace(this);
 		}
 
 		private static void ErrorCallback(GlfwError code, string desc)

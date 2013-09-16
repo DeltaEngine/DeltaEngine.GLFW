@@ -78,7 +78,7 @@ namespace DeltaEngine.Platforms
 		private void CopyGlfwDlls(string path)
 		{
 			foreach (var dll in glfwDllsNeeded)
-				File.Copy(Path.Combine(path, "packages", "Pencil.Gaming.GLFW3.1.0.4952", "NativeBinaries", "x86", dll), dll, true);
+				File.Copy(Path.Combine(path, "packages", "Pencil.Gaming.GLFW3.1.0.4953", "NativeBinaries", "x86", dll), dll, true);
 		}
 
 		private static bool IsPackagesDirectory(string path)
