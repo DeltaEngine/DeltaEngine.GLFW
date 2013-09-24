@@ -63,16 +63,16 @@ namespace DeltaEngine.Input.GLFW3
 			return GetPresence(Joystick.Joystick4) ? Joystick.Joystick4 : Joystick.Joystick1;
 		}
 
-		public override Point GetLeftThumbStick()
+		public override Vector2D GetLeftThumbStick()
 		{
-			return new Point(axisValues[0], axisValues[1]);
+			return new Vector2D(axisValues[0], axisValues[1]);
 		}
 
 		private float[] axisValues;
 
-		public override Point GetRightThumbStick()
+		public override Vector2D GetRightThumbStick()
 		{
-			return new Point(axisValues[4], -axisValues[3]);
+			return new Vector2D(axisValues[4], -axisValues[3]);
 		}
 
 		public override float GetLeftTrigger()

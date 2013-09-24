@@ -10,9 +10,9 @@ namespace DeltaEngine.Graphics.GLFW3
 	/// </summary>
 	public class GLFW3ScreenshotCapturer : ScreenshotCapturer
 	{
-		public GLFW3ScreenshotCapturer(GLFW3Device device, Window window)
+		public GLFW3ScreenshotCapturer(Device device, Window window)
 		{
-			this.device = device;
+			this.device = (GLFW3Device)device;
 			this.window = window;
 		}
 

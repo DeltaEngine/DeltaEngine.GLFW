@@ -25,10 +25,10 @@ namespace DeltaEngine.Input.GLFW3
 
 		public override void Dispose() {}
 
-		public override void SetPosition(Point newPosition)
+		public override void SetPosition(Vector2D position)
 		{
-			newPosition = ScreenSpace.Current.ToPixelSpace(newPosition);
-			Glfw.SetCursorPos(nativeWindow, newPosition.X, newPosition.Y);
+			position = ScreenSpace.Current.ToPixelSpace(position);
+			Glfw.SetCursorPos(nativeWindow, position.X, position.Y);
 		}
 
 		public override void Update(IEnumerable<Entity> entities)
@@ -40,7 +40,8 @@ namespace DeltaEngine.Input.GLFW3
 
 		private void UpdateValuesFromState(MouseState newState)
 		{
-			Position = ScreenSpace.Current.FromPixelSpace(new Point((float)newState.X, (float)newState.Y));
+			Position =
+				ScreenSpace.Current.FromPixelSpace(new Vector2D((float)newState.X, (float)newState.Y));
 			LeftButton = LeftButton.UpdateOnNativePressing(newState.LeftButton);
 			MiddleButton = MiddleButton.UpdateOnNativePressing(newState.MiddleButton);
 			RightButton = RightButton.UpdateOnNativePressing(newState.RightButton);

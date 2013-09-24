@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using Pencil.Gaming;
@@ -270,6 +271,11 @@ namespace DeltaEngine.Graphics.GLFW3
 		public void SetUniformValue(int location, Matrix matrix)
 		{
 			GL.UniformMatrix4(location, 1, false, matrix.GetValues);
+		}
+
+		public void SetUniformValue(int location, Vector3D vector)
+		{
+			GL.Uniform3(location, vector.X, vector.Y, vector.Z);
 		}
 
 		public void SetUniformValues(int uniformLocation, Matrix[] matrices)

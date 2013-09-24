@@ -27,7 +27,7 @@ namespace DeltaEngine.Graphics.GLFW3
 
 		protected override sealed void Create()
 		{
-			programHandle = device.CreateShaderProgram(VertexCode, PixelCode);
+			programHandle = device.CreateShaderProgram(OpenGLVertexCode, OpenGLFragmentCode);
 			if (programHandle == GLFW3Device.InvalidHandle)
 				throw new UnableToCreateOpenGLShader();
 			LoadAttributeLocations();
@@ -60,11 +60,17 @@ namespace DeltaEngine.Graphics.GLFW3
 			lightmapTextureUniformLocation = device.GetShaderUniformLocation(programHandle, "Lightmap");
 			modelViewProjectionMatrixLocation = device.GetShaderUniformLocation(programHandle,
 				"ModelViewProjection");
+			jointMatricesLocation = device.GetShaderUniformLocation(programHandle, "JointTransforms");
+			lightPositionUniformLocation = device.GetShaderUniformLocation(programHandle, "viewPosition");
+			viewPositionUniformLocation = device.GetShaderUniformLocation(programHandle, "lightPosition");
 		}
 
 		private int diffuseTextureUniformLocation;
 		private int lightmapTextureUniformLocation;
 		private int modelViewProjectionMatrixLocation;
+		private int jointMatricesLocation;
+		private int lightPositionUniformLocation;
+		private int viewPositionUniformLocation;
 
 		public override void SetModelViewProjectionMatrix(Matrix matrix)
 		{
@@ -73,7 +79,7 @@ namespace DeltaEngine.Graphics.GLFW3
 
 		public override void SetJointMatrices(Matrix[] jointMatrices)
 		{
-			device.SetUniformValues(modelViewProjectionMatrixLocation, jointMatrices);
+			device.SetUniformValues(jointMatricesLocation, jointMatrices);
 		}
 
 		public override void SetDiffuseTexture(Image texture)
@@ -86,6 +92,16 @@ namespace DeltaEngine.Graphics.GLFW3
 		{
 			device.BindTexture((texture as GLFW3Image).Handle, 1);
 			device.SetUniformValue(lightmapTextureUniformLocation, 1);
+		}
+
+		public override void SetLightPosition(Vector3D vector)
+		{
+			device.SetUniformValue(lightPositionUniformLocation, vector);
+		}
+
+		public override void SetViewPosition(Vector3D vector)
+		{
+			device.SetUniformValue(viewPositionUniformLocation, vector);
 		}
 
 		public override void Bind()

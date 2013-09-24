@@ -53,32 +53,40 @@ namespace DeltaEngine.Platforms
 
 		private void TryCopyNativeDlls()
 		{
-			try
-			{
-				CopyNativeDlls();
-			}
-			catch (Exception ex)
-			{
-				throw new FailedToCopyNativeGlfwDllFiles("Please provide the glfw .dll files!", ex);
-			}
+			if (TryCopyNativeDllsFromNuGetPackage())
+				return;
+			if (TryCopyNativeDllsFromDeltaEnginePath())
+				return;
+			throw new FailedToCopyNativeGlfwDllFiles("GLFW dlls not found inside the application " + "output directory nor inside the %DeltaEnginePath% environment variable. Make sure it's " + "set and containing the required files: " + string.Join(",", glfwDllsNeeded));
 		}
 
-		private void CopyNativeDlls()
+		private bool TryCopyNativeDllsFromNuGetPackage()
 		{
+			var nuGetPackagesPath = FindNuGetPackagesPath();
+			string nativeBinariesPath = Path.Combine(nuGetPackagesPath, "packages", "Pencil.Gaming.GLFW3.1.0.4953", "NativeBinaries", "x86");
+			if (!Directory.Exists(nativeBinariesPath))
+				return false;
+			CopyNativeDllsFromPath(nativeBinariesPath);
+			return true;
+		}
+
+		private static string FindNuGetPackagesPath()
+		{
+			int MaxPathLength = 18;
 			var path = Path.Combine("..", "..");
 			while (!IsPackagesDirectory(path))
 			{
 				path = Path.Combine(path, "..");
-				if (path.Length > 3 * 6)
+				if (path.Length > MaxPathLength)
 					break;
 			}
-			CopyGlfwDlls(path);
+			return path;
 		}
 
-		private void CopyGlfwDlls(string path)
+		private void CopyNativeDllsFromPath(string nativeBinariesPath)
 		{
-			foreach (var dll in glfwDllsNeeded)
-				File.Copy(Path.Combine(path, "packages", "Pencil.Gaming.GLFW3.1.0.4953", "NativeBinaries", "x86", dll), dll, true);
+			foreach (var nativeDll in glfwDllsNeeded)
+				File.Copy(Path.Combine(nativeBinariesPath, nativeDll), nativeDll, true);
 		}
 
 		private static bool IsPackagesDirectory(string path)
@@ -86,10 +94,19 @@ namespace DeltaEngine.Platforms
 			return Directory.Exists(Path.Combine(path, "packages"));
 		}
 
+		private bool TryCopyNativeDllsFromDeltaEnginePath()
+		{
+			string enginePath = Environment.GetEnvironmentVariable("DeltaEnginePath");
+			if (enginePath == null || !Directory.Exists(enginePath))
+				return false;
+			CopyNativeDllsFromPath(Path.Combine(enginePath, "GLFW"));
+			return true;
+		}
+
 		private class FailedToCopyNativeGlfwDllFiles : Exception
 		{
-			public FailedToCopyNativeGlfwDllFiles(string message, Exception innerException)
-				: base(message,innerException)
+			public FailedToCopyNativeGlfwDllFiles(string message)
+				: base(message)
 			{
 			}
 		}

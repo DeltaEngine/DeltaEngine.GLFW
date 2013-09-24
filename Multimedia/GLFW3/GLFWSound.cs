@@ -85,7 +85,7 @@ namespace DeltaEngine.Multimedia.GLFW
 			if (channelHandle == InvalidHandle)
 				return;
 			openAL.SetVolume(channelHandle, instanceToPlay.Volume);
-			openAL.SetPosition(channelHandle, new Vector(instanceToPlay.Panning, 0.0f, 0.0f));
+			openAL.SetPosition(channelHandle, new Vector3D(instanceToPlay.Panning, 0.0f, 0.0f));
 			openAL.SetPitch(channelHandle, instanceToPlay.Pitch);
 			openAL.Play(channelHandle);
 		}

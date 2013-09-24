@@ -37,31 +37,31 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="DeltaEngine.Content.Xml">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Content.Xml.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Content.Xml.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Input">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Input.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Rendering.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering.Fonts">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Rendering.Fonts.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering.Particles">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Rendering.Particles.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering.Shapes">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Rendering.Shapes.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering.Sprites">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.Rendering.Sprites.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Input.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.WindowsGLFW3">
-	  <HintPath>$(DeltaEnginePath)\DeltaEngine.WindowsGLFW3.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaEngine.Rendering2D">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaEngine.Rendering2D.Fonts">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Fonts.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaEngine.Rendering3D.Particles">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering3D.Particles.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaEngine.Rendering2D.Shapes">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Shapes.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaEngine.Rendering2D.Sprites">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Sprites.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

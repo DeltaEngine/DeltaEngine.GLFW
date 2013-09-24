@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using DeltaEngine.Core;
+using DeltaEngine.Datatypes;
 using DeltaEngine.Extensions;
 using Pencil.Gaming;
 using Color = DeltaEngine.Datatypes.Color;
 using Orientation = DeltaEngine.Core.Orientation;
-using Point = DeltaEngine.Datatypes.Point;
 using Size = DeltaEngine.Datatypes.Size;
 
 namespace DeltaEngine.Platforms
@@ -173,7 +173,7 @@ namespace DeltaEngine.Platforms
 			get { return viewportSize; }
 		}
 
-		public Point PixelPosition
+		public Vector2D PixelPosition
 		{
 			get { return position; }
 			set
@@ -183,7 +183,7 @@ namespace DeltaEngine.Platforms
 			}
 		}
 
-		private Point position;
+		private Vector2D position;
 
 		public Color BackgroundColor { get; set; }
 

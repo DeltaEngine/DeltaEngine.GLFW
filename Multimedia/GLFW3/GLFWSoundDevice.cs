@@ -116,7 +116,7 @@ namespace DeltaEngine.Multimedia.GLFW
 			AL.Source((uint)channelHandle, ALSourcef.Gain, volume);
 		}
 
-		public void SetPosition(int channelHandle, Vector position)
+		public void SetPosition(int channelHandle, Vector3D position)
 		{
 			AL.Source((uint)channelHandle, ALSource3f.Position, position.X, position.Y, position.Z);
 		}

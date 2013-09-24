@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DeltaEngine.Core;
 using DeltaEngine.Graphics.Vertices;
 
@@ -31,6 +32,15 @@ namespace DeltaEngine.Graphics.GLFW3
 		private int nativeVertexBuffer;
 		private int nativeIndexBuffer;
 
+		protected override void DisposeNextFrame()
+		{
+			buffersToDisposeNextFrame.Add(nativeVertexBuffer);
+			if (UsesIndexBuffer)
+				buffersToDisposeNextFrame.Add(nativeIndexBuffer);
+		}
+
+		private readonly List<int> buffersToDisposeNextFrame = new List<int>();
+
 		protected override void AddDataNative<VertexType>(Chunk textureChunk, VertexType[] vertexData,
 			short[] indices, int numberOfVertices, int numberOfIndices)
 		{
@@ -44,6 +54,15 @@ namespace DeltaEngine.Graphics.GLFW3
 				indices = RemapIndices(indices, numberOfIndices);
 			glDevice.BindIndexBuffer(nativeIndexBuffer);
 			glDevice.LoadIndices(totalIndexOffsetInBytes, indices, indexSize * numberOfIndices);
+		}
+
+		public override void DisposeUnusedBuffersFromPreviousFrame()
+		{
+			if (buffersToDisposeNextFrame.Count <= 0)
+				return;
+			foreach (var buffer in buffersToDisposeNextFrame)
+				glDevice.DeleteBuffer(buffer);
+			buffersToDisposeNextFrame.Clear();
 		}
 
 		public override void DrawAllTextureChunks()
