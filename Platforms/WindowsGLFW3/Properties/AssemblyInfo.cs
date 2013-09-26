@@ -8,6 +8,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright � Delta Engine 2013")]
 [assembly: ComVisible(false)]
 [assembly: Guid("3767a9f0-30f5-44ec-9e20-ef77acb405f7")]
-[assembly: AssemblyVersion("0.9.9.3")]
-[assembly: AssemblyFileVersion("0.9.9.3")]
+[assembly: AssemblyVersion("0.9.9.4")]
+[assembly: AssemblyFileVersion("0.9.9.4")]
 [assembly: InternalsVisibleTo("DeltaEngine.TestWithGLFW3")]
