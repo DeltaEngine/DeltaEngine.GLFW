@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("DeltaEngine.Platforms.Windows")]
-[assembly: AssemblyDescription("Delta Engine Windows Support Library for all common classes for Windows frameworks (OpenGL, DirectX and MonoGame)")]
+[assembly: AssemblyDescription("Delta Engine Windows Support Library for all common classes for Windows frameworks (OpenGL, DirectX and Xna)")]
 [assembly: AssemblyCompany("Delta Engine")]
 [assembly: AssemblyCopyright("Copyright � Delta Engine 2013")]
 [assembly: CLSCompliant(true)]

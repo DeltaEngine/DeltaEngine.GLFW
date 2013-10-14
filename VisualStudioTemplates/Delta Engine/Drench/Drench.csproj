@@ -41,25 +41,25 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="DeltaEngine.Content.Xml">
-	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Content.Xml.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Content.Xml.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine">
-	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Networking">
-	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Networking.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Networking.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering2D">
-	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering2D.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering2D.Fonts">
-	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering2D.Fonts.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Fonts.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Scenes">
-	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Scenes.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Scenes.dll</HintPath>
     </Reference>
-    <Reference Include="DeltaEngine.WindowsMonoGame">
-	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.WindowsMonoGame.dll</HintPath>
+    <Reference Include="DeltaEngine.WindowsGLFW3">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

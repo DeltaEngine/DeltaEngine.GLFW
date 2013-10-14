@@ -76,9 +76,9 @@
       <Project>{C9CB5DFF-6BF8-4BC8-9148-FBC85FF5A203}</Project>
       <Name>DeltaEngine.Rendering3D.Shapes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Platforms\TestWithMonoGame\DeltaEngine.TestWithMonoGame.csproj">
-      <Project>{D6D0CCE8-9850-4C28-A505-A1F5519FBE09}</Project>
-      <Name>DeltaEngine.TestWithMonoGame</Name>
+    <ProjectReference Include="..\..\..\Platforms\TestWithGLFW3\DeltaEngine.TestWithGLFW3.csproj">
+      <Project>{9892E4BA-9E69-4033-9B5E-B02561FC9C5E}</Project>
+      <Name>DeltaEngine.TestWithGLFW3</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

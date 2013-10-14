@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("DeltaEngine.Multimedia.OpenTKES")]
 [assembly: InternalsVisibleTo("DeltaEngine.Multimedia.SharpDX")]
 [assembly: InternalsVisibleTo("DeltaEngine.Multimedia.SlimDX")]
-[assembly: InternalsVisibleTo("DeltaEngine.Multimedia.MonoGame")]
+[assembly: InternalsVisibleTo("DeltaEngine.Multimedia.Xna")]
 [assembly: InternalsVisibleTo("DeltaEngine.Multimedia.Tests")]
 [assembly: InternalsVisibleTo("DeltaEngine.Input")]
 [assembly: InternalsVisibleTo("DeltaEngine.Input.Tests")]

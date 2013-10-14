@@ -23,5 +23,5 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("DeltaEngine.TestWithOpenTK20")]
 [assembly: InternalsVisibleTo("DeltaEngine.TestWithSharpDX")]
 [assembly: InternalsVisibleTo("DeltaEngine.TestWithSlimDX")]
-[assembly: InternalsVisibleTo("DeltaEngine.TestWithMonoGame")]
+[assembly: InternalsVisibleTo("DeltaEngine.TestWithXna")]
 [assembly: InternalsVisibleTo("DeltaEngine.Content.Mocks")]

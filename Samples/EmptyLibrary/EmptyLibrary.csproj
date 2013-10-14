@@ -39,9 +39,9 @@
       <Project>{20FA8D33-A964-4000-AD82-67BD6900793B}</Project>
       <Name>DeltaEngine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Platforms\WindowsMonoGame\DeltaEngine.WindowsMonoGame.csproj">
-      <Project>{07E9D341-4B22-48FE-B921-5D18D3AB2C49}</Project>
-      <Name>DeltaEngine.WindowsMonoGame</Name>
+    <ProjectReference Include="..\..\Platforms\WindowsGLFW3\DeltaEngine.WindowsGLFW3.csproj">
+      <Project>{157F559D-CF12-488B-AD0F-3F3477990B1F}</Project>
+      <Name>DeltaEngine.WindowsGLFW3</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
