@@ -38,31 +38,28 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="DeltaEngine">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Graphics">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Graphics.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Graphics.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Input">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Input.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Input.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Physics2D">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Physics2D.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.WindowsGLFW3">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Physics2D.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering2D">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering2D.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering2D.Shapes">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Shapes.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering2D.Sprites">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Sprites.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering2D.Shapes.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Scenes">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Scenes.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Scenes.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaEngine.WindowsMonoGame">
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.WindowsMonoGame.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

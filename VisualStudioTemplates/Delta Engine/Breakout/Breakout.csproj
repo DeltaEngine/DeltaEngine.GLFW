@@ -38,37 +38,34 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="DeltaEngine.Content.Xml">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Content.Xml.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Content.Xml.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Graphics">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Graphics.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Graphics.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Input">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Input.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Input.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Platforms">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Platforms.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Platforms.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering2D">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering2D.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering2D.Fonts">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Fonts.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering2D.Fonts.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering3D.Particles">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering3D.Particles.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering2D.Sprites">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Sprites.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering3D.Particles.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Scenes">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Scenes.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Scenes.dll</HintPath>
     </Reference>
-    <Reference Include="DeltaEngine.WindowsGLFW3">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
+    <Reference Include="DeltaEngine.WindowsMonoGame">
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.WindowsMonoGame.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

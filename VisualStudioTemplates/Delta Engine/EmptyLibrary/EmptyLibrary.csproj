@@ -34,7 +34,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="DeltaEngine">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaEngine.WindowsMonoGame">
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.WindowsMonoGame.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

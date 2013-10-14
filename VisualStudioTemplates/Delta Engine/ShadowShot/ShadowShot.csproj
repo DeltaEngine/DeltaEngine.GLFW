@@ -11,7 +11,6 @@
     <AssemblyName>$safeprojectname$</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,53 +34,38 @@
   <PropertyGroup>
     <StartupObject>$safeprojectname$.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ShadowShotIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="DeltaEngine.Content.Xml">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Content.Xml.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Content.Xml.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Graphics">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Graphics.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Input">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Input.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Input.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Physics2D">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Physics2D.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Platforms">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Platforms.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.WindowsGLFW3">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Physics2D.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering2D">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering2D.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Rendering2D.Fonts">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Fonts.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering2D.Sprites">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Sprites.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Rendering2D.Fonts.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.Scenes">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Scenes.dll</HintPath>
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.Scenes.dll</HintPath>
+    </Reference>
+    <Reference Include="DeltaEngine.WindowsMonoGame">
+	  <HintPath>$(DeltaEnginePath)\MonoGame\DeltaEngine.WindowsMonoGame.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <Content Include="ShadowShotIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
