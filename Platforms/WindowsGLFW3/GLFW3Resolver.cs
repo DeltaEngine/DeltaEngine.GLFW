@@ -37,7 +37,6 @@ namespace DeltaEngine.Platforms
 			Register<GLFW3Geometry>();
 			Register<GLFWSound>();
 			Register<GLFWMusic>();
-			Register<GLFWVideo>();
 		}
 
 		private void MakeSureGlfwDllsAreAvailable()

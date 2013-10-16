@@ -33,7 +33,7 @@ namespace DeltaEngine.Multimedia.GLFW
 			get
 			{
 				var seconds = (float)DateTime.Now.Subtract(playStartTime).TotalSeconds;
-				return MathExtensions.Round(seconds.Clamp(0f, DurationInSeconds), 2);
+				return seconds.Clamp(0f, DurationInSeconds).Round(2);
 			}
 		}
 

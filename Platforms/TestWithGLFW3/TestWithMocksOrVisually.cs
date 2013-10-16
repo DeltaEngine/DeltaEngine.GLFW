@@ -38,7 +38,7 @@ namespace DeltaEngine.Platforms
 		public void RunTestAndDisposeResolverWhenDone()
 		{
 			if (StackTraceExtensions.StartedFromProgramMain ||
-				TestContext.CurrentContext.Result.Status == TestStatus.Passed)
+				TestContext.CurrentContext.Result.Status != TestStatus.Failed)
 				resolver.Run();
 			else
 				resolver.Dispose();

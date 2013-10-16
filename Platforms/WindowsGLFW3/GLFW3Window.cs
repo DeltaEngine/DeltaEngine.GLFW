@@ -59,6 +59,7 @@ namespace DeltaEngine.Platforms
 		private void CreateWindow(Size resolution, bool startInFullscreen)
 		{
 			viewportSize = resolution;
+			IsFullscreen = startInFullscreen;
 			var width = (int)resolution.Width;
 			var height = (int)resolution.Height;
 			OpenWindow(startInFullscreen, width, height);
@@ -90,10 +91,10 @@ namespace DeltaEngine.Platforms
 				return new[] { 8, 8, 8, settings.ColorBufferBits >= 32 ? 8 : 0 };
 			if (settings.ColorBufferBits >= 16)
 				return new[] { 5, 6, 5, 0 };
-			throw new UnsupportedFramebuffeFormat();
+			throw new UnsupportedFramebufferFormat();
 		}
 
-		private class UnsupportedFramebuffeFormat : Exception {}
+		private class UnsupportedFramebufferFormat : Exception {}
 
 		private GlfwWindowPtr nativeWindow;
 
@@ -206,10 +207,7 @@ namespace DeltaEngine.Platforms
 				FullscreenChanged(windowedSize, false);
 		}
 
-		public bool IsFullscreen
-		{
-			get { return false; }
-		}
+		public bool IsFullscreen { get; private set; }
 		public event Action<Size, bool> FullscreenChanged;
 
 		public virtual bool IsClosing

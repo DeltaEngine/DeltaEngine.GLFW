@@ -55,10 +55,6 @@
       <Project>{BDDB4AA4-5D31-43B3-9A3B-BF3030EDE927}</Project>
       <Name>DeltaEngine.Rendering2D</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VideoStreams\DeltaEngine.Multimedia.VideoStreams.csproj">
-      <Project>{27487228-2ADB-447B-95D3-6F6053999281}</Project>
-      <Name>DeltaEngine.Multimedia.VideoStreams</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MusicStreams\DeltaEngine.Multimedia.MusicStreams.csproj">
       <Project>{769F9D01-D4A1-4C85-9F11-F721CDFC94DC}</Project>
       <Name>DeltaEngine.Multimedia.MusicStreams</Name>
@@ -76,7 +72,6 @@
     <Compile Include="Helpers\MsAdpcmConverter.cs" />
     <Compile Include="Helpers\AudioFormat.cs" />
     <Compile Include="GLFWSoundDevice.cs" />
-    <Compile Include="GLFWVideo.cs" />
     <Compile Include="Helpers\WaveFormat.cs" />
     <Compile Include="Helpers\WaveSoundData.cs" />
   </ItemGroup>
