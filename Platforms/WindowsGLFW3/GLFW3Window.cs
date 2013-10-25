@@ -72,6 +72,7 @@ namespace DeltaEngine.Platforms
 			nativeWindow = Glfw.CreateWindow(width, height, "GLFW3", monitor, GlfwWindowPtr.Null);
 			Glfw.MakeContextCurrent(nativeWindow);
 			Glfw.SetWindowSizeCallback(nativeWindow, OnWindowResize);
+			Glfw.SwapInterval(settings.UseVSync);
 		}
 
 		private void SetupWindow()

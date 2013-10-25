@@ -287,12 +287,12 @@ namespace DeltaEngine.Graphics.GLFW3
 			GL.Uniform3(location, vector.X, vector.Y, vector.Z);
 		}
 
-		public void SetUniformValues(int uniformLocation, Matrix[] matrices)
+		public void SetUniformValues(int location, Matrix[] matrices)
 		{
 			var values = new float[matrices.Length * 16];
 			for (int matrixIndex = 0; matrixIndex < matrices.Length; ++matrixIndex)
 				matrices[matrixIndex].GetValues.CopyTo(values, matrixIndex * 16);
-			GL.UniformMatrix4(uniformLocation, matrices.Length, false, values);
+			GL.UniformMatrix4(location, matrices.Length, false, values);
 		}
 
 		public void DrawTriangles(int indexOffsetInBytes, int numberOfIndicesToRender)

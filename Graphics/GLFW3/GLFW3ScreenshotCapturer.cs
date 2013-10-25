@@ -39,7 +39,7 @@ namespace DeltaEngine.Graphics.GLFW3
 		{
 			var bitmap = new Bitmap(width, height);
 			var bitmapData = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-				System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+				PixelFormat.Format24bppRgb);
 			var bitmapPointer = (byte*)bitmapData.Scan0.ToPointer();
 			SwitchTopToBottomAndRgbToBgr(bitmapPointer, rgbData);
 			bitmap.UnlockBits(bitmapData);

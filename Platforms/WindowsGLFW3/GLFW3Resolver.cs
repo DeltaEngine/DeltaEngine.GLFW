@@ -5,6 +5,8 @@ using DeltaEngine.Graphics.GLFW3;
 using DeltaEngine.Input.GLFW3;
 using DeltaEngine.Multimedia.GLFW;
 using DeltaEngine.Platforms.Windows;
+using DeltaEngine.Content.Xml;
+using DeltaEngine.Graphics;
 
 namespace DeltaEngine.Platforms
 {
@@ -19,12 +21,14 @@ namespace DeltaEngine.Platforms
 			RegisterSingleton<WindowsSystemInformation>();
 			RegisterSingleton<GLFW3Window>();
 			RegisterSingleton<GLFW3Device>();
+			RegisterSingleton<Drawing>();
 			RegisterSingleton<GLFW3ScreenshotCapturer>();
 			RegisterSingleton<GLFWSoundDevice>();
 			RegisterSingleton<GLFWMouse>();
 			RegisterSingleton<GLFWTouch>();
 			RegisterSingleton<GLFWGamePad>();
 			RegisterSingleton<GLFWKeyboard>();
+			Register<InputCommands>();
 			if (IsAlreadyInitialized)
 				throw new UnableToRegisterMoreTypesAppAlreadyStarted();
 		}
@@ -37,6 +41,7 @@ namespace DeltaEngine.Platforms
 			Register<GLFW3Geometry>();
 			Register<GLFWSound>();
 			Register<GLFWMusic>();
+			Register<XmlContent>();
 		}
 
 		private void MakeSureGlfwDllsAreAvailable()
@@ -56,7 +61,7 @@ namespace DeltaEngine.Platforms
 				return;
 			if (TryCopyNativeDllsFromDeltaEnginePath())
 				return;
-			throw new FailedToCopyNativeGlfwDllFiles("GLFW dlls not found inside the application " + "output directory nor inside the %DeltaEnginePath% environment variable. Make sure it's " + "set and containing the required files: " + string.Join(",", glfwDllsNeeded));
+			throw new GLFW3Resolver.FailedToCopyNativeGlfwDllFiles("GLFW dlls not found inside the application " + "output directory nor inside the %DeltaEnginePath% environment variable. Make sure it's " + "set and containing the required files: " + string.Join(",", glfwDllsNeeded));
 		}
 
 		private bool TryCopyNativeDllsFromNuGetPackage()
