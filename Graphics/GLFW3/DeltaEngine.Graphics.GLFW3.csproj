@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Pencil.Gaming.GLFW3">
-      <HintPath>..\..\packages\Pencil.Gaming.GLFW3.1.0.4953\lib\NET40\Pencil.Gaming.GLFW3.dll</HintPath>
+      <HintPath>..\..\packages\Pencil.Gaming.GLFW3.1.0.4954\lib\NET40\Pencil.Gaming.GLFW3.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -65,5 +65,4 @@
     <Compile Include="GLFW3Image.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

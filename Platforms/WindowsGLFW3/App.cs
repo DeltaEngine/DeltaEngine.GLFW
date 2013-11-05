@@ -7,7 +7,7 @@ namespace DeltaEngine.Platforms
 	/// </summary>
 	public abstract class App
 	{
-		protected App() { }
+		protected App() {}
 
 		protected App(Window windowToRegister)
 		{

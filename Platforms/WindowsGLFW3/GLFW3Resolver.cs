@@ -7,21 +7,24 @@ using DeltaEngine.Multimedia.GLFW;
 using DeltaEngine.Platforms.Windows;
 using DeltaEngine.Content.Xml;
 using DeltaEngine.Graphics;
+using DeltaEngine.Rendering2D;
 
 namespace DeltaEngine.Platforms
 {
 	internal class GLFW3Resolver : AppRunner
 	{
-		private readonly string[] glfwDllsNeeded = { "glfw3.dll", "openal32.dll", "wrap_oal.dll" };
+		private readonly string[] glfwDllsNeeded = { "glfw3.dll", "glfw3winxpvista.dll", "openal32.dll", "wrap_oal.dll" };
 
 		public GLFW3Resolver()
 		{
 			RegisterCommonEngineSingletons();
 			MakeSureGlfwDllsAreAvailable();
+			UseWinXpVistaVersionOfGlfwIfOnThatPlatform();
 			RegisterSingleton<WindowsSystemInformation>();
 			RegisterSingleton<GLFW3Window>();
 			RegisterSingleton<GLFW3Device>();
 			RegisterSingleton<Drawing>();
+			RegisterSingleton<BatchRenderer>();
 			RegisterSingleton<GLFW3ScreenshotCapturer>();
 			RegisterSingleton<GLFWSoundDevice>();
 			RegisterSingleton<GLFWMouse>();
@@ -67,7 +70,7 @@ namespace DeltaEngine.Platforms
 		private bool TryCopyNativeDllsFromNuGetPackage()
 		{
 			var nuGetPackagesPath = FindNuGetPackagesPath();
-			string nativeBinariesPath = Path.Combine(nuGetPackagesPath, "packages", "Pencil.Gaming.GLFW3.1.0.4953", "NativeBinaries", "x86");
+			string nativeBinariesPath = Path.Combine(nuGetPackagesPath, "packages", "Pencil.Gaming.GLFW3.1.0.4954", "NativeBinaries", "x86");
 			if (!Directory.Exists(nativeBinariesPath))
 				return false;
 			CopyNativeDllsFromPath(nativeBinariesPath);
@@ -105,6 +108,16 @@ namespace DeltaEngine.Platforms
 				return false;
 			CopyNativeDllsFromPath(Path.Combine(enginePath, "GLFW"));
 			return true;
+		}
+
+		private static void UseWinXpVistaVersionOfGlfwIfOnThatPlatform()
+		{
+			var version = Environment.OSVersion.Version;
+			bool isWin7OrHigher = version.Major >= 6 && version.Minor > 0;
+			if (isWin7OrHigher || File.Exists("glfw3win7.dll"))
+				return;
+			File.Move("glfw3.dll", "glfw3win7.dll");
+			File.Copy("glfw3winxpvista.dll", "glfw3.dll", true);
 		}
 
 		private class FailedToCopyNativeGlfwDllFiles : Exception

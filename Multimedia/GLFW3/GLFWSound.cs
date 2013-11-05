@@ -12,8 +12,8 @@ namespace DeltaEngine.Multimedia.GLFW
 	/// </summary>
 	public class GLFWSound : Sound
 	{
-		protected GLFWSound(string contentName, GLFWSoundDevice openAL, Settings settings)
-			: base(contentName, settings)
+		protected GLFWSound(string contentName, GLFWSoundDevice openAL)
+			: base(contentName)
 		{
 			this.openAL = openAL;
 		}

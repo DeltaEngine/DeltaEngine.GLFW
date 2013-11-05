@@ -16,7 +16,7 @@ namespace DeltaEngine.Input.GLFW3
 		{
 			IsAvailable = true;
 			nativeWindow = (GlfwWindowPtr)window.Handle;
-			Glfw.SetScrollCallback(nativeWindow, UpdateScrollWheelValue);
+			//Glfw.SetScrollCallback(nativeWindow, UpdateScrollWheelValue); See case 9460 7142
 		}
 
 		public override bool IsAvailable { get; protected set; }

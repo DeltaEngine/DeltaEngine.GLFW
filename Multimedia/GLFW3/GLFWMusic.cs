@@ -1,6 +1,6 @@
-﻿using DeltaEngine.Core;
-using System;
+﻿using System;
 using System.IO;
+using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 using DeltaEngine.Multimedia.GLFW.Helpers;
 using System.Diagnostics;
@@ -37,8 +37,8 @@ namespace DeltaEngine.Multimedia.GLFW
 			}
 		}
 
-		protected GLFWMusic(string contentName, GLFWSoundDevice soundDevice, Settings settings)
-			: base(contentName, soundDevice, settings)
+		protected GLFWMusic(string contentName, GLFWSoundDevice soundDevice)
+			: base(contentName, soundDevice)
 		{
 			openAL = soundDevice;
 			channelHandle = openAL.CreateChannel();
@@ -53,14 +53,14 @@ namespace DeltaEngine.Multimedia.GLFW
 				var stream = new MemoryStream();
 				fileData.CopyTo(stream);
 				stream.Seek(0, SeekOrigin.Begin);
-				musicStream = new MusicStreamFactory().Load(stream, "Content/" + Name);
+				musicStream = new MusicStreamFactory().Load(stream, Path.Combine("Content", Name));
 				format = musicStream.Channels == 2 ? AudioFormat.Stereo16 : AudioFormat.Mono16;
 			}
 			catch (Exception ex)
 			{
 				Logger.Error(ex);
 				if (Debugger.IsAttached)
-					throw new MusicNotFoundOrAccessible(Name, ex);
+					throw new CouldNotLoadMusicFromFilestream(Name, ex);
 			}
 		}
 
