@@ -35,33 +35,22 @@
     <StartupObject>$safeprojectname$.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>LogoAppIcon.ico</ApplicationIcon>
+    <ApplicationIcon>LogoApp.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DeltaEngine.Content.Disk">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Content.Disk.dll</HintPath>
-    </Reference>
     <Reference Include="DeltaEngine">
 	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Graphics">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Graphics.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Input">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Input.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering2D">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
-    </Reference>
-    <Reference Include="DeltaEngine.Rendering2D.Shapes">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.Shapes.dll</HintPath>
     </Reference>
     <Reference Include="DeltaEngine.WindowsGLFW3">
 	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
     </Reference>
+    <Reference Include="DeltaEngine.Rendering2D">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LogoAppIcon.ico" />
+    <Content Include="LogoApp.ico" />
+    <Content Include="LogoAppIcon72x72.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

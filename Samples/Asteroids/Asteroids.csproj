@@ -32,7 +32,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>AsteroidsIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Asteroids.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
@@ -52,10 +52,6 @@
       <Project>{CC65E69E-FAFD-4C2B-85EB-5E57FD3AF847}</Project>
       <Name>DeltaEngine.Input</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Platforms\WindowsGLFW3\DeltaEngine.WindowsGLFW3.csproj">
-      <Project>{157F559D-CF12-488B-AD0F-3F3477990B1F}</Project>
-      <Name>DeltaEngine.WindowsGLFW3</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Rendering2D\DeltaEngine.Rendering2D.csproj">
       <Project>{BDDB4AA4-5D31-43B3-9A3B-BF3030EDE927}</Project>
       <Name>DeltaEngine.Rendering2D</Name>
@@ -72,9 +68,14 @@
       <Project>{75BB4C75-DE36-47B3-9910-10EA8E8973B7}</Project>
       <Name>DeltaEngine.Scenes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Platforms\WindowsGLFW3\DeltaEngine.WindowsGLFW3.csproj">
+      <Project>{157F559D-CF12-488B-AD0F-3F3477990B1F}</Project>
+      <Name>DeltaEngine.WindowsGLFW3</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AsteroidsIcon.ico" />
+    <Content Include="Asteroids.ico" />
+    <Content Include="AsteroidsIcon72x72.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,7 +83,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="GameState.cs" />
-    <Compile Include="InteractionLogics.cs" />
+    <Compile Include="InteractionLogic.cs" />
     <Compile Include="HudInterface.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="PlayerShip.cs" />

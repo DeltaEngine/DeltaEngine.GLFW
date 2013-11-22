@@ -14,7 +14,6 @@ namespace DeltaEngine.Multimedia.GLFW
 		private readonly int channelHandle;
 		private readonly int[] buffers;
 		private readonly byte[] bufferData;
-		private const int NumberOfBuffers = 2;
 		private const int BufferSize = 1024 * 16;
 		private BaseMusicStream musicStream;
 		private AudioFormat format;
@@ -53,7 +52,7 @@ namespace DeltaEngine.Multimedia.GLFW
 				var stream = new MemoryStream();
 				fileData.CopyTo(stream);
 				stream.Seek(0, SeekOrigin.Begin);
-				musicStream = new MusicStreamFactory().Load(stream, Path.Combine("Content", Name));
+				musicStream = new MusicStreamFactory().Load(stream);
 				format = musicStream.Channels == 2 ? AudioFormat.Stereo16 : AudioFormat.Mono16;
 			}
 			catch (Exception ex)

@@ -162,6 +162,8 @@ namespace DeltaEngine.Platforms
 			get { return viewportSize; }
 			set
 			{
+				if (viewportSize == value)
+					return;
 				viewportSize = value;
 				Glfw.SetWindowSize(nativeWindow, (int)value.Width, (int)value.Height);
 				OnWindowResize(nativeWindow, (int)value.Width, (int)value.Height);
@@ -215,6 +217,7 @@ namespace DeltaEngine.Platforms
 		{
 			get { return rememberToClose || Glfw.WindowShouldClose(nativeWindow); }
 		}
+
 		private bool rememberToClose;
 
 		public bool ShowCursor

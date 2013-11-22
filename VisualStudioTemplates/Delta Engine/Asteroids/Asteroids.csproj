@@ -32,7 +32,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>AsteroidsIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Asteroids.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
@@ -47,9 +47,6 @@
     <Reference Include="DeltaEngine.Input">
 	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Input.dll</HintPath>
     </Reference>
-    <Reference Include="DeltaEngine.WindowsGLFW3">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
-    </Reference>
     <Reference Include="DeltaEngine.Rendering2D">
 	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
     </Reference>
@@ -62,9 +59,13 @@
     <Reference Include="DeltaEngine.Scenes">
 	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Scenes.dll</HintPath>
     </Reference>
+    <Reference Include="DeltaEngine.WindowsGLFW3">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AsteroidsIcon.ico" />
+    <Content Include="Asteroids.ico" />
+    <Content Include="AsteroidsIcon72x72.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="GameState.cs" />
-    <Compile Include="InteractionLogics.cs" />
+    <Compile Include="InteractionLogic.cs" />
     <Compile Include="HudInterface.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="PlayerShip.cs" />

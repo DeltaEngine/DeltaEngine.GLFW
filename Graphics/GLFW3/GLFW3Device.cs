@@ -41,6 +41,7 @@ namespace DeltaEngine.Graphics.GLFW3
 		{
 			nativeWindow = (GlfwWindowPtr)window.Handle;
 			CheckOpenGLVersion();
+			SetViewport(window.ViewportPixelSize);
 		}
 
 		private static void CheckOpenGLVersion()
@@ -169,11 +170,13 @@ namespace DeltaEngine.Graphics.GLFW3
 
 		public override void EnableDepthTest()
 		{
+			GL.CullFace(CullFaceMode.Front);
 			GL.Enable(EnableCap.DepthTest);
 		}
 
 		public override void DisableDepthTest()
 		{
+			GL.Disable(EnableCap.CullFace);
 			GL.Disable(EnableCap.DepthTest);
 		}
 

@@ -8,6 +8,8 @@ using DeltaEngine.Platforms.Windows;
 using DeltaEngine.Content.Xml;
 using DeltaEngine.Graphics;
 using DeltaEngine.Rendering2D;
+using DeltaEngine.Core;
+using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Platforms
 {
@@ -16,6 +18,21 @@ namespace DeltaEngine.Platforms
 		private readonly string[] glfwDllsNeeded = { "glfw3.dll", "glfw3winxpvista.dll", "openal32.dll", "wrap_oal.dll" };
 
 		public GLFW3Resolver()
+		{
+			try
+			{
+				InitializeGLFW();
+			}
+			catch (Exception exception)
+			{
+				Logger.Error(exception);
+				if (StackTraceExtensions.IsStartedFromNunitConsole())
+					throw;
+				DisplayMessageBoxAndCloseApp("Fatal GLFW Initialization Error", exception);
+			}
+		}
+
+		private void InitializeGLFW()
 		{
 			RegisterCommonEngineSingletons();
 			MakeSureGlfwDllsAreAvailable();

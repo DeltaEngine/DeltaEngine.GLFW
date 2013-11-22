@@ -38,7 +38,7 @@ namespace DeltaEngine.Multimedia.GLFW
 		{
 			var streamReader = new BinaryReader(fileData);
 			soundData = new WaveSoundData(streamReader);
-			length = GetLengthInSeconds();
+			length = CacheLengthInSeconds();
 			bufferHandle = CreateNativeBuffer();
 		}
 
@@ -46,7 +46,7 @@ namespace DeltaEngine.Multimedia.GLFW
 		protected float length;
 		protected int bufferHandle;
 
-		protected float GetLengthInSeconds()
+		protected float CacheLengthInSeconds()
 		{
 			float blockAlign = soundData.Channels * 2f;
 			return (soundData.BufferData.Length / blockAlign) / soundData.SampleRate;

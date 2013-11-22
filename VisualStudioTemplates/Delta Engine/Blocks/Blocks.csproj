@@ -35,7 +35,7 @@
     <StartupObject>$safeprojectname$.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>BlocksIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Blocks.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -54,9 +54,6 @@
     <Reference Include="DeltaEngine.Platforms">
 	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Platforms.dll</HintPath>
     </Reference>
-    <Reference Include="DeltaEngine.WindowsGLFW3">
-	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
-    </Reference>
     <Reference Include="DeltaEngine.Rendering2D">
 	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Rendering2D.dll</HintPath>
     </Reference>
@@ -69,9 +66,13 @@
     <Reference Include="DeltaEngine.Scenes">
 	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.Scenes.dll</HintPath>
     </Reference>
+    <Reference Include="DeltaEngine.WindowsGLFW3">
+	  <HintPath>$(DeltaEnginePath)\GLFW\DeltaEngine.WindowsGLFW3.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BlocksIcon.ico" />
+    <Content Include="Blocks.ico" />
+    <Content Include="BlocksIcon72x72.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
