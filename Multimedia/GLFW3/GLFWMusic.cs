@@ -63,15 +63,19 @@ namespace DeltaEngine.Multimedia.GLFW
 			}
 		}
 
-		protected override void PlayNativeMusic(float volume)
+		protected override void PlayNativeMusic()
 		{
 			musicStream.Rewind();
 			for (int index = 0; index < NumberOfBuffers; index++)
 				if (!Stream(buffers[index]))
 					break;
 			openAL.Play(channelHandle);
-			openAL.SetVolume(channelHandle, volume);
 			playStartTime = DateTime.Now;
+		}
+
+		protected override void SetPlayingVolume(float value)
+		{
+			openAL.SetVolume(channelHandle, value);
 		}
 
 		protected override void StopNativeMusic()

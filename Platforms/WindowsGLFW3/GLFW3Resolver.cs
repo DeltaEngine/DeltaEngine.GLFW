@@ -26,7 +26,7 @@ namespace DeltaEngine.Platforms
 			catch (Exception exception)
 			{
 				Logger.Error(exception);
-				if (StackTraceExtensions.IsStartedFromNunitConsole())
+				if (StackTraceExtensions.StartedFromNCrunchOrNunitConsole)
 					throw;
 				DisplayMessageBoxAndCloseApp("Fatal GLFW Initialization Error", exception);
 			}
