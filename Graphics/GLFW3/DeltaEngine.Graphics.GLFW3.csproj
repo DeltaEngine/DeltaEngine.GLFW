@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Pencil.Gaming.GLFW3">
-      <HintPath>..\..\packages\Pencil.Gaming.GLFW3.1.0.4954\lib\NET40\Pencil.Gaming.GLFW3.dll</HintPath>
+      <HintPath>..\..\packages\Pencil.Gaming.GLFW3.1.0.4955\lib\NET40\Pencil.Gaming.GLFW3.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -46,7 +46,7 @@
       <Project>{20FA8D33-A964-4000-AD82-67BD6900793B}</Project>
       <Name>DeltaEngine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DeltaEngine.Graphics.csproj">
+    <ProjectReference Include="..\..\Graphics\DeltaEngine.Graphics.csproj">
       <Project>{8F701B0D-48B6-45CF-85E0-286BD53328BA}</Project>
       <Name>DeltaEngine.Graphics</Name>
     </ProjectReference>
@@ -56,13 +56,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GLFW3BufferMode.cs" />
-    <Compile Include="GLFW3ScreenshotCapturer.cs" />
-    <Compile Include="GLFW3Geometry.cs" />
     <Compile Include="GLFW3Shader.cs" />
-    <Compile Include="GLFW3CircularBuffer.cs" />
     <Compile Include="GLFW3Device.cs" />
-    <Compile Include="GLFW3Image.cs" />
+    <Compile Include="OpenGL20BufferMode.cs" />
+    <Compile Include="OpenGL20ScreenshotCapturer.cs" />
+    <Compile Include="OpenGL20Geometry.cs" />
+    <Compile Include="OpenGL20CircularBuffer.cs" />
+    <Compile Include="OpenGL20Image.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using DeltaEngine.Core;
 using Pencil.Gaming;
 
@@ -11,15 +12,15 @@ namespace DeltaEngine.Input.GLFW3
 	{
 		public GLFWKeyboard(Window window)
 		{
-			this.window = window;
 			if (window.Handle == null)
 				throw new CannotCreateKeyboardWithoutWindow();
 			IsAvailable = true;
+			nativeWindow = GLFWMouse.CreateNativeWindowsFromWindowHandle(window);
 		}
 
 		private class CannotCreateKeyboardWithoutWindow : Exception {}
 
-		private readonly Window window;
+		private readonly GlfwWindowPtr nativeWindow;
 
 		public override void Dispose()
 		{
@@ -34,7 +35,7 @@ namespace DeltaEngine.Input.GLFW3
 
 		private void UpdateKeyState(Key key)
 		{
-			bool isKeyPressed = Glfw.GetKey((GlfwWindowPtr)window.Handle, ConvertToPencilKey(key));
+			bool isKeyPressed = Glfw.GetKey(nativeWindow, ConvertToPencilKey(key));
 			keyboardStates[(int)key] = keyboardStates[(int)key].UpdateOnNativePressing(isKeyPressed);
 			if (keyboardStates[(int)key] == State.Pressing)
 				newlyPressedKeys.Add(key);
@@ -147,10 +148,6 @@ namespace DeltaEngine.Input.GLFW3
 				return Pencil.Gaming.Key.NumLock;
 			case Key.Scroll:
 				return Pencil.Gaming.Key.ScrollLock;
-			case Key.Shift:
-				return Pencil.Gaming.Key.LeftShift;
-			case Key.Control:
-				return Pencil.Gaming.Key.LeftControl;
 			case Key.Alt:
 				return Pencil.Gaming.Key.LeftAlt;
 			case Key.LeftShift:
@@ -193,5 +190,14 @@ namespace DeltaEngine.Input.GLFW3
 				return (Pencil.Gaming.Key)key;
 			}
 		}
+
+		protected override bool IsCapsLocked
+		{
+			get { return (((ushort)GetKeyState(0x14)) & 0xffff) != 0; }
+		}
+
+		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true,
+			CallingConvention = CallingConvention.Winapi)]
+		private static extern short GetKeyState(int keyCode);
 	}
 }

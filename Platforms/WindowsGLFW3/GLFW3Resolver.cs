@@ -1,19 +1,25 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using DeltaEngine.Content.Json;
 using DeltaEngine.Graphics.GLFW3;
 using DeltaEngine.Input.GLFW3;
 using DeltaEngine.Multimedia.GLFW;
+using DeltaEngine.Physics2D;
+using DeltaEngine.Physics2D.Farseer;
+using DeltaEngine.Physics3D;
+using DeltaEngine.Physics3D.Jitter;
 using DeltaEngine.Platforms.Windows;
 using DeltaEngine.Content.Xml;
 using DeltaEngine.Graphics;
 using DeltaEngine.Rendering2D;
+using DeltaEngine.Rendering3D;
 using DeltaEngine.Core;
 using DeltaEngine.Extensions;
 
 namespace DeltaEngine.Platforms
 {
-	internal class GLFW3Resolver : AppRunner
+	public class GLFW3Resolver : AppRunner
 	{
 		private readonly string[] glfwDllsNeeded = { "glfw3.dll", "glfw3winxpvista.dll", "openal32.dll", "wrap_oal.dll" };
 
@@ -21,7 +27,7 @@ namespace DeltaEngine.Platforms
 		{
 			try
 			{
-				InitializeGLFW();
+				TryInitializeGLFW();
 			}
 			catch (Exception exception)
 			{
@@ -32,7 +38,7 @@ namespace DeltaEngine.Platforms
 			}
 		}
 
-		private void InitializeGLFW()
+		private void TryInitializeGLFW()
 		{
 			RegisterCommonEngineSingletons();
 			MakeSureGlfwDllsAreAvailable();
@@ -41,8 +47,9 @@ namespace DeltaEngine.Platforms
 			RegisterSingleton<GLFW3Window>();
 			RegisterSingleton<GLFW3Device>();
 			RegisterSingleton<Drawing>();
-			RegisterSingleton<BatchRenderer>();
-			RegisterSingleton<GLFW3ScreenshotCapturer>();
+			RegisterSingleton<BatchRenderer2D>();
+			RegisterSingleton<BatchRenderer3D>();
+			RegisterSingleton<OpenGL20ScreenshotCapturer>();
 			RegisterSingleton<GLFWSoundDevice>();
 			RegisterSingleton<GLFWMouse>();
 			RegisterSingleton<GLFWTouch>();
@@ -56,12 +63,22 @@ namespace DeltaEngine.Platforms
 		protected override void RegisterMediaTypes()
 		{
 			base.RegisterMediaTypes();
-			Register<GLFW3Image>();
+			Register<OpenGL20Image>();
 			Register<GLFW3Shader>();
-			Register<GLFW3Geometry>();
-			Register<GLFWSound>();
+			Register<OpenGL20Geometry>();
+			Register<OpenALSound>();
 			Register<GLFWMusic>();
+			Register<GLFWVideo>();
 			Register<XmlContent>();
+			Register<JsonContent>();
+		}
+
+		protected override void RegisterPhysics()
+		{
+			RegisterSingleton<FarseerPhysics>();
+			RegisterSingleton<JitterPhysics>();
+			Register<AffixToPhysics2D>();
+			Register<AffixToPhysics3D>();
 		}
 
 		private void MakeSureGlfwDllsAreAvailable()
@@ -72,7 +89,7 @@ namespace DeltaEngine.Platforms
 
 		private bool AreNativeDllsMissing()
 		{
-			return glfwDllsNeeded.Any(dll => !File.Exists(dll));
+			return glfwDllsNeeded.Any((string dll) => !File.Exists(dll));
 		}
 
 		private void TryCopyNativeDlls()
@@ -81,13 +98,13 @@ namespace DeltaEngine.Platforms
 				return;
 			if (TryCopyNativeDllsFromDeltaEnginePath())
 				return;
-			throw new GLFW3Resolver.FailedToCopyNativeGlfwDllFiles("GLFW dlls not found inside the application " + "output directory nor inside the %DeltaEnginePath% environment variable. Make sure it's " + "set and containing the required files: " + string.Join(",", glfwDllsNeeded));
+			throw new FailedToCopyNativeGlfwDllFiles("GLFW dlls not found inside the application " + "output directory nor inside the %DeltaEnginePath% environment variable. Make sure it's " + "set and containing the required files: " + string.Join(",", glfwDllsNeeded));
 		}
 
 		private bool TryCopyNativeDllsFromNuGetPackage()
 		{
-			var nuGetPackagesPath = FindNuGetPackagesPath();
-			string nativeBinariesPath = Path.Combine(nuGetPackagesPath, "packages", "Pencil.Gaming.GLFW3.1.0.4954", "NativeBinaries", "x86");
+			string nuGetPackagesPath = FindNuGetPackagesPath();
+			string nativeBinariesPath = Path.Combine(nuGetPackagesPath, "packages", "Pencil.Gaming.GLFW3.1.0.4955", "NativeBinaries", "x86");
 			if (!Directory.Exists(nativeBinariesPath))
 				return false;
 			CopyNativeDllsFromPath(nativeBinariesPath);
@@ -96,8 +113,8 @@ namespace DeltaEngine.Platforms
 
 		private static string FindNuGetPackagesPath()
 		{
-			int MaxPathLength = 18;
-			var path = Path.Combine("..", "..");
+			const int MaxPathLength = 18;
+			string path = Path.Combine("..", "..");
 			while (!IsPackagesDirectory(path))
 			{
 				path = Path.Combine(path, "..");
@@ -109,7 +126,7 @@ namespace DeltaEngine.Platforms
 
 		private void CopyNativeDllsFromPath(string nativeBinariesPath)
 		{
-			foreach (var nativeDll in glfwDllsNeeded)
+			foreach (string nativeDll in glfwDllsNeeded)
 				File.Copy(Path.Combine(nativeBinariesPath, nativeDll), nativeDll, true);
 		}
 
@@ -121,7 +138,7 @@ namespace DeltaEngine.Platforms
 		private bool TryCopyNativeDllsFromDeltaEnginePath()
 		{
 			string enginePath = Environment.GetEnvironmentVariable("DeltaEnginePath");
-			if (enginePath == null || !Directory.Exists(enginePath))
+			if (enginePath == null || !Directory.Exists(Path.Combine(enginePath, "GLFW")))
 				return false;
 			CopyNativeDllsFromPath(Path.Combine(enginePath, "GLFW"));
 			return true;
@@ -129,7 +146,7 @@ namespace DeltaEngine.Platforms
 
 		private static void UseWinXpVistaVersionOfGlfwIfOnThatPlatform()
 		{
-			var version = Environment.OSVersion.Version;
+			Version version = Environment.OSVersion.Version;
 			bool isWin7OrHigher = version.Major >= 6 && version.Minor > 0;
 			if (isWin7OrHigher || File.Exists("glfw3win7.dll"))
 				return;
@@ -140,9 +157,7 @@ namespace DeltaEngine.Platforms
 		private class FailedToCopyNativeGlfwDllFiles : Exception
 		{
 			public FailedToCopyNativeGlfwDllFiles(string message)
-				: base(message)
-			{
-			}
+				: base(message) {}
 		}
 	}
 }

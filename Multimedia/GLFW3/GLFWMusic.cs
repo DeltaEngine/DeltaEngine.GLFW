@@ -10,14 +10,14 @@ namespace DeltaEngine.Multimedia.GLFW
 {
 	public class GLFWMusic : Music
 	{
-		private readonly GLFWSoundDevice openAL;
-		private readonly int channelHandle;
-		private readonly int[] buffers;
-		private readonly byte[] bufferData;
-		private const int BufferSize = 1024 * 16;
-		private BaseMusicStream musicStream;
-		private AudioFormat format;
-		private DateTime playStartTime;
+		protected readonly GLFWSoundDevice openAL;
+		protected readonly int channelHandle;
+		protected readonly int[] buffers;
+		protected readonly byte[] bufferData;
+		protected const int BufferSize = 1024 * 16;
+		protected BaseMusicStream musicStream;
+		protected AudioFormat format;
+		protected DateTime playStartTime;
 
 		public override float DurationInSeconds
 		{
@@ -31,7 +31,7 @@ namespace DeltaEngine.Multimedia.GLFW
 		{
 			get
 			{
-				var seconds = (float)DateTime.Now.Subtract(playStartTime).TotalSeconds;
+				float seconds = (float)DateTime.Now.Subtract(playStartTime).TotalSeconds;
 				return seconds.Clamp(0f, DurationInSeconds).Round(2);
 			}
 		}
@@ -49,11 +49,7 @@ namespace DeltaEngine.Multimedia.GLFW
 		{
 			try
 			{
-				var stream = new MemoryStream();
-				fileData.CopyTo(stream);
-				stream.Seek(0, SeekOrigin.Begin);
-				musicStream = new MusicStreamFactory().Load(stream);
-				format = musicStream.Channels == 2 ? AudioFormat.Stereo16 : AudioFormat.Mono16;
+				TryLoadData(fileData);
 			}
 			catch (Exception ex)
 			{
@@ -61,6 +57,15 @@ namespace DeltaEngine.Multimedia.GLFW
 				if (Debugger.IsAttached)
 					throw new CouldNotLoadMusicFromFilestream(Name, ex);
 			}
+		}
+
+		private void TryLoadData(Stream fileData)
+		{
+			MemoryStream stream = new MemoryStream();
+			fileData.CopyTo(stream);
+			stream.Seek(0, SeekOrigin.Begin);
+			musicStream = new MusicStreamFactory().Load(stream);
+			format = musicStream.Channels == 2 ? AudioFormat.Stereo16 : AudioFormat.Mono16;
 		}
 
 		protected override void PlayNativeMusic()
@@ -84,12 +89,11 @@ namespace DeltaEngine.Multimedia.GLFW
 			EmptyBuffers();
 		}
 
-		protected override void DisposeData()
+		private void EmptyBuffers()
 		{
-			base.DisposeData();
-			openAL.DeleteBuffers(buffers);
-			openAL.DeleteChannel(channelHandle);
-			musicStream = null;
+			int queued = openAL.GetNumberOfBuffersQueued(channelHandle);
+			while (queued-- > 0)
+				openAL.UnqueueBufferFromChannel(channelHandle);
 		}
 
 		public override bool IsPlaying()
@@ -101,16 +105,8 @@ namespace DeltaEngine.Multimedia.GLFW
 		{
 			if (UpdateBuffersAndCheckFinished())
 				HandleStreamFinished();
-			else
-				if (!IsPlaying())
-					openAL.Play(channelHandle);
-		}
-
-		private void EmptyBuffers()
-		{
-			int queued = openAL.GetNumberOfBuffersQueued(channelHandle);
-			while (queued-- > 0)
-				openAL.UnqueueBufferFromChannel(channelHandle);
+			else if (!IsPlaying())
+				openAL.Play(channelHandle);
 		}
 
 		private ChannelState GetState()
@@ -134,17 +130,30 @@ namespace DeltaEngine.Multimedia.GLFW
 		{
 			try
 			{
-				int bytesRead = musicStream.Read(bufferData, BufferSize);
-				if (bytesRead == 0)
-					return false;
-				openAL.BufferData(buffer, format, bufferData, bytesRead, musicStream.Samplerate);
-				openAL.QueueBufferInChannel(buffer, channelHandle);
+				return TryStream(buffer);
 			}
 			catch (Exception)
 			{
 				return false;
 			}
+		}
+
+		private bool TryStream(int buffer)
+		{
+			int bytesRead = musicStream.Read(bufferData, BufferSize);
+			if (bytesRead == 0)
+				return false;
+			openAL.BufferData(buffer, format, bufferData, bytesRead, musicStream.Samplerate);
+			openAL.QueueBufferInChannel(buffer, channelHandle);
 			return true;
+		}
+
+		protected override void DisposeData()
+		{
+			base.DisposeData();
+			openAL.DeleteBuffers(buffers);
+			openAL.DeleteChannel(channelHandle);
+			musicStream = null;
 		}
 	}
 }

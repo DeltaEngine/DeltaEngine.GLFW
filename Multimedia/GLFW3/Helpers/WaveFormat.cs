@@ -1,8 +1,5 @@
 ﻿namespace DeltaEngine.Multimedia.GLFW.Helpers
 {
-	/// <summary>
-	/// All wave formats we're currently able to parse which is read from the fmt chunk.
-	/// </summary>
 	internal enum WaveFormat
 	{
 		Pcm = 1,

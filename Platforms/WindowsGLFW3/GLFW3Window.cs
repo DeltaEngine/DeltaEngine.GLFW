@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -13,14 +15,145 @@ using Size = DeltaEngine.Datatypes.Size;
 
 namespace DeltaEngine.Platforms
 {
-	/// <summary>
-	/// GLFW3 window implementation for the Delta Engine to run applications in.
-	/// </summary>
 	public class GLFW3Window : Window
 	{
+		private readonly Settings settings;
+		private GlfwWindowPtr nativeWindow;
+		private string title;
+		public event Action<Size> ViewportSizeChanged;
+		public event Action<Orientation> OrientationChanged;
+		private const int WMSeticon = 0x80;
+		private const int IconSmall = 0;
+		private readonly IntPtr hwnd;
+		private Size viewportSize;
+		private Vector2D position;
+		private Size windowedSize;
+		public event Action<Size, bool> FullscreenChanged;
+		private bool rememberToClose;
+		private Cursor currentCursor;
+		private bool remDisabledShowCursor;
+
+		public string Title
+		{
+			get
+			{
+				return title;
+			}
+			set
+			{
+				title = value;
+				Glfw.SetWindowTitle(nativeWindow, title);
+			}
+		}
+
+		public Orientation Orientation { get; private set; }
+
+		public bool IsVisible
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public bool IsWindowsFormAndNotJustAPanel
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public IntPtr Handle
+		{
+			get
+			{
+				Type type = nativeWindow.GetType();
+				FieldInfo field = type.GetField("inner_ptr", BindingFlags.Instance | BindingFlags.NonPublic);
+				return (IntPtr)field.GetValue(nativeWindow);
+			}
+		}
+
+		public Size ViewportPixelSize
+		{
+			get
+			{
+				return viewportSize;
+			}
+			set
+			{
+				if (viewportSize == value)
+					return;
+				viewportSize = value;
+				Glfw.SetWindowSize(nativeWindow, (int)value.Width, (int)value.Height);
+				OnWindowResize(nativeWindow, (int)value.Width, (int)value.Height);
+			}
+		}
+
+		public Vector2D ViewportPixelPosition
+		{
+			get
+			{
+				return Vector2D.Zero;
+			}
+		}
+
+		public Size TotalPixelSize
+		{
+			get
+			{
+				return viewportSize;
+			}
+		}
+
+		public Vector2D PixelPosition
+		{
+			get
+			{
+				return position;
+			}
+			set
+			{
+				position = value;
+				Glfw.SetWindowPos(nativeWindow, (int)value.X, (int)value.Y);
+			}
+		}
+
+		public Color BackgroundColor { get; set; }
+
+		public bool IsFullscreen { get; private set; }
+
+		public virtual bool IsClosing
+		{
+			get
+			{
+				return rememberToClose || Glfw.WindowShouldClose(nativeWindow);
+			}
+		}
+
+		public bool ShowCursor
+		{
+			get
+			{
+				return !remDisabledShowCursor;
+			}
+			set
+			{
+				if (remDisabledShowCursor != value)
+					return;
+				remDisabledShowCursor = !value;
+				if (remDisabledShowCursor)
+					Cursor.Hide();
+				else
+					Cursor.Show();
+				currentCursor = null;
+			}
+		}
+
 		public GLFW3Window(Settings settings)
 		{
-			Glfw.SetErrorCallback(ErrorCallback);
+			if (!StackTraceExtensions.StartedFromNCrunchOrNunitConsole)
+				Glfw.SetErrorCallback(ErrorCallback);
 			if (!Glfw.Init())
 				throw new UnableToInitializeGLFW();
 			if (GetGlfwMajorVersion() < 3)
@@ -41,8 +174,6 @@ namespace DeltaEngine.Platforms
 			Logger.Warning("Glfw error: " + desc);
 		}
 
-		private class UnableToInitializeGLFW : Exception {}
-
 		private static int GetGlfwMajorVersion()
 		{
 			int majorVersion;
@@ -52,22 +183,18 @@ namespace DeltaEngine.Platforms
 			return majorVersion;
 		}
 
-		private class UnableToInitializeShadersForGLFW : Exception {}
-
-		private readonly Settings settings;
-
 		private void CreateWindow(Size resolution, bool startInFullscreen)
 		{
 			viewportSize = resolution;
 			IsFullscreen = startInFullscreen;
-			var width = (int)resolution.Width;
-			var height = (int)resolution.Height;
+			int width = (int)resolution.Width;
+			int height = (int)resolution.Height;
 			OpenWindow(startInFullscreen, width, height);
 		}
 
 		private void OpenWindow(bool startInFullscreen, int width, int height)
 		{
-			var monitor = startInFullscreen ? Glfw.GetPrimaryMonitor() : GlfwMonitorPtr.Null;
+			GlfwMonitorPtr monitor = startInFullscreen ? Glfw.GetPrimaryMonitor() : GlfwMonitorPtr.Null;
 			SetupWindow();
 			nativeWindow = Glfw.CreateWindow(width, height, "GLFW3", monitor, GlfwWindowPtr.Null);
 			Glfw.MakeContextCurrent(nativeWindow);
@@ -77,7 +204,7 @@ namespace DeltaEngine.Platforms
 
 		private void SetupWindow()
 		{
-			var colorBits = GetColorBits();
+			int[] colorBits = GetColorBits();
 			Glfw.WindowHint(WindowHint.RedBits, colorBits[0]);
 			Glfw.WindowHint(WindowHint.GreenBits, colorBits[1]);
 			Glfw.WindowHint(WindowHint.BlueBits, colorBits[2]);
@@ -89,44 +216,23 @@ namespace DeltaEngine.Platforms
 		private int[] GetColorBits()
 		{
 			if (settings.ColorBufferBits >= 24)
-				return new[] { 8, 8, 8, settings.ColorBufferBits >= 32 ? 8 : 0 };
+				return new int[] { 8, 8, 8, settings.ColorBufferBits >= 32 ? 8 : 0 };
 			if (settings.ColorBufferBits >= 16)
-				return new[] { 5, 6, 5, 0 };
+				return new int[] { 5, 6, 5, 0 };
 			throw new UnsupportedFramebufferFormat();
 		}
-
-		private class UnsupportedFramebufferFormat : Exception {}
-
-		private GlfwWindowPtr nativeWindow;
 
 		private void OnWindowResize(GlfwWindowPtr window, int width, int height)
 		{
 			if (width == 0 || height == 0)
 				return;
 			viewportSize = new Size(width, height);
-			Orientation = width > height ? Orientation.Landscape : Orientation.Portrait;
+			Orientation = width > height ? DeltaEngine.Core.Orientation.Landscape : DeltaEngine.Core.Orientation.Portrait;
 			if (ViewportSizeChanged != null)
 				ViewportSizeChanged(ViewportPixelSize);
 			if (OrientationChanged != null)
 				OrientationChanged(Orientation);
 		}
-
-		public string Title
-		{
-			get { return title; }
-			set
-			{
-				title = value;
-				Glfw.SetWindowTitle(nativeWindow, title);
-			}
-		}
-
-		private string title;
-
-		public Orientation Orientation { get; private set; }
-
-		public event Action<Size> ViewportSizeChanged;
-		public event Action<Orientation> OrientationChanged;
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
 		public static extern IntPtr GetForegroundWindow();
@@ -137,59 +243,11 @@ namespace DeltaEngine.Platforms
 		[DllImport("user32.dll")]
 		private static extern int DrawMenuBar(int currentWindow);
 
-		private const int WMSeticon = 0x80;
-		private const int IconSmall = 0;
-		private readonly IntPtr hwnd;
-
 		private void SetIcon(Icon icon)
 		{
 			SendMessage(hwnd, WMSeticon, (IntPtr)IconSmall, icon.Handle);
 			DrawMenuBar((int)hwnd);
 		}
-
-		public bool IsVisible
-		{
-			get { return true; }
-		}
-
-		public object Handle
-		{
-			get { return nativeWindow; }
-		}
-
-		public Size ViewportPixelSize
-		{
-			get { return viewportSize; }
-			set
-			{
-				if (viewportSize == value)
-					return;
-				viewportSize = value;
-				Glfw.SetWindowSize(nativeWindow, (int)value.Width, (int)value.Height);
-				OnWindowResize(nativeWindow, (int)value.Width, (int)value.Height);
-			}
-		}
-
-		private Size viewportSize;
-
-		public Size TotalPixelSize
-		{
-			get { return viewportSize; }
-		}
-
-		public Vector2D PixelPosition
-		{
-			get { return position; }
-			set
-			{
-				position = value;
-				Glfw.SetWindowPos(nativeWindow, (int)value.X, (int)value.Y);
-			}
-		}
-
-		private Vector2D position;
-
-		public Color BackgroundColor { get; set; }
 
 		public virtual void SetFullscreen(Size setFullscreenViewportSize)
 		{
@@ -200,8 +258,6 @@ namespace DeltaEngine.Platforms
 				FullscreenChanged(setFullscreenViewportSize, true);
 		}
 
-		private Size windowedSize;
-
 		public void SetWindowed()
 		{
 			Glfw.DestroyWindow(nativeWindow);
@@ -210,35 +266,16 @@ namespace DeltaEngine.Platforms
 				FullscreenChanged(windowedSize, false);
 		}
 
-		public bool IsFullscreen { get; private set; }
-		public event Action<Size, bool> FullscreenChanged;
-
-		public virtual bool IsClosing
+		public void SetCursorIcon(string iconFilePath)
 		{
-			get { return rememberToClose || Glfw.WindowShouldClose(nativeWindow); }
-		}
-
-		private bool rememberToClose;
-
-		public bool ShowCursor
-		{
-			get { return !remDisabledShowCursor; }
-			set
-			{
-				if (remDisabledShowCursor != value)
-					return;
-
-				remDisabledShowCursor = !value;
-				if (remDisabledShowCursor)
-					Cursor.Hide();
-				else
-					Cursor.Show();
-			}
+			ShowCursor = true;
+			currentCursor = new Cursor(iconFilePath);
+			Cursor.Current = currentCursor;
 		}
 
 		public string ShowMessageBox(string caption, string message, string[] buttons)
 		{
-			var buttonCombination = MessageBoxButtons.OK;
+			MessageBoxButtons buttonCombination = MessageBoxButtons.OK;
 			if (buttons.Contains("Cancel"))
 				buttonCombination = MessageBoxButtons.OKCancel;
 			if (buttons.Contains("Ignore") || buttons.Contains("Abort") || buttons.Contains("Retry"))
@@ -248,21 +285,18 @@ namespace DeltaEngine.Platforms
 			return MessageBox.Show(message, Title + " " + caption, buttonCombination).ToString();
 		}
 
-		/// <summary>
-		/// Clipboard.SetText must be executed on a STA thread, which we are not, create extra thread!
-		/// </summary>
 		public void CopyTextToClipboard(string text)
 		{
-			var staThread = new Thread(() => TrySetClipboardText(text));
+			Thread staThread = new Thread(() => SetClipboardText(text));
 			staThread.SetApartmentState(ApartmentState.STA);
 			staThread.Start();
 		}
 
-		private static void TrySetClipboardText(string text)
+		private static void SetClipboardText(string text)
 		{
 			try
 			{
-				Clipboard.SetText(text, TextDataFormat.Text);
+				TrySetClipboardText(text);
 			}
 			catch (Exception)
 			{
@@ -270,12 +304,18 @@ namespace DeltaEngine.Platforms
 			}
 		}
 
-		private bool remDisabledShowCursor;
+		private static void TrySetClipboardText(string text)
+		{
+			Clipboard.SetText(text, TextDataFormat.Text);
+		}
 
 		public void Present()
 		{
-			Glfw.PollEvents();
+			if (!StackTraceExtensions.StartedFromNCrunchOrNunitConsole)
+				Glfw.PollEvents();
 			AllowAltF4ToCloseWindow();
+			if (currentCursor != null)
+				Cursor.Current = currentCursor;
 		}
 
 		private void AllowAltF4ToCloseWindow()
@@ -295,5 +335,11 @@ namespace DeltaEngine.Platforms
 			Glfw.DestroyWindow(nativeWindow);
 			Glfw.Terminate();
 		}
+
+		private class UnableToInitializeGLFW : Exception {}
+
+		private class UnableToInitializeShadersForGLFW : Exception {}
+
+		private class UnsupportedFramebufferFormat : Exception {}
 	}
 }

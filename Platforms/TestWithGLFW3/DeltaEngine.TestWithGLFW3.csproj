@@ -50,21 +50,21 @@
       <Project>{BDDB4AA4-5D31-43B3-9A3B-BF3030EDE927}</Project>
       <Name>DeltaEngine.Rendering2D</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DeltaEngine.Platforms.csproj">
+    <ProjectReference Include="..\..\Rendering3D\DeltaEngine.Rendering3D.csproj">
+      <Project>{3266F559-74EE-4A1C-B37B-2C591F73611B}</Project>
+      <Name>DeltaEngine.Rendering3D</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Platforms\DeltaEngine.Platforms.csproj">
       <Project>{BAE8830E-5F62-48D6-B772-C4B1E8665FB3}</Project>
       <Name>DeltaEngine.Platforms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Mocks\DeltaEngine.Platforms.Mocks.csproj">
+    <ProjectReference Include="..\..\Platforms\Mocks\DeltaEngine.Platforms.Mocks.csproj">
       <Project>{BF968F20-246B-4F86-BB7B-377FD4B47A9F}</Project>
       <Name>DeltaEngine.Platforms.Mocks</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WindowsGLFW3\DeltaEngine.WindowsGLFW3.csproj">
-      <Project>{50DCE461-478F-4EED-BFE1-D10122A5AF21}</Project>
+    <ProjectReference Include="..\..\Platforms\WindowsGLFW3\DeltaEngine.WindowsGLFW3.csproj">
+      <Project>{157F559D-CF12-488B-AD0F-3F3477990B1F}</Project>
       <Name>DeltaEngine.WindowsGLFW3</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Windows\DeltaEngine.Platforms.Windows.csproj">
-      <Project>{BD8A80E2-A313-437E-B0EF-FC0B066280A7}</Project>
-      <Name>DeltaEngine.Platforms.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

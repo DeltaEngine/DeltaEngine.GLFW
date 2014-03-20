@@ -24,9 +24,9 @@ namespace DeltaEngine.Multimedia.GLFW
 
 		public int[] CreateBuffers(int numberOfBuffers)
 		{
-			var newBuffers = new uint[numberOfBuffers];
+			uint[] newBuffers = new uint[numberOfBuffers];
 			AL.GenBuffers(numberOfBuffers, newBuffers);
-			var returnBuffers = new int[numberOfBuffers];
+			int[] returnBuffers = new int[numberOfBuffers];
 			for (int num = 0; num < numberOfBuffers; num++)
 				returnBuffers[num] = (int)newBuffers[num];
 			return returnBuffers;
@@ -34,13 +34,13 @@ namespace DeltaEngine.Multimedia.GLFW
 
 		public void DeleteBuffer(int bufferHandle)
 		{
-			var handle = (uint)bufferHandle;
+			uint handle = (uint)bufferHandle;
 			AL.DeleteBuffers(1, ref handle);
 		}
 
 		public void DeleteBuffers(int[] bufferHandles)
 		{
-			var buffers = new uint[bufferHandles.Length];
+			uint[] buffers = new uint[bufferHandles.Length];
 			for (int num = 0; num < bufferHandles.Length; num++)
 				buffers[num] = (uint)bufferHandles[num];
 			AL.DeleteBuffers(bufferHandles.Length, buffers);
@@ -68,7 +68,7 @@ namespace DeltaEngine.Multimedia.GLFW
 
 		public void DeleteChannel(int channelHandle)
 		{
-			var handle = (uint)channelHandle;
+			uint handle = (uint)channelHandle;
 			AL.DeleteSources(1, ref handle);
 		}
 
@@ -79,12 +79,12 @@ namespace DeltaEngine.Multimedia.GLFW
 
 		public void QueueBufferInChannel(int bufferHandle, int channelHandle)
 		{
-			AL.SourceQueueBuffers((uint)channelHandle, 1, new [] { (uint)bufferHandle });
+			AL.SourceQueueBuffers((uint)channelHandle, 1, new uint[] { (uint)bufferHandle });
 		}
 
 		public int UnqueueBufferFromChannel(int channelHandle)
 		{
-			var bids = new uint[1];
+			uint[] bids = new uint[1];
 			AL.SourceUnqueueBuffers((uint)channelHandle, 1, bids);
 			return (int)bids[0];
 		}

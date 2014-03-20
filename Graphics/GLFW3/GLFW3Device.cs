@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using Pencil.Gaming;
@@ -9,53 +10,50 @@ namespace DeltaEngine.Graphics.GLFW3
 {
 	public sealed class GLFW3Device : Device
 	{
-		private GlfwWindowPtr nativeWindow;
+		private readonly GlfwWindowPtr nativeWindow;
 		private BlendMode currentBlendMode = BlendMode.Opaque;
-		private bool cullBackFaces;
 		public const int InvalidHandle = -1;
-
-		public override bool CullBackFaces
-		{
-			get
-			{
-				return cullBackFaces;
-			}
-			set
-			{
-				if (cullBackFaces == value)
-					return;
-				cullBackFaces = value;
-				if (cullBackFaces)
-				{
-					GL.Enable(EnableCap.CullFace);
-					GL.FrontFace(FrontFaceDirection.Cw);
-					GL.CullFace(CullFaceMode.Back);
-				}
-				else
-					GL.Disable(EnableCap.CullFace);
-			}
-		}
+		private bool isCullingEnabled;
 
 		public GLFW3Device(Window window)
 			: base(window)
 		{
-			nativeWindow = (GlfwWindowPtr)window.Handle;
+			nativeWindow = CreateNativeWindowsFromWindowHandle(window);
 			CheckOpenGLVersion();
 			SetViewport(window.ViewportPixelSize);
+			SetupFrontFaceDirection();
+		}
+
+		private static GlfwWindowPtr CreateNativeWindowsFromWindowHandle(Window window)
+		{
+			Type type = typeof(GlfwWindowPtr);
+			ConstructorInfo constructor = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)[0];
+			return (GlfwWindowPtr)constructor.Invoke(new object[] { window.Handle });
 		}
 
 		private static void CheckOpenGLVersion()
 		{
-			var version = GL.GetString(StringName.Version);
-			var extensions = GL.GetString(StringName.Extensions);
-			var majorVersion = int.Parse(version[0] + "");
+			string version = GL.GetString(StringName.Version);
+			string extensions = GL.GetString(StringName.Extensions);
+			int majorVersion = int.Parse(version[0] + "");
 			if (majorVersion < 3 || string.IsNullOrEmpty(extensions))
-				throw new GLFW3Device.OpenGLVersionDoesNotSupportShaders();
+				throw new OpenGLVersionDoesNotSupportShaders();
+		}
+
+		public override void SetViewport(Size viewportSize)
+		{
+			GL.Viewport(0, 0, (int)viewportSize.Width, (int)viewportSize.Height);
+			SetModelViewProjectionMatrixFor2D();
+		}
+
+		private static void SetupFrontFaceDirection()
+		{
+			GL.FrontFace(FrontFaceDirection.Ccw);
 		}
 
 		public override void Clear()
 		{
-			var color = window.BackgroundColor;
+			Color color = window.BackgroundColor;
 			if (color.A == 0)
 				return;
 			GL.ClearColor(color.RedValue, color.GreenValue, color.BlueValue, color.AlphaValue);
@@ -67,15 +65,7 @@ namespace DeltaEngine.Graphics.GLFW3
 			Glfw.SwapBuffers(nativeWindow);
 		}
 
-		public override void Dispose()
-		{
-		}
-
-		protected override void OnFullscreenChanged(Size displaySize, bool wantFullscreen)
-		{
-			nativeWindow = (GlfwWindowPtr)window.Handle;
-			base.OnFullscreenChanged(displaySize, wantFullscreen);
-		}
+		public override void Dispose() {}
 
 		public override void SetBlendMode(BlendMode blendMode)
 		{
@@ -114,13 +104,7 @@ namespace DeltaEngine.Graphics.GLFW3
 			}
 		}
 
-		public override void SetViewport(Size viewportSize)
-		{
-			GL.Viewport(0, 0, (int)viewportSize.Width, (int)viewportSize.Height);
-			SetModelViewProjectionMatrixFor2D();
-		}
-
-		public int CreateVertexBuffer(int sizeInBytes, GLFW3BufferMode mode)
+		public int CreateVertexBuffer(int sizeInBytes, OpenGL20BufferMode mode)
 		{
 			int bufferHandle;
 			GL.GenBuffers(1, out bufferHandle);
@@ -129,9 +113,9 @@ namespace DeltaEngine.Graphics.GLFW3
 			return bufferHandle;
 		}
 
-		private static BufferUsageHint GetBufferMode(GLFW3BufferMode mode)
+		private static BufferUsageHint GetBufferMode(OpenGL20BufferMode mode)
 		{
-			return mode == GLFW3BufferMode.Static ? BufferUsageHint.StaticDraw : mode == GLFW3BufferMode.Dynamic ? BufferUsageHint.DynamicDraw : BufferUsageHint.StreamDraw;
+			return mode == OpenGL20BufferMode.Static ? BufferUsageHint.StaticDraw : mode == OpenGL20BufferMode.Dynamic ? BufferUsageHint.DynamicDraw : BufferUsageHint.StreamDraw;
 		}
 
 		public void BindVertexBuffer(int bufferHandle)
@@ -139,12 +123,13 @@ namespace DeltaEngine.Graphics.GLFW3
 			GL.BindBuffer(BufferTarget.ArrayBuffer, bufferHandle);
 		}
 
-		public void LoadVertexData<T>(int offset, T[] vertices, int vertexDataSizeInBytes) where T : struct
+		public void LoadVertexData<T>(int offset, T[] vertices, int vertexDataSizeInBytes)
+			where T : struct
 		{
 			GL.BufferSubData(BufferTarget.ArrayBuffer, (IntPtr)offset, (IntPtr)vertexDataSizeInBytes, vertices);
 		}
 
-		public int CreateIndexBuffer(int sizeInBytes, GLFW3BufferMode mode)
+		public int CreateIndexBuffer(int sizeInBytes, OpenGL20BufferMode mode)
 		{
 			int bufferHandle;
 			GL.GenBuffers(1, out bufferHandle);
@@ -168,24 +153,25 @@ namespace DeltaEngine.Graphics.GLFW3
 			GL.DeleteBuffers(1, ref bufferHandle);
 		}
 
+		private void NativeEnableCulling()
+		{
+			GL.Enable(EnableCap.CullFace);
+			GL.CullFace(CullFaceMode.Back);
+		}
+
+		private void NativeDisableCulling()
+		{
+			GL.Disable(EnableCap.CullFace);
+		}
+
 		public override void EnableDepthTest()
 		{
-			GL.CullFace(CullFaceMode.Front);
 			GL.Enable(EnableCap.DepthTest);
 		}
 
 		public override void DisableDepthTest()
 		{
-			GL.Disable(EnableCap.CullFace);
 			GL.Disable(EnableCap.DepthTest);
-		}
-
-		public void EnableTexturing()
-		{
-		}
-
-		public void DisableTexturing()
-		{
 		}
 
 		public int GenerateTexture()
@@ -207,17 +193,17 @@ namespace DeltaEngine.Graphics.GLFW3
 				return TextureUnit.Texture0;
 			if (samplerIndex == 1)
 				return TextureUnit.Texture1;
-			throw new GLFW3Device.UnsupportedTextureUnit();
+			throw new UnsupportedTextureUnit();
 		}
 
-		public void LoadTexture(Size size, IntPtr data, bool hasAlpha)
+		public void LoadTextureInNativePlatformFormat(int width, int height, IntPtr nativeLoadedData, bool hasAlpha)
 		{
-			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, (int)size.Width, (int)size.Height, 0, hasAlpha ? PixelFormat.Bgra : PixelFormat.Bgr, PixelType.UnsignedByte, data);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, hasAlpha ? PixelFormat.Bgra : PixelFormat.Bgr, PixelType.UnsignedByte, nativeLoadedData);
 		}
 
-		public void LoadTexture(Size size, byte[] data, bool hasAlpha)
+		public void FillTexture(Size size, byte[] rgbaData, bool hasAlpha)
 		{
-			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, (int)size.Width, (int)size.Height, 0, hasAlpha ? PixelFormat.Bgra : PixelFormat.Bgr, PixelType.UnsignedByte, data);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, hasAlpha ? PixelInternalFormat.Rgba : PixelInternalFormat.Rgb, (int)size.Width, (int)size.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, rgbaData);
 		}
 
 		public void DeleteTexture(int glHandle)
@@ -227,9 +213,9 @@ namespace DeltaEngine.Graphics.GLFW3
 
 		public void SetTextureSamplerState(bool disableLinearFiltering = false, bool allowTiling = false)
 		{
-			var minFilter = disableLinearFiltering ? TextureMinFilter.Nearest : TextureMinFilter.Linear;
-			var magFilter = disableLinearFiltering ? TextureMagFilter.Nearest : TextureMagFilter.Linear;
-			var clampMode = allowTiling ? TextureWrapMode.Repeat : TextureWrapMode.ClampToEdge;
+			TextureMinFilter minFilter = disableLinearFiltering ? TextureMinFilter.Nearest : TextureMinFilter.Linear;
+			TextureMagFilter magFilter = disableLinearFiltering ? TextureMagFilter.Nearest : TextureMagFilter.Linear;
+			TextureWrapMode clampMode = allowTiling ? TextureWrapMode.Repeat : TextureWrapMode.ClampToEdge;
 			SetSamplerState((int)minFilter, (int)magFilter, (int)clampMode);
 		}
 
@@ -244,26 +230,6 @@ namespace DeltaEngine.Graphics.GLFW3
 		private static void SetTexture2DParameter(TextureParameterName name, int value)
 		{
 			GL.TexParameter(TextureTarget.Texture2D, name, value);
-		}
-
-		public int CreateShaderProgram(string vertexShaderCode, string fragmentShaderCode)
-		{
-			int programHandle = GL.CreateProgram();
-			int vertexShader = CreateShader(ShaderType.VertexShader, vertexShaderCode);
-			int fragmentShader = CreateShader(ShaderType.FragmentShader, fragmentShaderCode);
-			GL.AttachShader(programHandle, vertexShader);
-			GL.AttachShader(programHandle, fragmentShader);
-			GL.LinkProgram(programHandle);
-			return programHandle;
-		}
-
-		private static int CreateShader(ShaderType shaderType, string code)
-		{
-			int shader = GL.CreateShader(shaderType);
-			int codeLength = code.Length;
-			GL.ShaderSource(shader, 1, new [] { code }, ref codeLength);
-			GL.CompileShader(shader);
-			return shader;
 		}
 
 		public void UseShaderProgram(int programHandle)
@@ -303,6 +269,11 @@ namespace DeltaEngine.Graphics.GLFW3
 			GL.Uniform1(location, value);
 		}
 
+		public void SetUniformValue(int location, float value)
+		{
+			GL.Uniform1(location, value);
+		}
+
 		public void SetUniformValue(int location, Matrix matrix)
 		{
 			GL.UniformMatrix4(location, 1, false, matrix.GetValues);
@@ -313,9 +284,14 @@ namespace DeltaEngine.Graphics.GLFW3
 			GL.Uniform3(location, vector.X, vector.Y, vector.Z);
 		}
 
+		public void SetUniformValue(int location, float r, float g, float b, float a)
+		{
+			GL.Uniform4(location, r, g, b, a);
+		}
+
 		public void SetUniformValues(int location, Matrix[] matrices)
 		{
-			var values = new float[matrices.Length * 16];
+			float[] values = new float[matrices.Length * 16];
 			for (int matrixIndex = 0; matrixIndex < matrices.Length; ++matrixIndex)
 				matrices[matrixIndex].GetValues.CopyTo(values, matrixIndex * 16);
 			GL.UniformMatrix4(location, matrices.Length, false, values);
@@ -340,14 +316,27 @@ namespace DeltaEngine.Graphics.GLFW3
 
 		public override CircularBuffer CreateCircularBuffer(ShaderWithFormat shader, BlendMode blendMode, VerticesMode drawMode = VerticesMode.Triangles)
 		{
-			return new GLFW3CircularBuffer(this, shader, blendMode, drawMode);
+			return new OpenGL20CircularBuffer(this, shader, blendMode, drawMode);
 		}
 
-		private class OpenGLVersionDoesNotSupportShaders : Exception
+		protected override void EnableClockwiseBackfaceCulling()
 		{
+			if (isCullingEnabled)
+				return;
+			isCullingEnabled = true;
+			NativeEnableCulling();
 		}
-		private class UnsupportedTextureUnit : Exception
+
+		protected override void DisableCulling()
 		{
+			if (!isCullingEnabled)
+				return;
+			isCullingEnabled = false;
+			NativeDisableCulling();
 		}
+
+		private class OpenGLVersionDoesNotSupportShaders : Exception {}
+
+		private class UnsupportedTextureUnit : Exception {}
 	}
 }

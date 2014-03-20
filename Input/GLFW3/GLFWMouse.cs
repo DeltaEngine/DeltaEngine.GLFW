@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using DeltaEngine.Core;
 using DeltaEngine.Datatypes;
 using DeltaEngine.Entities;
+using DeltaEngine.Extensions;
 using DeltaEngine.ScreenSpaces;
 using Pencil.Gaming;
 
@@ -15,8 +17,16 @@ namespace DeltaEngine.Input.GLFW3
 		public GLFWMouse(Window window)
 		{
 			IsAvailable = true;
-			nativeWindow = (GlfwWindowPtr)window.Handle;
-			//Glfw.SetScrollCallback(nativeWindow, UpdateScrollWheelValue); See case 9460 7142
+			nativeWindow = CreateNativeWindowsFromWindowHandle(window);
+			if (!StackTraceExtensions.StartedFromNCrunchOrNunitConsole)
+				Glfw.SetScrollCallback(nativeWindow, UpdateScrollWheelValue);
+		}
+
+		internal static GlfwWindowPtr CreateNativeWindowsFromWindowHandle(Window window)
+		{
+			var type = typeof(GlfwWindowPtr);
+			var constructor = type.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)[0];
+			return (GlfwWindowPtr)constructor.Invoke(new object[] { window.Handle });
 		}
 
 		public override bool IsAvailable { get; protected set; }
@@ -25,7 +35,7 @@ namespace DeltaEngine.Input.GLFW3
 
 		public override void Dispose() {}
 
-		public override void SetPosition(Vector2D position)
+		public override void SetNativePosition(Vector2D position)
 		{
 			position = ScreenSpace.Current.ToPixelSpace(position);
 			Glfw.SetCursorPos(nativeWindow, position.X, position.Y);

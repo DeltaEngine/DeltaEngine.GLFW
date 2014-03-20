@@ -7,8 +7,7 @@ using Pencil.Gaming;
 namespace DeltaEngine.Input.GLFW3
 {
 	/// <summary>
-	/// GLFW implementation of a GamePad.
-	/// Not all features of the Xbox GamePad are available.
+	/// GLFW implementation of a GamePad. Not all features of the Xbox GamePad are available.
 	/// </summary>
 	public class GLFWGamePad : GamePad
 	{

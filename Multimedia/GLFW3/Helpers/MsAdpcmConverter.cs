@@ -3,14 +3,16 @@ using System.IO;
 
 namespace DeltaEngine.Multimedia.GLFW.Helpers
 {
-	/// <summary>
-	/// Audio data converter capable of converting MS Adpcm audio to pcm 16 bit.
-	/// http://wiki.multimedia.cx/index.php?title=Microsoft_ADPCM
-	/// http://dslinux.gits.kiev.ua/trunk/lib/audiofile/src/libaudiofile/modules/msadpcm.c
-	/// http://netghost.narod.ru/gff/vendspec/micriff/ms_riff.txt
-	/// </summary>
 	internal class MsAdpcmConverter
 	{
+		private readonly int numberOfSamples;
+		private readonly int channels;
+		private readonly short blockAlign;
+		private StateObject[] states;
+		private static readonly int[] AdaptationTable = { 230, 230, 230, 230, 307, 409, 512, 614, 768, 614, 512, 409, 307, 230, 230, 230 };
+		private static readonly int[] AdaptCoeff1 = { 256, 512, 0, 192, 240, 460, 392 };
+		private static readonly int[] AdaptCoeff2 = { 0, -256, 0, 64, 0, -208, -232 };
+
 		public MsAdpcmConverter(int setChannels, short samplesPerBlock, short setBlockAlign)
 		{
 			channels = setChannels;
@@ -19,38 +21,23 @@ namespace DeltaEngine.Multimedia.GLFW.Helpers
 			InitializeStates();
 		}
 
-		private readonly int numberOfSamples;
-		private readonly int channels;
-		private readonly short blockAlign;
-
 		private void InitializeStates()
 		{
-			var firstState = new StateObject();
-			var secondState = channels > 1 ? new StateObject() : firstState;
-			states = new[] { firstState, secondState };
-		}
-
-		private StateObject[] states;
-
-		private class StateObject
-		{
-			public byte predicator;
-			public short delta;
-			public short sample1;
-			public short sample2;
+			StateObject firstState = new StateObject();
+			StateObject secondState = channels > 1 ? new StateObject() : firstState;
+			states = new StateObject[] { firstState, secondState };
 		}
 
 		public byte[] ConvertToPcm(byte[] data)
 		{
 			byte[] resultBytes;
-			using (var result = new MemoryStream())
+			using (MemoryStream result = new MemoryStream())
 			{
-				var reader = new BinaryReader(new MemoryStream(data));
-				var writer = new BinaryWriter(result);
+				BinaryReader reader = new BinaryReader(new MemoryStream(data));
+				BinaryWriter writer = new BinaryWriter(result);
 				DecodeAllBlocks(data.Length, reader, writer);
 				resultBytes = result.ToArray();
 			}
-
 			return resultBytes;
 		}
 
@@ -72,7 +59,6 @@ namespace DeltaEngine.Multimedia.GLFW.Helpers
 		{
 			for (int index = 0; index < channels; index++)
 				states[index].predicator = reader.ReadByte();
-
 			for (int index = 0; index < channels; index++)
 				states[index].delta = reader.ReadInt16();
 		}
@@ -81,13 +67,11 @@ namespace DeltaEngine.Multimedia.GLFW.Helpers
 		{
 			for (int index = 0; index < channels; index++)
 				states[index].sample1 = reader.ReadInt16();
-
 			for (int index = 0; index < channels; index++)
 			{
 				states[index].sample2 = reader.ReadInt16();
 				writer.Write(states[index].sample2);
 			}
-
 			for (int index = 0; index < channels; index++)
 				writer.Write(states[index].sample1);
 		}
@@ -125,12 +109,12 @@ namespace DeltaEngine.Multimedia.GLFW.Helpers
 			state.sample1 = (short)Math.Min(short.MaxValue, Math.Max(short.MinValue, linearSample));
 		}
 
-		private static readonly int[] AdaptationTable =
+		private class StateObject
 		{
-			230, 230, 230, 230, 307, 409, 512, 614, 768, 614, 512, 409, 307, 230, 230, 230
-		};
-
-		private static readonly int[] AdaptCoeff1 = { 256, 512, 0, 192, 240, 460, 392 };
-		private static readonly int[] AdaptCoeff2 = { 0, -256, 0, 64, 0, -208, -232 };
+			public byte predicator;
+			public short delta;
+			public short sample1;
+			public short sample2;
+		}
 	}
 }
